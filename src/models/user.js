@@ -1,5 +1,7 @@
 const mongoose = require('../db/connection');
+const bcrypt = require('bcryptjs');
 
+//Schema for Users
 const UserSchema = new mongoose.Schema({
      firstName: {
           type: String,
@@ -29,6 +31,20 @@ const UserSchema = new mongoose.Schema({
           default: Date.now
      }
 });
+
+
+
+// Execute this always before doing anything in DataBase
+UserSchema.pre('save', async function(next){
+     var salt = bcrypt.genSaltSync(10);
+     await bcrypt.hash(this.password, salt, function(err, hash){
+          if(err) console.error(err);
+          else this.password = hash;
+     });
+     next();
+});
+
+
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

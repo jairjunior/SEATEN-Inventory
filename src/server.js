@@ -1,11 +1,12 @@
 const express = require('express');
+const authController = require('./controllers/authController');
+
+const MY_PORT = process.env.MY_PORT || 8080;
 
 const app = express();
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-require('./controllers/authController')(app);
-
-const MY_PORT = process.env.MY_PORT || 8080;
+app.use('/auth', authController);
 
 
 
