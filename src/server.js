@@ -1,12 +1,12 @@
 const express = require('express');
 const authController = require('./controllers/authController');
 
-const MY_PORT = process.env.MY_PORT || 8080;
+const SERVER_PORT = process.env.SERVER_PORT || 3000;
 
 const app = express();
-app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-app.use('/auth', authController);
+app.use(express.json());                               // for parsing application/json
+app.use(express.urlencoded({ extended: true }));       // for parsing application/x-www-form-urlencoded
+app.use('/auth', authController);                      // middleware for user authentication
 
 
 
@@ -16,6 +16,6 @@ app.get('/', (req, res) => {
 
 
 
-app.listen(MY_PORT, () => {
+app.listen(SERVER_PORT, () => {
 	console.log(`Server listening on port 3000...`);
 });

@@ -1,19 +1,25 @@
 const mongoose = require('mongoose');
 
-const DB_USER = process.env.DATABASE_USER;
-const DB_PASSWORD = process.env.DATABASE_PASSWORD;
-const DB_NAME = process.env.DATABASE_NAME;
-const uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@database.rrtt9.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_SYSTEM_ADMIN_USERNAME;
+const dbPassword = process.env.DB_SYSTEM_ADMIN_PASSWORD;
 
-mongoose.connect( uri, 
-     {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          useFindAndModify: false,
-          useCreateIndex: true
-     }, 
-     () => {
-     console.log('Connected to DataBase!')
-});
+const mongoAtlasURI = `mongodb+srv://${dbUser}:${dbPassword}@database.rrtt9.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+
+(async () => {
+     try {
+          await mongoose.connect( mongoAtlasURI, 
+               {    
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true,
+                    useFindAndModify: false,
+                    useCreateIndex: true
+               });     
+     } 
+     catch (error) {
+          console.error('Error: Could not connect to database!');
+          console.error(error);
+     }
+})();
 
 module.exports = mongoose;
