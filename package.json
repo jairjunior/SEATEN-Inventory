@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/jairjunior/SEATEN-Inventory/issues"
   },
-  "homepage": "https://github.com/jairjunior/SEATEN-Inventory#readme"
+  "homepage": "https://github.com/jairjunior/SEATEN-Inventory#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
