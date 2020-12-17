@@ -1,6 +1,7 @@
 const express = require('express');
 const { findOne } = require('../models/User');
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
 
 const router = express.Router();
@@ -24,5 +25,21 @@ router.post('/register', async (req, res) => {
           return res.status(400).send({ error: 'Registration failed.' });
      }
 });
+
+
+router.post('/authenticate', async (req, res) => {
+     const { email, password} = req.body;
+     const user = await User.findOne({ email }).select('+password');
+
+     if(!user) 
+          return res.status(400).send({ error: 'User not found.' });
+     else if( !await bcrypt.compare(password, user.password) )
+          return res.status(400).send({ error: 'Invalid password.' });
+     else {
+          user.password = undefined;
+          res.send({ user });
+     }
+});
+
 
 module.exports = router;
