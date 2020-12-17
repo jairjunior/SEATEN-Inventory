@@ -16,6 +16,10 @@ app.get('/', (req, res) => {
 
 
 
-app.listen(SERVER_PORT, () => {
-	console.log(`Server listening on port 3000...`);
+app.listen(SERVER_PORT, (error) => {
+     if(error){
+          console.error('Application Error: Cannot create node.js server.');
+          console.error(error);
+     }
+	console.log(`Application Log: Server listening on port 3000...`);
 });

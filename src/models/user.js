@@ -1,5 +1,6 @@
 const mongoose = require('../db/connection');
 const bcrypt = require('bcryptjs');
+const { runInNewContext } = require('vm');
 
 //Schema for Users
 const UserSchema = new mongoose.Schema({
@@ -36,11 +37,9 @@ const UserSchema = new mongoose.Schema({
 
 // Execute this always before doing anything in DataBase
 UserSchema.pre('save', async function(next){
-     var salt = bcrypt.genSaltSync(10);
-     await bcrypt.hash(this.password, salt, function(err, hash){
-          if(err) console.error(err);
-          else this.password = hash;
-     });
+     const hash = await bcrypt.hash(this.password, 15);
+     this.password = hash;
+     
      next();
 });
 
