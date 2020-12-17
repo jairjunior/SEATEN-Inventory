@@ -1,7 +1,7 @@
 const express = require('express');
-const { findOne } = require('../models/User');
-const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 
 const router = express.Router();
@@ -15,9 +15,10 @@ router.post('/register', async (req, res) => {
           }
 
           const user = await User.create(req.body);
-          user.password = undefined;
           console.log("Application Log: User created successfully.");
-          return res.send({ user });
+          user.password = undefined;
+          const token = jwt.sign({ id: user.id  }, process.env.APP_AUTH_HASH, { expiresIn: 86400 });
+          return res.send({ user, token });
      }
      catch(err) {
           console.error('Application Error: Registration failed.');
