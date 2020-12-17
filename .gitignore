@@ -1,2 +1,16 @@
+# The /node_modules folder keeps all packages installed at the moment
+# and that are being used by this project.
+# As all the information needed is in the "package.json" file, you just need
+# to run the command "npm install" from your terminal the very first time
+# you run this application. The NPM package manager will install
+# all the dependencies for you.
 node_modules/
+
+# The .env file has the environment variables which hold secret information
+# such as database username/password, web API tokens and hash used for authentication.
+# Create your own .env file using the file /examples/.env-example changing the values
+# of the variables to your own. Then place your .env file at the root folder.
+# The package "dotenv" will get these variables and set to environment.
+# You'll be able to access the value of this variables using:
+# "process.env.VARIABLE_NAME" on your Node.js code
 /.env
