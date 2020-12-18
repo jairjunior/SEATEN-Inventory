@@ -1,3 +1,35 @@
+# INTRODUCTION
+
+### Description
+Web Application to control and keep track of all inventory information related to IT equipment under the responsability of the Help Desk Department, where I am currently working.
+
+### The Problem to Solve
+In my current job, there's a need to control all the computers and peripherals that we install for and users.
+We request new items, such as desktops and screens, from the main warehouse and stock them in our own storeroom. We keep this personal storeroom to shorten the amount of time to begin the service. The equipment stored in this room then will be used to install new workstations or replace damaged parts.
+
+Furthermore, there's a need to keep track of each desktop and screen by its inventory number (SKU - Stock Keeping Unit). It's needed to register which user is currently using each of the parts.
+
+### Features
+...
+
+### Technologies (Stack)
+In this application, the following technologies were used:
+* Front-End:
+	* HTML5
+	* CSS3
+	* JavaScript
+* Back-End:
+	* Node.js
+	* MongoDB
+* Frameworks and others:
+	* Bootstrap
+	* Express
+	* Mongoose
+	* JWT (JSON Web Token)
+
+
+
+
 # REGISTRATION, LOGIN AND AUTHENTICATION
 
 ### USER REGISTRATION (/auth/register)
@@ -15,9 +47,7 @@ The JSON data sent to the API must follow the following pattern:
 	"password":"123456"
 }
 ```
-
 Every new user registered starts off as "General User" permission. If a new user is supposed to be a "Help Desk Attendant", the System Admin should grant permission.
-
 
 
 ### USER AUTHENTICATION / LOGIN (/auth/authenticate)
@@ -32,14 +62,6 @@ The JSON data sent to the API must follow the following pattern:
 ```
 After logging in the application, the server will return a confirmation and the Access Token. It will be needed after to access all routes of the application.
 See the **ACCESS TOKEN** section to more information.
-
-
-
-### ACCESS AUTHORIZATION
-After logging in the application, to access any of the routes, the client will need to send the authentication token together in the HTPP request.
-
-
-
 
 
 ### ACCESS TOKEN
@@ -58,6 +80,7 @@ The token for authentication purposes is composed of two parts separated by a sp
      2) the second part is the token hash itself.
 
 The token expires in 86,400 seconds or one day.
+
 
 
 
