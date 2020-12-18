@@ -30,7 +30,7 @@ In this application, the following technologies were used:
 
 
 
-# REGISTRATION, LOGIN AND AUTHENTICATION
+# REGISTRATION, AUTHENTICATION AND ACCESS CONTROL
 
 ### USER REGISTRATION (/auth/register)
 The User Registration is the act of creating a new user for the application. There are 3 (three) types of users:
@@ -75,7 +75,7 @@ There are only 2 (two) routes that do not request a token:
 * /auth/register
 * /auth/athenticate
 
-The token for authentication purposes is composed of two parts separated by a space: 
+Finally, the token for authentication purposes is composed of two parts separated by a space: 
      1) the first part is the key word "bearer" (case insensitive).
      2) the second part is the token hash itself.
 
@@ -91,11 +91,14 @@ The token expires in 86,400 seconds or one day.
 The MongoDB document representing a user stored in the database is like below:
 ```JSON
 {
-	"firstName": "Paul",
-	"lastName":"Gilbert",
-	"email":"paul@gmail.com",
-	"password":"123456",
-	"permission": "general_user"
+	_id: 5fdasa754dlde0d7ed8f
+	firstName: "Paul"
+	lastName: "Gilbert"
+	email: "paul@gmail.com"
+	password: "12jkh98jhf3107bvhfhj6vxnsd"
+	permission: "system_admin"
+	createdAt: 2020-12-17T02:45:49.773+00:00
+	__v: 0
 }
 ```
 The "permission" property can be either "system_admin", "general_user", or "helpdesk_attendant".
