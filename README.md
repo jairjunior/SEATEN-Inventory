@@ -1,21 +1,28 @@
 # REGISTRATION, LOGIN AND AUTHENTICATION
 
 ### USER REGISTRATION (/auth/register)
+The User Registration is the act of creating a new user for the application. There are 3 (three) types of users:
+* **System Admin**: The system admin, which has permissions for doing everything, including give upgrade an
+* **General User**: Common user, which has only permissions to "read". This user can't store or modify any data within the application.
+* **Help Desk Attendant**: Team worker, who has permissions to "read" and "write". This user can save data into the database and modify its content.
+
 The JSON data sent to the API must follow the following pattern:
 ```JSON
 {
 	"firstName": "Paul",
 	"lastName":"Gilbert",
 	"email":"paul@gmail.com",
-	"password":"123456",
-	"permission":"general_user"
+	"password":"123456"
 }
 ```
-The "permission" property can be either "admin", "general_user", or "helpdesk_attendant".
+
+Every new user registered starts off as "General User" permission. If a new user is supposed to be a "Help Desk Attendant", the System Admin should grant permission.
 
 
 
 ### USER AUTHENTICATION / LOGIN (/auth/authenticate)
+The User Authentication is the act of an user (already registered) to log in the application and start a new session.
+
 The JSON data sent to the API must follow the following pattern:
 ```JSON
 {
@@ -23,20 +30,52 @@ The JSON data sent to the API must follow the following pattern:
 	"password":"123456"
 }
 ```
+After logging in the application, the server will return a confirmation and the Access Token. It will be needed after to access all routes of the application.
+See the **ACCESS TOKEN** section to more information.
+
 
 
 ### ACCESS AUTHORIZATION
-Being logged in the application, to access any of the routes, the client will need to send the authentication token together in the HTPP request.
-
-There is a middleware in each route of this application controlling the access by checking each of the HTTP request received looking for a token. If it's found, the algorithm will then validate weather the token is valid.
-
-The HTTP header of the request must contain a field called "Authentication" carrying as value the token provided whenever a user register or log in the application.
+After logging in the application, to access any of the routes, the client will need to send the authentication token together in the HTPP request.
 
 
-### AUTHENTICATION TOKEN
+
+
+
+### ACCESS TOKEN
+For every HTTP request, to access the routes of the application, it will be requested by the server a token for validating the user access permission.
+
+There is a middleware in each route of this application controlling the access by checking each of the HTTP requests received looking for a token. If it's found, the algorithm will then validate weather the token is valid. If it's is not found, the application will request the user to log in.
+
+The header of the HTTP request must contain a field called "Authentication" carrying as its value the token provided after authentication.
+
+There are only 2 (two) routes that do not request a token:
+* /auth/register
+* /auth/athenticate
+
 The token for authentication purposes is composed of two parts separated by a space: 
      1) the first part is the key word "bearer" (case insensitive).
      2) the second part is the token hash itself.
+
+The token expires in 86,400 seconds or one day.
+
+
+
+
+# DATABASE
+
+### USER SCHEMA
+The MongoDB document representing a user stored in the database is like below:
+```JSON
+{
+	"firstName": "Paul",
+	"lastName":"Gilbert",
+	"email":"paul@gmail.com",
+	"password":"123456",
+	"permission": "general_user"
+}
+```
+The "permission" property can be either "system_admin", "general_user", or "helpdesk_attendant".
 
 
 
