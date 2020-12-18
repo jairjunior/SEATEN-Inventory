@@ -1,4 +1,6 @@
-# USER REGISTRATION (/auth/register)
+# REGISTRATION, LOGIN AND AUTHENTICATION
+
+### USER REGISTRATION (/auth/register)
 The JSON data sent to the API must follow the following pattern:
 ```JSON
 {
@@ -13,8 +15,7 @@ The "permission" property can be either "admin", "general_user", or "helpdesk_at
 
 
 
-
-# USER AUTHENTICATION / LOGIN (/auth/authenticate)
+### USER AUTHENTICATION / LOGIN (/auth/authenticate)
 The JSON data sent to the API must follow the following pattern:
 ```JSON
 {
@@ -24,19 +25,23 @@ The JSON data sent to the API must follow the following pattern:
 ```
 
 
-
-# ACCESS AUTHORIZATION
+### ACCESS AUTHORIZATION
 Being logged in the application, to access any of the routes, the client will need to send the authentication token together in the HTPP request.
 
 There is a middleware in each route of this application controlling the access by checking each of the HTTP request received looking for a token. If it's found, the algorithm will then validate weather the token is valid.
 
-]The HTTP header of the request must contain a field called "Authentication" carrying as value the token provided whenever a user register or log in the application.
+The HTTP header of the request must contain a field called "Authentication" carrying as value the token provided whenever a user register or log in the application.
 
 
-
-
-
-# AUTHENTICATION TOKEN
+### AUTHENTICATION TOKEN
 The token for authentication purposes is composed of two parts separated by a space: 
      1) the first part is the key word "bearer" (case insensitive).
      2) the second part is the token hash itself.
+
+
+
+
+
+# TODO
+* Decide if the token will be provided just after registration or if the user will need to confirm his/her email first.
+* Create the first draft of the front-end SPA.
