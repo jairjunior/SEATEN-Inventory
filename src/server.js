@@ -21,5 +21,5 @@ app.listen(SERVER_PORT, (error) => {
           console.error('Application Error: Cannot create node.js server.');
           console.error(error);
      }
-	console.log(`Application Log: Server listening on port 3000...`);
+	console.log(`Application Log: Server listening on port ${SERVER_PORT}...`);
 });

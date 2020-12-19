@@ -1,6 +1,5 @@
 const mongoose = require('../db/connection');
 const bcrypt = require('bcryptjs');
-const { runInNewContext } = require('vm');
 
 //Schema for Users
 const UserSchema = new mongoose.Schema({
@@ -14,8 +13,8 @@ const UserSchema = new mongoose.Schema({
      },
      email: {
           type: String,
-          unique: true,
           required: true,
+          unique: true,
           lowercase: true
      },
      password: {
@@ -25,7 +24,7 @@ const UserSchema = new mongoose.Schema({
      },
      permission: {
           type: String,
-          required: true,
+          default: 'general_user',
      },
      createdAt: {
           type: Date,
@@ -35,7 +34,8 @@ const UserSchema = new mongoose.Schema({
 
 
 
-// Execute this always before doing anything in DataBase
+// Middleware that will always execute before doing anything
+// in the DataBase related to the User collection.
 UserSchema.pre('save', async function(next){
      const hash = await bcrypt.hash(this.password, 15);
      this.password = hash;

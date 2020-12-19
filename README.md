@@ -47,7 +47,7 @@ The JSON data sent to the API must follow the following pattern:
 	"password":"123456"
 }
 ```
-Every new user registered starts off as "General User" permission. If a new user is supposed to be a "Help Desk Attendant", the System Admin should grant permission.
+Every new user registered starts off with "General User" permission. If a new user is supposed to be a "Help Desk Attendant" or even another "System Admin", one System Admin should grant permission.
 
 
 ### USER AUTHENTICATION / LOGIN (/auth/authenticate)
@@ -67,7 +67,7 @@ See the **ACCESS TOKEN** section to more information.
 ### ACCESS TOKEN
 For every HTTP request, to access the routes of the application, it will be requested by the server a token for validating the user access permission.
 
-There is a middleware in each route of this application controlling the access by checking each of the HTTP requests received looking for a token. If it's found, the algorithm will then validate weather the token is valid. If it's is not found, the application will request the user to log in.
+There is a middleware setted for controlling the client access by checking each of the HTTP requests received looking for a token. If it's found, the algorithm will then validate weather the token is valid. If it's is not found, the application will request the user to log in.
 
 The header of the HTTP request must contain a field called "Authentication" carrying as its value the token provided after authentication.
 
@@ -102,6 +102,9 @@ The MongoDB document representing a user stored in the database is like below:
 }
 ```
 The "permission" property can be either "system_admin", "general_user", or "helpdesk_attendant".
+
+See the file "/src/db/User.js" to understand how the Mongoose Schema is used to fill those fields.
+
 
 
 
