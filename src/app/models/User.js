@@ -1,4 +1,4 @@
-const mongoose = require('../db/connection');
+const mongoose = require('../../database/connection');
 const bcrypt = require('bcryptjs');
 
 //Schema for Users
