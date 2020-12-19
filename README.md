@@ -47,7 +47,7 @@ The JSON data sent to the API must follow the following pattern:
 	"password":"123456"
 }
 ```
-Every new user registered starts off with "General User" permission. If a new user is supposed to be a "Help Desk Attendant" or even another "System Admin", one System Admin should grant permission.
+Every new user registered starts off with "General User" permission. If a new user is supposed to be a "Help Desk Attendant" or even another "System Admin", one System Admin already registered should grant the permission.
 
 
 ### USER AUTHENTICATION / LOGIN (/auth/authenticate)
@@ -60,14 +60,14 @@ The JSON data sent to the API must follow the following pattern:
 	"password":"123456"
 }
 ```
-After logging in the application, the server will return a confirmation and the Access Token. It will be needed after to access all routes of the application.
-See the **ACCESS TOKEN** section to more information.
+After logging in the application, the server will return a confirmation and the Access Token. The token will be needed to access all routes of the application.
+See the **ACCESS TOKEN** section for more information.
 
 
 ### ACCESS TOKEN
 For every HTTP request, to access the routes of the application, it will be requested by the server a token for validating the user access permission.
 
-There is a middleware setted for controlling the client access by checking each of the HTTP requests received looking for a token. If it's found, the algorithm will then validate weather the token is valid. If it's is not found, the application will request the user to log in.
+There is a middleware (auth.js) setted for controlling the client access by checking each of the HTTP requests received looking for a token. If it's found, the algorithm will then validate weather the token is valid. If it's not found or it's invalid, an error is returned to the client. Thus, the client needs to authenticate first to get a valid token.
 
 The header of the HTTP request must contain a field called "Authentication" carrying as its value the token provided after authentication.
 
@@ -111,5 +111,4 @@ See the file "/src/db/User.js" to understand how the Mongoose Schema is used to 
 
 
 # TODO
-* Decide if the token will be provided just after registration or if the user will need to confirm his/her email first.
 * Create the first draft of the front-end SPA.
