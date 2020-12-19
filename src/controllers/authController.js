@@ -15,10 +15,12 @@ router.post('/register', async (req, res) => {
 
           req.body.permission = 'general_user';
           const newUser = await User.create(req.body);
-          console.log("Application Log: User created successfully.");
+          console.log(`Application Log: New user (${email}) created successfully.`);
           newUser.password = undefined;
-          const token = jwt.sign({ id: newUser.id  }, process.env.APP_AUTH_HASH, { expiresIn: 86400 });
-          return res.send({ newUser, token });
+          return res.send({ 
+               newUser, 
+               token: generateToken({ id: newUser.id }) 
+          });
      }
      catch(err) {
           console.error('Application Error: Registration failed.');
@@ -29,19 +31,26 @@ router.post('/register', async (req, res) => {
 
 
 router.post('/authenticate', async (req, res) => {
-     const { email, password} = req.body;
+     const { email, password } = req.body;
      const user = await User.findOne({ email }).select('+password');
 
-     if(!user) 
+     if( !user ) 
           return res.status(400).send({ error: 'User not found.' });
-     else if( !await bcrypt.compare(password, user.password) )
+     if( !await bcrypt.compare(password, user.password) )
           return res.status(400).send({ error: 'Invalid password.' });
-     else {
-          user.password = undefined;
-          const token = jwt.sign({ id: user.id  }, process.env.APP_AUTH_HASH, { expiresIn: 86400 });
-          return res.send({ user, token });
-     }
+     
+     console.log('Application Log: User authentication is valid. Access Token will be provided.');
+     user.password = undefined;
+     return res.send({ 
+          user, 
+          token: generateToken({ id: user.id }) 
+     });   
 });
 
 
 module.exports = router;
+
+
+function generateToken(params = {}){
+     return jwt.sign(params, process.env.APP_AUTH_HASH, { expiresIn: 24*60*60 }); 
+}
