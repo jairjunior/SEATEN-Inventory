@@ -111,4 +111,6 @@ See the file "/src/db/User.js" to understand how the Mongoose Schema is used to 
 
 
 # TODO
+* Create the Item and Model Schema for database.
 * Create the first draft of the front-end SPA.
+* Add the field "updatedAt" to the User Schema.

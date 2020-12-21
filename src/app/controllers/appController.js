@@ -1,5 +1,8 @@
 const express = require('express');
 const authMiddleware = require('../middleware/auth');
+const model = require('../models/Model');
+const stockItem = require('../models/StockItem');
+
 
 const router = express.Router();
 router.use(authMiddleware);

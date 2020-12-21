@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 });
 
 
-const SERVER_PORT = process.env.SERVER_PORT || 3000;
+const SERVER_PORT = process.env.SERVER_PORT || 3080;
 
 app.listen(SERVER_PORT, (error) => {
      if(error){
