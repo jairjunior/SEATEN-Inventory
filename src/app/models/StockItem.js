@@ -30,6 +30,10 @@ const StockItemSchema = new mongoose.Schema({
                type: String,
                required: true
           },
+          userNumber: {
+               type: Number,
+               required: true
+          },
           date: {
                type: Date,
                default: Date.now
