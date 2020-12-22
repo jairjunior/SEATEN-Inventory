@@ -4,9 +4,53 @@
 }
 
 body {
-     background-color: lightblue;
+     background-color:#FEFEFE;
 }
 
-h1 {
-     color: red;
+.navbar-container {
+     width: 75%;
+     margin: 0 auto;
+}
+
+.navbar-brand {
+     font-size: 1.6em;
+     font-weight: 600;
+}
+
+.navbar-brand img {
+     border-radius: 10px;
+     border: 1px solid green;
+}
+
+.navbar-brand span {
+     padding-left: 10px;
+}
+
+.nav-item {
+     padding: 0px 14px;
+}
+
+.nav-link {
+     text-transform: uppercase;
+     letter-spacing: 1px;
+}
+
+
+
+
+
+@media screen and (max-width: 894px){
+     .navbar-container {
+          width: 97%;
+          margin: 0 auto;
+     }
+     
+     .navbar-brand {
+          font-size: 1.1em;
+          font-weight: 600;
+     }
+     .navbar-brand img {
+          border-radius: 10px;
+          border: 1px solid green;
+     }
 }
