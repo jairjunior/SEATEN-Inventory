@@ -1,16 +1,18 @@
 const express = require('express');
 const StockItem = require('../models/StockItem');
 const authMiddleware = require('../middleware/auth');
+const path = require('path');
 
 
 const router = express.Router();
-router.use(authMiddleware);
+//router.use(authMiddleware);
 
 
 
 // Return a list containing all the items stored in the database
 router.get('/items', async (req, res) => {
-     res.send({ user: req.userId, msg: 'List all items' });
+     console.log('Application Log: Listing all stock items...');
+     res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
 });
 
 
@@ -24,15 +26,14 @@ router.get('/items/:id', async (req, res) => {
 
 // Register a new item in the inventory
 router.post('/items', async (req, res) => {
-     const { inventoryNumber } = req.body;
-     const { model } = req.body;
+     const { type, inventoryNumber } = req.body;
      
      try {
           if( await StockItem.findOne({ inventoryNumber }) )
                return res.status(400).send({ error: 'Item already registered.' });
 
           const newItem = await StockItem.create(req.body);
-          console.log(`Application Log: New item (${inventoryNumber}) registered successfully.`);
+          console.log(`Application Log: New item (${type} - ${inventoryNumber}) registered successfully.`);
           return res.send({ ok: true, newItem });
      }
      catch(err) {

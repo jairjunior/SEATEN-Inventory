@@ -43,7 +43,8 @@ const StockItemSchema = new mongoose.Schema({
           taskNumber: String,
           department: String,
           userName: String,
-          date: Date,
+          userNumber: String,
+          date: Date
      },
      location: {
           type: String,

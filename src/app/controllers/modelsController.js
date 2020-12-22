@@ -24,14 +24,14 @@ router.get('/models/:id', async (req, res) => {
 
 // Register a new model in the inventory
 router.post('/models', async (req, res) => {
-     const { type, name } = req.body;
+     const { type, brand, name } = req.body;
      
      try {
           if( await Model.findOne({ name }) )
                return res.status(400).send({ error: 'Item already registered.' });
 
           const newModel = await Model.create(req.body);
-          console.log(`Application Log: New model (${type}: ${name}) registered successfully.`);
+          console.log(`Application Log: New model (${type}: ${brand} ${name}) registered successfully.`);
           return res.send({ ok: true, newModel });
      }
      catch(err) {
