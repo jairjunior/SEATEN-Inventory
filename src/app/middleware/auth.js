@@ -16,12 +16,12 @@ module.exports = (req, res, next) => {
           return res.status(401).send({ error: 'Token malformatted.' });
 
      jwt.verify(token, process.env.APP_AUTH_HASH, (err, decoded) => {
-          if(err) return res.status(401).send({ error: 'Inavlid token.' });
+          if(err) return res.status(401).send({ error: 'Invalid token.' });
 
-          // After validate the token, the user id will be available as a result of the decryption task
+          // After validate the token, the user id will be available as a result of the decryption
           // So it will be saved in the "req" variable to be used by the rest of the code.
           req.userId = decoded.id;
-          next();
+          return next();
      })
 
 };

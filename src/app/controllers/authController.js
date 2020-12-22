@@ -48,9 +48,9 @@ router.post('/authenticate', async (req, res) => {
 });
 
 
-module.exports = app => app.use('/auth', router);
-
-
 function generateToken(params = {}){
      return jwt.sign(params, process.env.APP_AUTH_HASH, { expiresIn: 24*60*60 }); 
 }
+
+
+module.exports = app => app.use('/auth', router);

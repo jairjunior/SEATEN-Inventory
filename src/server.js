@@ -1,15 +1,10 @@
 const express = require('express');
-//const authController = require('./app/controllers/authController');
-//const appController = require('./app/controllers/appController');
-
 
 const app = express();
 
 app.use(express.json());                               // for parsing application/json
 app.use(express.urlencoded({ extended: true }));       // for parsing application/x-www-form-urlencoded
-//app.use('/auth', authController);                      // middleware for user authentication
-//app.use(appController);                                // main routes of the application
-require('./app/controllers/index')(app);
+require('./app/controllers/index')(app);               // import all controllers and set them to the "app"
 
 
 app.get('/', (req, res) => {
