@@ -15,7 +15,7 @@ body {
 }
 
 .filter-stock-items {
-     margin-top: 4.3vh;
+     margin-top: 4.5vh;
 }
 
 /* Aligns all the <th> and <td> tags at the center, except the first ones in each row */
@@ -28,11 +28,13 @@ body {
 }
 
 .badge-available {
-     background-color: rgb(2, 184, 2);
-     border: 3px solid rgb(2, 230, 2);
+     background-color: rgb(3, 210, 3);
+     border: 3px solid rgb(2, 180, 2);
+     color: white;
 }
 
 .badge-taken {
-     background-color: rgb(224, 2, 2);
-     border: 3px solid rgb(255, 0, 0);
+     background-color: rgb(255, 0, 0);
+     border: 3px solid rgb(218, 0, 0);
+     color: white;
 }
