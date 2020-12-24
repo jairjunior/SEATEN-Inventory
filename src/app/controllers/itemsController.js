@@ -9,10 +9,26 @@ const router = express.Router();
 
 
 
+// Send to the client the HTML file inventory.html
+router.get('/', async (req, res) => {
+     console.log('Application Log: Sending the client the Inventory HTML page.');
+     res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
+});
+
+
+
 // Return a list containing all the items stored in the database
 router.get('/items', async (req, res) => {
-     console.log('Application Log: Listing all stock items...');
-     res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
+     console.log('Application Log: Sending the client the whole Inventory List.');
+
+     try {
+          const stockItems = await StockItem.find().populate('model');
+          return res.send({ stockItems });
+     } catch (error) {
+          console.error('Application Error: Cannot list items.');
+          console.error(error);
+          return res.status(400).send({ user: req.userId, error: 'Cannot list items!' });
+     }
 });
 
 
@@ -39,7 +55,7 @@ router.post('/items', async (req, res) => {
      catch(err) {
           console.error('Application Error: Failed to register new item.');
           console.error(err);
-          return res.status(400).send({ user: req.userId, error: 'Failed!' });
+          return res.status(400).send({ user: req.userId, error: 'Failed to register new item!' });
      }
 });
 
