@@ -14,10 +14,25 @@ body {
      margin: 1em 0 1.3em;
 }
 
-.filter-items {
-     margin-top: 4vh;
+.filter-stock-items {
+     margin-top: 4.3vh;
 }
 
-.table-items tr:hover{
+/* Aligns all the <th> and <td> tags at the center, except the first ones in each row */
+.table-stock-items th:not(:first-child), .table-stock-items tr td:not(:first-child) {
+     text-align: center;
+}
+
+.table-stock-items tr:hover{
      cursor: pointer;
+}
+
+.badge-available {
+     background-color: rgb(2, 184, 2);
+     border: 3px solid rgb(2, 230, 2);
+}
+
+.badge-taken {
+     background-color: rgb(224, 2, 2);
+     border: 3px solid rgb(255, 0, 0);
 }

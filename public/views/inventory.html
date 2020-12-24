@@ -72,12 +72,12 @@
      
      <main class="container">
 
-          <div class="container">
+          <header class="container p-0">
                <h1 class="main-title text-center">Inventory</h1>
 
                <ul class="nav nav-tabs">
                     <li class="nav-item">
-                         <a class="nav-link active" href="#">Items</a>
+                         <a class="nav-link active" href="#">Stock Items</a>
                     </li>
                     <li class="nav-item">
                          <a class="nav-link" href="#">Models</a>
@@ -89,55 +89,59 @@
                          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                     </li>-->
                </ul>
-          </div>
+          </header>
 
-          <form class="filter-items">
-               <div class="form-group">
-                    <label for="tableFilterField">Filter</label>
-                    <input type="text" class="form-control" id="tableFilterField" aria-describedby="filter" placeholder="Filter by type, brand, model or inventory number">
-               </div>
-          </form>
+          <section>
+               <form class="filter-stock-items">
+                    <div class="form-group">
+                         <legend class="h5">Filter</legend>
+                         <label for="tableFilterField" class="sr-only">
+                              Use the field below to search within the inventory.
+                         </label>
+                         <input type="text" class="form-control" id="tableFilterField" aria-describedby="filter" placeholder="&#128270; Search by type, brand, model or inventory number">
+                    </div>
+               </form>
 
-          <table class="table-items table table-hover table-responsive-sm">
-               <thead>
-                    <th scope="col">Item</th>
-                    <th scope="col">Inventory Number</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Location</th>
-               </thead>
-               <tbody>
-                    <tr>
-                         <td>Desktop - Dell 7070</td>
-                         <td>CJF 020.254</td>
-                         <td><span class="badge badge-success">AVAILABLE</span></td>
-                         <td>SEATEN - Stockroom</td>
-                    </tr>
-                    <tr>
-                         <td>Desktop - Lenovo ThinkCentre</td>
-                         <td>CJF 020.437</td>
-                         <td><span class="badge badge-danger">TAKEN</span></td>
-                         <td>SAD - SEMAPA</td>
-                    </tr>
-                    <tr>
-                         <td>Screen - AOC HV700S+</td>
-                         <td>CJF 016.321</td>
-                         <td><span class="badge badge-danger">TAKEN</span></td>
-                         <td>SG-GAB</td>
-                    </tr>
-                    <tr>
-                         <td>Notebook - Asus Evolver</td>
-                         <td>CJF 018.908</td>
-                         <td><span class="badge badge-success">AVAILABLE</span></td>
-                         <td>SEATEN - Stockroom</td>
-                    </tr>
-               </tbody>
-          </table>
+               <table class="table-stock-items table table-hover table-responsive-sm">
+                    <thead>
+                         <th scope="col">Stock Item</th>
+                         <th scope="col">Inventory Number</th>
+                         <th scope="col">Status</th>
+                         <th scope="col">Location</th>
+                    </thead>
+                    <tbody>
+                         <tr>
+                              <td>Desktop - Dell 7070</td>
+                              <td>CJF 020.254</td>
+                              <td class="text-center"><span class="badge badge-available">&#x1f44d; AVAILABLE</span></td>
+                              <td>SEATEN - Stockroom</td>
+                         </tr>
+                         <tr>
+                              <td>Desktop - Lenovo ThinkCentre</td>
+                              <td>CJF 020.437</td>
+                              <td class="text-center"><span class="badge badge-taken">&#x1f6c7; TAKEN</span></td>
+                              <td>SAD - SEMAPA</td>
+                         </tr>
+                         <tr>
+                              <td>Screen - AOC HV700S+</td>
+                              <td>CJF 016.321</td>
+                              <td class="text-center"><span class="badge badge-taken">&#x1f6c7; TAKEN</span></td>
+                              <td>SG-GAB</td>
+                         </tr>
+                         <tr>
+                              <td>Notebook - Asus Evolver</td>
+                              <td>CJF 018.908</td>
+                              <td class="text-center"><span class="badge badge-available">&#x1f44d; AVAILABLE</span></td>
+                              <td>SEATEN - Stockroom</td>
+                         </tr>
+                    </tbody>
+               </table>
+          </section>
 
      </main>
 
 
      <footer>
-
      </footer>
 
 
