@@ -21,9 +21,9 @@ $( document ).ready( () => {
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          console.error(`Status: ${textStatus}`);
+          console.error(`jqXHR object: ${jqXHR}`);
+          console.error(`Error: ${errorThrown}`);
      });
      
 });
@@ -40,17 +40,16 @@ function fillTableStockItems({ stockItems }){
                console.error(`Item (${stockItem.inventoryNumber}) is marked as Available, but its location is different from SEATEN. Please, inform System Admin to fix this discrepancy.`)
 
           let trTableStockItems = document.createElement('TR');
+          
           let tdStockItem = document.createElement('TD');
-          let tdInventoryNumber = document.createElement('TD');
-          let tdStatus = document.createElement('TD');
-          let statusBadge = document.createElement('SPAN');
-          let tdLocation = document.createElement('TD');
-
           tdStockItem.textContent = `${stockItem.model.type} - ${stockItem.model.brand} ${stockItem.model.name}`;
           
+          let tdInventoryNumber = document.createElement('TD');
           let inventoryNumber = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
           tdInventoryNumber.textContent = inventoryNumber;
           
+          let tdStatus = document.createElement('TD');
+          let statusBadge = document.createElement('SPAN');
           if(stockItem.status === 'Available'){
                statusBadge.classList.add('badge', 'badge-available');
                statusBadge.textContent = '👍 AVAILABLE';
@@ -61,6 +60,7 @@ function fillTableStockItems({ stockItems }){
           }
           tdStatus.append(statusBadge);
 
+          let tdLocation = document.createElement('TD');
           tdLocation.textContent = stockItem.location;
 
           trTableStockItems.append(tdStockItem, tdInventoryNumber, tdStatus, tdLocation);
