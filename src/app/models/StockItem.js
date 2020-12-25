@@ -41,9 +41,8 @@ const StockItemSchema = new mongoose.Schema({
      },
      transferedTo: {
           taskNumber: String,
-          department: String,
           userName: String,
-          userNumber: String,
+          userNumber: Number,
           date: Date
      },
      location: {

@@ -16,7 +16,7 @@ $( document ).ready( () => {
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Request status: ${textStatus}`);
+               console.log(`Retrieve stock items - Request status: ${textStatus}`);
                fillTableStockItems(data);
           }
      })
@@ -33,11 +33,12 @@ function fillTableStockItems({ stockItems }){
      
      for(const item in stockItems){
           let stockItem = stockItems[item];
-          console.log(stockItem);
 
           if(stockItem.type !== stockItem.model.type)
-               console.error(`In item ${type.inventoryNumber} - Models do not match. Please, inform admin to fix this discrepancy.`)
-          
+               console.error(`In item (${stockItem.inventoryNumber}), models do not match. Please, Inform Admin to fix this discrepancy.`)
+          else if (stockItem.status === 'Available' && stockItem.location.substring(0, 6) !== 'SEATEN')
+               console.error(`Item (${stockItem.inventoryNumber}) is marked as Available, but its location is different from SEATEN. Please, inform System Admin to fix this discrepancy.`)
+
           let trTableStockItems = document.createElement('TR');
           let tdStockItem = document.createElement('TD');
           let tdInventoryNumber = document.createElement('TD');
