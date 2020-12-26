@@ -98,7 +98,12 @@
                          <label for="tableFilterField" class="sr-only">
                               Use the field below to search within the inventory.
                          </label>
-                         <input type="text" class="form-control" id="tableFilterField" aria-describedby="filter" placeholder="&#128270; Search by type, brand, model or inventory number">
+                         <div class="input-group mb-2">
+                              <div class="input-group-prepend">
+                                   <div class="input-group-text">🔎</div>
+                              </div>
+                              <input type="text" class="form-control" id="tableFilterField" aria-describedby="filter" placeholder="Search by category, model, inventory number, status or Service Now ticket">
+                         </div>
                     </div>
                </form>
 
@@ -109,7 +114,7 @@
                          <th scope="col">Status</th>
                          <th scope="col">Location</th>
                     </thead>
-                    
+
                     <tbody>
                     </tbody>
 
