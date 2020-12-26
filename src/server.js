@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const path = require('path');
 
 
 app.use(express.json());                               // for parsing application/json
@@ -25,8 +24,8 @@ const SERVER_PORT = process.env.SERVER_PORT || 3080;
 
 app.listen(SERVER_PORT, (error) => {
      if(error){
-          console.error('Application Error: Cannot create node.js server.');
+          console.error('ERROR: Cannot create node.js server.');
           console.error(error);
      }
-	else console.log(`Application Log: Server listening on port ${SERVER_PORT}...`);
+	else console.log(`System Log: Server listening on port ${SERVER_PORT}...`);
 });

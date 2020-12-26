@@ -16,10 +16,10 @@ const mongoAtlasURI = `mongodb+srv://${dbUser}:${dbPassword}@database.rrtt9.mong
           }, 
           function(error){
                if(error){
-                    console.error('Application Error: Could not connect to database.');
+                    console.error('ERROR: Could not connect to database.');
                     console.error(error);
                }
-               else console.log('Application Log: Connected to database successfully.\n');
+               else console.log('System Log: Connected to database successfully.\n');
           });
 })();
 
