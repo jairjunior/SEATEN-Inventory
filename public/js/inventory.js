@@ -4,19 +4,24 @@ var items;
 
 $( document ).ready( () => {
      const listStockItemsURL = '/inventory/items';     
-     const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwODg0MTE3MCwiZXhwIjoxNjA4OTI3NTcwfQ.DC0G3Su4u9vOEBZ6Qjuorpn0W5abtUHEQmR_PxmAP90';
+     const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTAwNTI3NSwiZXhwIjoxNjA5MDkxNjc1fQ.qU_AgTtJ-gKTDjSIGyunSGbQuwXAswLrRWcWotX-O0k';
 
      $.ajax({
           url: listStockItemsURL,
           type: 'GET',
-          beforeSend: (xhr) => {
-               xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+          contentType: 'application/json',
+          headers: {
+               'Authorization': `Bearer ${accessToken}`
           },
+          //beforeSend: (xhr, settings) => {
+          //     xhr.setRequestHeader('authorization', `Bearer ${accessToken}`);
+          //},
           data: {}
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve stock items - Request status: ${textStatus}`);
+               console.log(`Retrieve stock items - request status: ${textStatus}`);
+               console.log(data);
                fillTableStockItems(data);
           }
      })
@@ -29,32 +34,31 @@ $( document ).ready( () => {
 });
 
 
-function fillTableStockItems({ stockItems }){
+function fillTableStockItems({ stockItems, itemModels }){
      
-     for(const item in stockItems){
-          let stockItem = stockItems[item];
+     for(let index in stockItems){
+          const stockItem = stockItems[index];
 
-          if(stockItem.type !== stockItem.model.type)
-               console.error(`In item (${stockItem.inventoryNumber}), models do not match. Please, Inform Admin to fix this discrepancy.`)
-          else if (stockItem.status === 'Available' && stockItem.location.substring(0, 6) !== 'SEATEN')
-               console.error(`Item (${stockItem.inventoryNumber}) is marked as Available, but its location is different from SEATEN. Please, inform System Admin to fix this discrepancy.`)
+          const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId })
+          if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
+
 
           let trTableStockItems = document.createElement('TR');
           
           let tdStockItem = document.createElement('TD');
-          tdStockItem.textContent = `${stockItem.model.type} - ${stockItem.model.brand} ${stockItem.model.name}`;
+          tdStockItem.textContent = `${stockItem.category} - ${model.brand} ${model.name}`;
           
           let tdInventoryNumber = document.createElement('TD');
-          let inventoryNumber = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
-          tdInventoryNumber.textContent = inventoryNumber;
+          let inventoryNumberStr = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
+          tdInventoryNumber.textContent = inventoryNumberStr;
           
           let tdStatus = document.createElement('TD');
           let statusBadge = document.createElement('SPAN');
-          if(stockItem.status === 'Available'){
+          if(stockItem.status === 'available'){
                statusBadge.classList.add('badge', 'badge-available');
                statusBadge.textContent = '👍 AVAILABLE';
           }
-          else if(stockItem.status === 'Taken'){
+          else if(stockItem.status === 'taken'){
                statusBadge.classList.add('badge', 'badge-taken');
                statusBadge.textContent = '❌ TAKEN';
           }
