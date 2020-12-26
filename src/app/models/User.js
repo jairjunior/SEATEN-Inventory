@@ -25,11 +25,10 @@ const UserSchema = new mongoose.Schema({
      permission: {
           type: String,
           default: 'general_user',
-     },
-     createdAt: {
-          type: Date,
-          default: Date.now
      }
+},
+{
+     timestamps: true
 });
 
 
@@ -37,9 +36,14 @@ const UserSchema = new mongoose.Schema({
 // Middleware that will always execute before doing anything
 // in the DataBase related to the User collection.
 UserSchema.pre('save', async function(next){
-     const hash = await bcrypt.hash(this.password, 15);
-     this.password = hash;
-     
+     try{
+          const hash = await bcrypt.hash(this.password, 15);
+          this.password = hash;
+     }
+     catch(err){
+          console.error('ERROR trying to encrypt password before saving in database.');
+          console.error(err);
+     }
      next();
 });
 

@@ -1,21 +1,30 @@
 const mongoose = require('../../database/connection');
 
 
-//Schema for Items
+//Schema for Stock Items
 const StockItemSchema = new mongoose.Schema({
+     category: {
+          type: String,
+          required: true
+     },
+     itemModelId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Model',
+          required: true
+     },
      inventoryNumber: {
           type: String,
           required: true,
           unique: true
      },
-     type: {
+     location: {
           type: String,
-          required: true
+          default: 'SEATEN - Stockroom'
      },
-     model: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Model',
-          required: true
+     status: {
+          type: String,
+          lowercase: true,
+          default: 'available'
      },
      transferedFrom: {
           taskNumber: {
@@ -44,15 +53,10 @@ const StockItemSchema = new mongoose.Schema({
           userName: String,
           userNumber: Number,
           date: Date
-     },
-     location: {
-          type: String,
-          default: 'SEATEN - Stockroom'
-     },
-     status: {
-          type: String,
-          default: 'Available'
      }
+},
+{
+     timestamps: true
 });
 
 

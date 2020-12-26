@@ -1,10 +1,11 @@
 const mongoose = require('../../database/connection');
 
 
-//Schema for Models
+//Schema for Item Models
 const ModelSchema = new mongoose.Schema({
-     type: {
-          type: String,
+     categoryId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Category',
           required: true
      },
      brand: {
@@ -19,7 +20,11 @@ const ModelSchema = new mongoose.Schema({
           type: Map,
           required: true
      },
-     contract: {
+     contractNumber: {
+          type: String,
+          required: true
+     },
+     processNumber: {
           type: String,
           required: true
      },
@@ -27,6 +32,9 @@ const ModelSchema = new mongoose.Schema({
           type: Date,
           required: true
      }
+},
+{
+     timestamps: true
 });
 
 
