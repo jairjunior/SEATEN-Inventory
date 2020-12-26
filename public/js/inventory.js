@@ -5,6 +5,14 @@ var items;
 $( document ).ready( () => {
      const listStockItemsURL = '/inventory/items';     
      const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTAwNTI3NSwiZXhwIjoxNjA5MDkxNjc1fQ.qU_AgTtJ-gKTDjSIGyunSGbQuwXAswLrRWcWotX-O0k';
+     
+
+     // First of all, build the table header with the columns names in the array below.
+     const theaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
+     for (let i = 0; i < theaders.length; i++){
+          $('.table-stock-items thead').append("<th scope='col'>"+ theaders[i] +"</th>");
+     }
+
 
      $.ajax({
           url: listStockItemsURL,
@@ -22,6 +30,7 @@ $( document ).ready( () => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Retrieve stock items - request status: ${textStatus}`);
                console.log(data);
+               $('.my-spinner').hide();
                fillTableStockItems(data);
           }
      })
@@ -34,6 +43,7 @@ $( document ).ready( () => {
 });
 
 
+
 function fillTableStockItems({ stockItems, itemModels }){
      
      for(let index in stockItems){
@@ -41,7 +51,6 @@ function fillTableStockItems({ stockItems, itemModels }){
 
           const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId })
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
-
 
           let trTableStockItems = document.createElement('TR');
           

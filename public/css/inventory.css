@@ -38,3 +38,8 @@ body {
      border: 3px solid rgb(218, 0, 0);
      color: white;
 }
+
+.my-spinner {
+     display: block;
+     margin: 100px auto;
+}
