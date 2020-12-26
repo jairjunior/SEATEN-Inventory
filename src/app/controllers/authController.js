@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
           if( await User.findOne({ email }) )
                return res.status(400).send({ error: 'Email already registered.' });
 
-          req.body.permission = 'general_user';
+          req.body.permission = undefined;
           const newUser = await User.create(req.body);
           console.log(`Application Log: New user (${email}) created successfully.`);
           newUser.password = undefined;
