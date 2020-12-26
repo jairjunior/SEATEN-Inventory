@@ -111,6 +111,11 @@ See the file "/src/db/User.js" to understand how the Mongoose Schema is used to 
 
 
 # TODO
-* Create the Item and Model Schema for database.
-* Create the first draft of the front-end SPA.
-* Add the field "updatedAt" to the User Schema.
+* Create modal to show more information about the stock item when the user clicks a table row.
+* Add to the modal an "Update" tab in which the user can edit the item (only system admin).
+* Add to the modal an "Transfer" tab in which the user can transfer the item or edit it (only system admin).
+* Implement the filter algorithm for the stock item table.
+* Add pagination to the table with and dropdown menu to select the number of items to be shown at a time.
+* Create the page for register a new Stock Item.
+* Add the field "updatedAt" to the User Schema (or a timestamp in the Mongoose Schema).
+* Add the "permission" of each user to the JWT payload. So the back-end can control some actions only System Admins can do.
