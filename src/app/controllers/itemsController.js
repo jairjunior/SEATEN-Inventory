@@ -56,10 +56,10 @@ router.post('/items', async (req, res) => {
           if( await StockItem.findOne({ inventoryNumber }) )
                return res.status(400).send({ error: 'Item already registered.' });
 
-          const model = await Model.findById(itemModelId).populate('category');
+          const model = await Model.findById(itemModelId).populate('categoryId');
           if(!model) 
                return res.status(400).send({ error: 'Item Model not registered in database.' });
-          if( category !== model.category.name )
+          if( category !== model.categoryId.name )
                return res.status(400).send({ error: 'The category field in your requisition needs to be the same as the chosen model.' });
 
           const newItem = await StockItem.create(req.body);
@@ -69,7 +69,7 @@ router.post('/items', async (req, res) => {
      catch(err) {
           console.error('ERROR: Failed to register new item.');
           console.error(err);
-          return res.status(500).send({ ok: false, error: 'Failed to register new item.' });
+          return res.status(400).send({ ok: false, error: 'Failed to register new item.' });
      }
 });
 
