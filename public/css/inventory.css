@@ -49,8 +49,15 @@ body {
      margin: 100px auto;
 }
 
+
+
 .inventory-modal-pills {
      width: 100%;
+}
+
+.modal .nav-link i.fas::after {
+     content: "  ";
+     white-space: pre;
 }
 
 .my-inventory-modal-spinner {

@@ -1,4 +1,4 @@
-var item;
+
 $('#inventoryModal').on('shown.bs.modal', () => {
      let id = $('#modalItemId').text();
      if( !id ) return console.error('Errouuuuu!!!');
@@ -52,12 +52,10 @@ function modalShowItemInformation({ stockItem }){
      $(modalBody).append(`<p class="mb-0"><span class='modal-item-info'>Specifications:</span></p>`);
 
      $(modalBody).append(`<ul class='modal-list-specs pl-3'></ul>`);
-     console.log(stockItem.itemModelId.specs);
      var specs = stockItem.itemModelId.specs;
      for(spec in specs){
-          console.log(spec + ': ' + specs[spec]);
-          
-          $('.modal-list-specs').append(`<li><span class='modal-item-spec'>${spec}:</span> ${specs[spec]}</li>`);
+          let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
+          $('.modal-list-specs').append(`<li><span class='modal-item-spec'>${specStr}:</span> ${specs[spec]}</li>`);
      }
 
 }
