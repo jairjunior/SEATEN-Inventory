@@ -32,6 +32,7 @@ $( document ).ready( () => {
                console.log(data);
                $('.my-spinner').hide();
                fillTableStockItems(data);
+               rowsClickable();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -79,4 +80,12 @@ function fillTableStockItems({ stockItems, itemModels }){
           trTableStockItems.append(tdStockItem, tdInventoryNumber, tdStatus, tdLocation);
           $('.table-stock-items tbody').append(trTableStockItems);
      }
+}
+
+
+
+function rowsClickable(){
+     $('.table-stock-items TR').click( () => {
+          $('#inventoryModal').modal('show');
+     });
 }
