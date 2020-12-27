@@ -41,7 +41,19 @@ router.get('/items', async (req, res) => {
 
 // Return a specific item according to the id
 router.get('/items/:id', async (req, res) => {
-     res.send({ user: req.userId, msg: 'Show a specific item.' });
+     try {
+          const stockItem = await StockItem.findById(req.params.id).populate({
+               path: 'itemModelId',
+               populate: { path: 'categoryId' }
+          });
+          console.log(`System Log: Sending to the client the item document (id = ${req.params.id}).`);
+          return res.send({ stockItem });
+     }
+     catch (error) {
+          console.error('ERROR: Cannot retrieve item.');
+          console.error(error);
+          return res.status(400).send({ ok: false, error: 'Cannot retrieve item.' });
+     }
 });
 
 
