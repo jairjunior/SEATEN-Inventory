@@ -1,26 +1,25 @@
 "use strict";
 
-var items;
-
 $( document ).ready( () => {
-     const listStockItemsURL = '/inventory/items';     
-     const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTAwNTI3NSwiZXhwIjoxNjA5MDkxNjc1fQ.qU_AgTtJ-gKTDjSIGyunSGbQuwXAswLrRWcWotX-O0k';
      
-
      // First of all, build the table header with the columns names in the array below.
+     // A hidden <th> is created at the final of the header to keep the ID of each stock item.
      const theaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
      for (let i = 0; i < theaders.length; i++){
           $('.table-stock-items thead').append("<th scope='col'>"+ theaders[i] +"</th>");
      }
+     $('.table-stock-items thead').append("<th scope='col' hidden>ID</th>");
 
 
+
+     // Makes the AJAX requisition to retrieve all stock items from the database.
      $.ajax({
-          url: listStockItemsURL,
+          url: '/inventory/items',
           type: 'GET',
           contentType: 'application/json',
-          headers: {
-               'Authorization': `Bearer ${accessToken}`
-          },
+          //headers: {
+          //     'Authorization': `Bearer ${accessToken}`
+          //},
           //beforeSend: (xhr, settings) => {
           //     xhr.setRequestHeader('authorization', `Bearer ${accessToken}`);
           //},
@@ -28,9 +27,9 @@ $( document ).ready( () => {
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve stock items - request status: ${textStatus}`);
+               console.log(`Retrieve complete list of stock items - request status: ${textStatus}`);
                console.log(data);
-               $('.my-spinner').hide();
+               $('.my-table-spinner').hide();
                fillTableStockItems(data);
                rowsClickable();
           }
@@ -45,6 +44,9 @@ $( document ).ready( () => {
 
 
 
+
+
+// This function fills the inventory table with the data received from the server.
 function fillTableStockItems({ stockItems, itemModels }){
      
      for(let index in stockItems){
@@ -54,6 +56,7 @@ function fillTableStockItems({ stockItems, itemModels }){
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
 
           let trTableStockItems = document.createElement('TR');
+          //trTableStockItems.classList.add('table-stock-row');
           
           let tdStockItem = document.createElement('TD');
           tdStockItem.textContent = `${stockItem.category} - ${model.brand} ${model.name}`;
@@ -77,15 +80,37 @@ function fillTableStockItems({ stockItems, itemModels }){
           let tdLocation = document.createElement('TD');
           tdLocation.textContent = stockItem.location;
 
-          trTableStockItems.append(tdStockItem, tdInventoryNumber, tdStatus, tdLocation);
+          let tdId = document.createElement('TD');
+          tdId.setAttribute('hidden', true);
+          tdId.textContent = stockItem._id;
+
+          trTableStockItems.append(tdStockItem, tdInventoryNumber, tdStatus, tdLocation, tdId);
           $('.table-stock-items tbody').append(trTableStockItems);
      }
 }
 
 
 
+
+// When a row of the table is clicked, the hidden id (last <td> tag of each row) is saved into a variable.
+// Then, the id is pasted into a hidden <span> tag located in the modal body.
+// Finally, the modal is triggered to show up.
 function rowsClickable(){
-     $('.table-stock-items TR').click( () => {
-          $('#inventoryModal').modal('show');
+
+     $('.table-stock-items').click( (event) => {
+          let clickedRow = $(event.target).closest('tr');
+
+          if(clickedRow.length === 1){
+               let id = $(clickedRow).find('td:last').text();
+               console.log('ID of selected item: ', id);
+
+               let modalBody = $('#inventoryModal div.modal-body');
+               $(modalBody).children().not('.my-inventory-modal-spinner').remove();
+               $(modalBody).append("<span id='modalItemId' hidden>"+ id +"</span>");
+               $('.my-inventory-modal-spinner').show();
+
+               $('#inventoryModal').modal('show');
+          }
      });
+
 }
