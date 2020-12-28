@@ -11,8 +11,7 @@ $('#modalPillTransfer').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillTransfer .nav-link').addClass('active');
      clearModalBody();
-     $('.modal-btn-cancel, .modal-btn-save').show();
-     $('.modal-btn-close').hide();
+     hideAndShowModalButtons('.modal-btn-cancel, .modal-btn-transfer');
      $('.my-modal-spinner').hide();
      buildTransferForm();
 })

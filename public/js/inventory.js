@@ -8,13 +8,20 @@
 // Finally, it makes an AJAX requisition to retrieve all stock items from the database.
 //----------------------------------------------------------------------------------------
 $( document ).ready( () => {
-     
      const tHeaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
-     for (let i = 0; i < tHeaders.length; i++)
+     for (let i = 0; i < tHeaders.length; i++){
           $('.table-stock-items thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
-     
+     }
      $('.table-stock-items thead').append("<th scope='col' hidden>ID</th>");
+     fetchStockItemsList();
+});
 
+//----------------------------------------------------------------------------------------
+// Retrieves all stock items from the database.
+// On success, it fills the table (.table-stock-items) with the items returned from the server
+// and finally it adds an event listener to detect clicks on any table row.
+//----------------------------------------------------------------------------------------
+function fetchStockItemsList(){
      $.ajax({
           url: '/inventory/items',
           type: 'GET',
@@ -29,7 +36,7 @@ $( document ).ready( () => {
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve complete list of stock items - request status: ${textStatus}`);
+               console.log(`Retrieve complete list of stock items - GET request status: ${textStatus}`);
                console.log(data);
                $('.my-table-spinner').hide();
                fillTableStockItems(data);
@@ -41,8 +48,7 @@ $( document ).ready( () => {
           console.error(`jqXHR object: ${jqXHR}`);
           console.error(`Error: ${errorThrown}`);
      });
-     
-});
+}
 
 
 //----------------------------------------------------------------------------------------
@@ -111,7 +117,8 @@ function setClickableTableRows(){
                $(modalBody).children().not('.my-modal-spinner').remove();
                $(modalBody).append("<span id='modalItemId' hidden>"+ id +"</span>");
 
-               $('.modal-btn-cancel, .modal-btn-save').hide();
+               $("#inventoryModal .modal-footer button").hide();
+               $('.modal-btn-close').show();
 
                $('#inventoryModal').modal('show');
           }

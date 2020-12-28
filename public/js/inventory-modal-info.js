@@ -19,12 +19,8 @@ $('#inventoryModal').on('shown.bs.modal', () => {
 $('#modalPillInfo').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillInfo .nav-link').addClass('active');
-
      clearModalBody();
-
-     $('.modal-btn-close').show();
-     $('.modal-btn-cancel, .modal-btn-save').hide();
-
+     hideAndShowModalButtons('.modal-btn-close');
      let id = $('#modalItemId').text();
      fetchStockItemInfo(id);
 });
@@ -38,6 +34,19 @@ function clearModalBody(){
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody).children().not('.my-modal-spinner, #modalItemId').remove();
      $('.my-modal-spinner').show();
+}
+
+
+//----------------------------------------------------------------------------------------
+// This function hides al the buttons locaed in the modal (#inventoryModal) footer.
+// And it shows the button(s) passed as argument. 
+// The argument needs to be a string with a CSS selector for the button(s) to be shown    .
+//----------------------------------------------------------------------------------------
+function hideAndShowModalButtons(buttonToBeShown){
+     if(! typeof toBeShown === 'string') 
+          return console.error('ERROR: argument of function showHideModalButtons() needs to be of type String.');
+     $("#inventoryModal .modal-footer button").hide();
+     $(buttonToBeShown).show();
 }
 
 
@@ -60,7 +69,7 @@ function fetchStockItemInfo(id){
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve stock item information - request status: ${textStatus}`);
+               console.log(`Retrieve stock item information - GET request status: ${textStatus}`);
                $('.my-modal-spinner').hide();
                const { stockItem } = data;
                if(stockItem === null)

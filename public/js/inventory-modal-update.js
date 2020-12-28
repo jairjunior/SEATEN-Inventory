@@ -8,4 +8,5 @@ $('#modalPillUpdate').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillUpdate .nav-link').addClass('active');
      clearModalBody();
+     hideAndShowModalButtons('.modal-btn-cancel, .modal-btn-update');
 })
