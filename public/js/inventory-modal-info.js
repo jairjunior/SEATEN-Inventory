@@ -24,7 +24,7 @@ $('#inventoryModal').on('shown.bs.modal', () => {
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve item data - request status: ${textStatus}`);
+               console.log(`Retrieve stock item information - request status: ${textStatus}`);
                console.log(data);
                $('.my-modal-spinner').hide();
                modalFillItemInformation(data);
@@ -64,7 +64,7 @@ function modalFillItemInformation({ stockItem }){
      $(modalBody).append(`<p class="mb-0"><span class='modal-item-info'>Specifications:</span></p>`);
      $(modalBody).append(`<ul class='modal-list-specs pl-4'></ul>`);
      var specs = stockItem.itemModelId.specs;
-     for(spec in specs){
+     for(let spec in specs){
           let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
           $('.modal-list-specs').append(`<li><span class='modal-item-info'>${specStr}:</span> ${specs[spec]}</li>`);
      }
@@ -80,7 +80,6 @@ function modalFillItemInformation({ stockItem }){
      $(modalBody).append(`<p><span class='modal-item-info'>User Number:</span> ${stockItem.transferredFrom.userNumber}</p>`);
      $(modalBody).append(`<p><span class='modal-item-info'>Task Numer:</span> ${stockItem.transferredFrom.taskNumber}</p>`);
      $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeTimeDateString(stockItem.transferredFrom.date) + "</p>");
-     console.log( stockItem.transferredFrom.date );
 
      $(modalBody).append(`<h5 class='modal-item-section'>Transferred To</h5>`);
      if( stockItem.transferredTo == undefined ){

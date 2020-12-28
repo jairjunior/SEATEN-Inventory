@@ -103,7 +103,7 @@ function setClickableTableRows(){
 
           if(clickedRow.length === 1){
                let id = $(clickedRow).find('td:last').text();
-               console.log('ID of selected item: ', id);
+               console.log('Id of selected item: ', id);
 
                let modalBody = $('#inventoryModal div.modal-body');
                $(modalBody).children().not('.my-modal-spinner').remove();
