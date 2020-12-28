@@ -2,14 +2,45 @@
 
 //----------------------------------------------------------------------------------------
 // This function is triggered when the Inventory Modal is shown.
-// It gets the item Id from the hidden cell in the table,
-// Then it retrieves from the server all the data related to this specific item 
-// With the fields "model" and the "category" populated.
+// It triggers the event handler of clicking the "Info" Nav Pill located in this modal
 //----------------------------------------------------------------------------------------
 $('#inventoryModal').on('shown.bs.modal', () => {
-     let id = $('#modalItemId').text();
-     if( !id ) return console.error('Cannot find the id of the selected stock item.');
+     $('#modalPillInfo').trigger('click');
+});
 
+
+//----------------------------------------------------------------------------------------
+// Whenever the "Info" Nav Pill (from the modal) is clicked,
+// it will select the pill by adding the 'active' class to the <a> tag.
+// After this, it clears all the visible content from the modal body
+// and gets the item Id from the hidden <span> in modal body.
+// Then, it retrieves from the server an object data related with all information about
+// the specific item.
+//----------------------------------------------------------------------------------------
+$('#modalPillInfo').click( () => {
+     $('.inventory-modal-pills .nav-link').removeClass('active');
+     $('#modalPillInfo .nav-link').addClass('active');
+
+     clearModalBody();
+     let id = $('#modalItemId').text();
+     fetchStockItemInfo(id);
+});
+
+
+//----------------------------------------------------------------------------------------
+// Clear all the visible content from the Modal Body, except the spinner.
+//----------------------------------------------------------------------------------------
+function clearModalBody(){
+     let modalBody = $('#inventoryModal div.modal-body');
+     $(modalBody).children().not('.my-modal-spinner, #modalItemId').remove();
+     $('.my-modal-spinner').show();
+}
+
+
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+function fetchStockItemInfo(id){
      $.ajax({
           url: `/inventory/items/${id}`,
           type: 'GET',
@@ -25,9 +56,12 @@ $('#inventoryModal').on('shown.bs.modal', () => {
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Retrieve stock item information - request status: ${textStatus}`);
-               console.log(data);
                $('.my-modal-spinner').hide();
-               modalFillItemInformation(data);
+               const { stockItem } = data;
+               if(stockItem === null)
+                    showModalErrorMsg();
+               else
+                    modalFillItemInformation(stockItem);
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -35,16 +69,14 @@ $('#inventoryModal').on('shown.bs.modal', () => {
           console.error(`jqXHR object: ${jqXHR}`);
           console.error(`Error: ${errorThrown}`);
      });
-
-
-});
+}
 
 
 //----------------------------------------------------------------------------------------
 // This function gets all the data related to a specific item as parameter,
 // Then, it fills the Modal Body with this information using jQuery.
 //----------------------------------------------------------------------------------------
-function modalFillItemInformation({ stockItem }){
+function modalFillItemInformation(stockItem){
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody).append(`<h4 class='modal-item-title'>${stockItem.category} - ${stockItem.itemModelId.brand} ${stockItem.itemModelId.name}</h4>`);
      $(modalBody).append(`<h5 class='modal-item-section mt-4'>General Information</h5>`);
@@ -117,4 +149,13 @@ function makeTimeDateString(timestamp){
      if( date.getHours() > 12) timeStr += ' PM';
      else timeStr += ' AM';
      return makeDateString(timestamp) + ' ' + timeStr;
+}
+
+
+//----------------------------------------------------------------------------------------
+// Show an error message in the Modal Body in case of null data as response from the server.
+//----------------------------------------------------------------------------------------
+function showModalErrorMsg(){
+     let modalBody = $('#inventoryModal div.modal-body');
+     $(modalBody).append(`<p id='modalErrorMsg'><strong>ERROR:</strong> Could not retrieve data for this specific item. Please, contact the System Admin.</p>`);
 }

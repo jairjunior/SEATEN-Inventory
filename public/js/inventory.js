@@ -92,15 +92,14 @@ function fillTableStockItems({ stockItems, itemModels }){
 
 
 //----------------------------------------------------------------------------------------
-// When a row of the table is clicked, the hidden id (last <td> tag of each row) is saved into a variable.
-// Then, the id is pasted into a hidden <span> tag located in the modal body.
+// When a row of the table is clicked, the hidden id (last <td> of each table row) is saved into a variable.
+// Then, this id is appended to a hidden <span> tag located in the modal body.
 // Finally, the modal is triggered to show up.
 //----------------------------------------------------------------------------------------
 function setClickableTableRows(){
-
      $('.table-stock-items').click( (event) => {
           let clickedRow = $(event.target).closest('tr');
-
+          
           if(clickedRow.length === 1){
                let id = $(clickedRow).find('td:last').text();
                console.log('Id of selected item: ', id);
@@ -108,10 +107,7 @@ function setClickableTableRows(){
                let modalBody = $('#inventoryModal div.modal-body');
                $(modalBody).children().not('.my-modal-spinner').remove();
                $(modalBody).append("<span id='modalItemId' hidden>"+ id +"</span>");
-               $('.my-modal-spinner').show();
-
                $('#inventoryModal').modal('show');
           }
      });
-
 }
