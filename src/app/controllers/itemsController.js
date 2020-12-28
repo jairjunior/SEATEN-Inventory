@@ -10,17 +10,18 @@ const router = express.Router();
 
 
 
+//----------------------------------------------------------------------------------------
 // Send to the client the HTML file inventory.html
+//----------------------------------------------------------------------------------------
 router.get('/', async (req, res) => {
      console.log('System Log: Sending to the client the Inventory HTML page.');
      res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
 });
 
 
-
-
-
+//----------------------------------------------------------------------------------------
 // Return a list containing all the items stored in the database
+//----------------------------------------------------------------------------------------
 router.get('/items', async (req, res) => {
      try {
           const stockItems = await StockItem.find();
@@ -36,10 +37,9 @@ router.get('/items', async (req, res) => {
 });
 
 
-
-
-
+//----------------------------------------------------------------------------------------
 // Return a specific item according to the id
+//----------------------------------------------------------------------------------------
 router.get('/items/:id', async (req, res) => {
      try {
           const stockItem = await StockItem.findById(req.params.id).populate({
@@ -57,10 +57,9 @@ router.get('/items/:id', async (req, res) => {
 });
 
 
-
-
-
+//----------------------------------------------------------------------------------------
 // Register a new item in the inventory
+//----------------------------------------------------------------------------------------
 router.post('/items', async (req, res) => {
      const { category, itemModelId, inventoryNumber } = req.body;
      
@@ -86,22 +85,23 @@ router.post('/items', async (req, res) => {
 });
 
 
-
-
-
+//----------------------------------------------------------------------------------------
 // Update an item already stored in the database
+//----------------------------------------------------------------------------------------
 router.put('/items/:id', async (req, res) => {
+     console.log(req.body);
      res.send({ user: req.userId, msg: 'Update a specific item.' });
 });
 
 
-
-
-
+//----------------------------------------------------------------------------------------
 // Delete an item from the database
+//----------------------------------------------------------------------------------------
 router.delete('/items/:id', async (req, res) => {
      res.send({ user: req.userId, msg: 'Delete a specific item.' });
 });
+
+
 
 
 

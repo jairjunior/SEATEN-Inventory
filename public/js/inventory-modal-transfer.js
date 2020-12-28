@@ -30,7 +30,7 @@ function buildTransferForm(){
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody)
      .append(  `<h4 class="modal-item-title mb-4">Transfer Item</h4>
-               <form class="form-transfer-to mt-3">
+               <form class="mt-3" id="formTransferTo">
 
                     <fieldset class="form-group">
                          <legend>User Info</legend>
@@ -47,11 +47,11 @@ function buildTransferForm(){
                          <div class="form-row">
                               <div class="form-group col-md-4">
                                    <label for="transferDepartment">Division</label>
-                                   <input type="text" class="form-control" id="transferDepartment" name="department" placeholder="STI" required>
+                                   <input type="text" class="form-control" id="transferDepartment" name="division" placeholder="STI" required>
                               </div>
                               <div class="form-group col-md-4">
                                    <label for="transferDepartment">Branch</label>
-                                   <input type="text" class="form-control" id="transferDepartment" name="department" placeholder="SUTEC" required>
+                                   <input type="text" class="form-control" id="transferDepartment" name="branch" placeholder="SUTEC" required>
                               </div>
                               <div class="form-group col-md-4">
                                    <label for="transferDepartment">Department</label>
@@ -85,4 +85,60 @@ function buildTransferForm(){
                </form>`);
 
                $('#transferItemId').val(id);
+}
+
+
+//----------------------------------------------------------------------------------------
+// When the button "Transfer" on the modal is clicked, it gets all the data from the form
+// and adds the id of the selected item in the end of the array.
+// Then, it converts the array to an object and calls the function to send it to the server
+// as a PUT HTTP request
+//----------------------------------------------------------------------------------------
+$('.modal-btn-transfer').click( () => {
+     let id = $('#modalItemId').text();
+     if( !id ) return console.error('ERROR: No Id found in the hidden form <span> tag. Please, contact the System Admin to fix this bug.');
+     
+     let formData = $('#formTransferTo').serializeArray();
+     formData.push({ name: 'stockItemId', value: id });
+
+     var objFormData = {};
+     formData.forEach( (currentElement) => {
+          var { name, value } = currentElement;
+          objFormData[name] = value;
+     });
+     console.log('Form data in JSON format to be sent: ', JSON.stringify(objFormData) );
+     submitFormTransfer(objFormData);
+});
+
+
+//----------------------------------------------------------------------------------------
+// This function submits the data passed through the Transfer Form (#formTransferTo)
+// This form is built inside the modal body when the "Transfer" tab is selected.
+// Data is first converted to JSON and then sent through an UPDATE HTTP request.
+//----------------------------------------------------------------------------------------
+function submitFormTransfer(objFormData){
+     $.ajax({
+          url: `/inventory/items/${objFormData.stockItemId}`,
+          type: 'PUT',
+          contentType: 'application/json',
+          //headers: {
+          //     'Authorization': `Bearer ${accessToken}`
+          //},
+          //beforeSend: (xhr, settings) => {
+          //     xhr.setRequestHeader('authorization', `Bearer ${accessToken}`);
+          //},
+          data: JSON.stringify(objFormData)
+        })
+     .done( (data, textStatus, jqXHR) => {
+          if(jqXHR.readyState === 4 && jqXHR.status === 200){
+               console.log(`Transfer stock item - PUT request status: ${textStatus}`);
+               console.log('Response: ', data);
+               console.log('jqXHR object: ', jqXHR);
+          }
+     })
+     .fail( (jqXHR, textStatus, errorThrown) => {
+          console.error(`Status: ${textStatus}`);
+          console.error(`jqXHR object: ${jqXHR}`);
+          console.error(`Error: ${errorThrown}`);
+     });
 }
