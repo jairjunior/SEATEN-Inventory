@@ -1,18 +1,20 @@
 "use strict";
 
+//----------------------------------------------------------------------------------------
+// This function is supposed to execute when the page is completely loaded.
+// First of all, it builds the table header with the columns names in the array tHeaders.
+// A hidden <th> is created at the final of the header to keep the ID of each stock item.
+// All the column containing the Item Ids is hidden from the view.
+// Then, akes the AJAX requisition to retrieve all stock items from the database.
+//----------------------------------------------------------------------------------------
 $( document ).ready( () => {
-     
-     // First of all, build the table header with the columns names in the array below.
-     // A hidden <th> is created at the final of the header to keep the ID of each stock item.
-     const theaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
-     for (let i = 0; i < theaders.length; i++){
-          $('.table-stock-items thead').append("<th scope='col'>"+ theaders[i] +"</th>");
+     const tHeaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
+
+     for (let i = 0; i < tHeaders.length; i++){
+          $('.table-stock-items thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
      }
      $('.table-stock-items thead').append("<th scope='col' hidden>ID</th>");
 
-
-
-     // Makes the AJAX requisition to retrieve all stock items from the database.
      $.ajax({
           url: '/inventory/items',
           type: 'GET',
@@ -31,7 +33,7 @@ $( document ).ready( () => {
                console.log(data);
                $('.my-table-spinner').hide();
                fillTableStockItems(data);
-               rowsClickable();
+               setClickableTableRows();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -43,10 +45,9 @@ $( document ).ready( () => {
 });
 
 
-
-
-
+//----------------------------------------------------------------------------------------
 // This function fills the inventory table with the data received from the server.
+//----------------------------------------------------------------------------------------
 function fillTableStockItems({ stockItems, itemModels }){
      
      for(let index in stockItems){
@@ -90,12 +91,12 @@ function fillTableStockItems({ stockItems, itemModels }){
 }
 
 
-
-
+//----------------------------------------------------------------------------------------
 // When a row of the table is clicked, the hidden id (last <td> tag of each row) is saved into a variable.
 // Then, the id is pasted into a hidden <span> tag located in the modal body.
 // Finally, the modal is triggered to show up.
-function rowsClickable(){
+//----------------------------------------------------------------------------------------
+function setClickableTableRows(){
 
      $('.table-stock-items').click( (event) => {
           let clickedRow = $(event.target).closest('tr');
@@ -105,9 +106,9 @@ function rowsClickable(){
                console.log('ID of selected item: ', id);
 
                let modalBody = $('#inventoryModal div.modal-body');
-               $(modalBody).children().not('.my-inventory-modal-spinner').remove();
+               $(modalBody).children().not('.my-modal-spinner').remove();
                $(modalBody).append("<span id='modalItemId' hidden>"+ id +"</span>");
-               $('.my-inventory-modal-spinner').show();
+               $('.my-modal-spinner').show();
 
                $('#inventoryModal').modal('show');
           }

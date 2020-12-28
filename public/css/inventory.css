@@ -7,16 +7,19 @@ body {
      background-color:#FEFEFE;
 }
 
-
-
+/*********************************************************************/
 
 .main-title {
      margin: 1em 0 1.3em;
 }
 
+/*********************************************************************/
+
 .filter-stock-items {
      margin-top: 4.5vh;
 }
+
+/*********************************************************************/
 
 .table-stock-items thead th {
      font-weight: bold;
@@ -49,32 +52,42 @@ body {
      margin: 100px auto;
 }
 
-
+/*********************************************************************/
 
 .inventory-modal-pills {
      width: 100%;
 }
 
 .modal .nav-link i.fas::after {
-     content: "  ";
+     content: " ";
      white-space: pre;
 }
 
-.my-inventory-modal-spinner {
+.my-modal-spinner {
      display: block;
      margin: 100px auto;
 }
 
 .modal-item-title {
-     margin-bottom: 1em;
+     margin-top: 0.5em;
+     padding-bottom: 0.3em;
+     border-bottom: 1px solid lightgray;
+     display: inline-block;
 }
 
-.modal-item-info, .modal-item-spec {
+.modal-item-section {
+     margin-top: 2em;
+}
+
+#inventoryModal div.modal-body p {
+     margin: 0 0 0.4em;
+}
+
+.modal-item-info {
      font-weight: bold;
 }
 
-
-
+/*********************************************************************/
 
 .page-footer {
      background: rgb(35,136,76);
@@ -86,12 +99,18 @@ body {
      color: white;
 }
 
-
-
-
-
+/*********************************************************************/
 
 @media screen and (max-width: 991px){
+     .modal button.close {
+          /*padding: .5rem .5rem;*/
+          display: none;
+     }
+
+     .inventory-modal-pills .nav-link {
+          padding: .5rem .5rem;
+     }
+
      .page-footer {
           min-height: 10vh;
      }
