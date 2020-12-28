@@ -21,7 +21,11 @@ $('#modalPillInfo').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillInfo .nav-link').addClass('active');
 
+     $('.modal-btn-close').show();
+     $('.modal-btn-cancel, .modal-btn-save').hide();
+
      clearModalBody();
+
      let id = $('#modalItemId').text();
      fetchStockItemInfo(id);
 });

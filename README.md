@@ -22,7 +22,8 @@ In this application, the following technologies were used:
 	* Node.js
 	* MongoDB
 * Frameworks and others:
-	* Bootstrap
+	* jQuery 3.5.1
+	* Bootstrap 4.5.3
 	* Express
 	* Mongoose
 	* JWT (JSON Web Token)

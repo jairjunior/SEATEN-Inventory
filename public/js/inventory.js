@@ -107,6 +107,9 @@ function setClickableTableRows(){
                let modalBody = $('#inventoryModal div.modal-body');
                $(modalBody).children().not('.my-modal-spinner').remove();
                $(modalBody).append("<span id='modalItemId' hidden>"+ id +"</span>");
+
+               $('.modal-btn-cancel, .modal-btn-save').hide();
+
                $('#inventoryModal').modal('show');
           }
      });

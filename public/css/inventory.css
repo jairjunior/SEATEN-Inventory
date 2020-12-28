@@ -94,6 +94,21 @@ body {
 
 /*********************************************************************/
 
+fieldset.form-group {
+     border: 1px solid rgba(0, 0, 0, 0.226);
+     padding: 0.5rem 1.5rem 1.5rem;
+     border-radius: 10px;
+     margin-bottom: 2rem;
+ }
+
+
+ fieldset.form-group legend {
+     width: auto;
+     padding: 0 10px;
+ }
+
+/*********************************************************************/
+
 .page-footer {
      background: rgb(35,136,76);
      background: radial-gradient(circle, rgba(35,136,76,1) 30%, rgba(29,97,56,1) 65%);
