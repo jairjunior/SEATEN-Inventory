@@ -2,7 +2,7 @@
 
 //----------------------------------------------------------------------------------------
 // This function is triggered when the Inventory Modal is shown.
-// It triggers the event handler of clicking the "Info" Nav Pill located in this modal
+// It just triggers the event handler of clicking the "Info" Nav Pill located in this modal header.
 //----------------------------------------------------------------------------------------
 $('#inventoryModal').on('shown.bs.modal', () => {
      $('#modalPillInfo').trigger('click');
@@ -10,21 +10,20 @@ $('#inventoryModal').on('shown.bs.modal', () => {
 
 
 //----------------------------------------------------------------------------------------
-// Whenever the "Info" Nav Pill (from the modal) is clicked,
-// it will select the pill by adding the 'active' class to the <a> tag.
-// After this, it clears all the visible content from the modal body
-// and gets the item Id from the hidden <span> in modal body.
-// Then, it retrieves from the server an object data related with all information about
-// the specific item.
+// Whenever the "Info" Nav Pill (in the Inventory Modal header) is clicked,
+// it will select the respective pill by adding the 'active' class to the <a> tag.
+// After this, it clears all the visible content from the modal body and hides/shows the footer buttons.
+// Then, it gets the item Id from the hidden <span> (#modalItemId) in modal body.
+// Finally, it retrieves from the server an object with all information related to the selected item.
 //----------------------------------------------------------------------------------------
 $('#modalPillInfo').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillInfo .nav-link').addClass('active');
 
+     clearModalBody();
+
      $('.modal-btn-close').show();
      $('.modal-btn-cancel, .modal-btn-save').hide();
-
-     clearModalBody();
 
      let id = $('#modalItemId').text();
      fetchStockItemInfo(id);
@@ -32,7 +31,8 @@ $('#modalPillInfo').click( () => {
 
 
 //----------------------------------------------------------------------------------------
-// Clear all the visible content from the Modal Body, except the spinner.
+// Clears all the visible content from the Modal Body, except the spinner
+// and the <span> tag containing the selected item id.
 //----------------------------------------------------------------------------------------
 function clearModalBody(){
      let modalBody = $('#inventoryModal div.modal-body');
@@ -42,7 +42,8 @@ function clearModalBody(){
 
 
 //----------------------------------------------------------------------------------------
-// 
+// Makes and HTTP requisition (GET method) and retrieves data related to a specific stock item, 
+// passing the parameter id of the item throught the URL.
 //----------------------------------------------------------------------------------------
 function fetchStockItemInfo(id){
      $.ajax({
@@ -115,7 +116,7 @@ function modalFillItemInformation(stockItem){
      $(modalBody).append(`<p><span class='modal-item-info'>User Name:</span> ${stockItem.transferredFrom.userName}</p>`);
      $(modalBody).append(`<p><span class='modal-item-info'>User Number:</span> ${stockItem.transferredFrom.userNumber}</p>`);
      $(modalBody).append(`<p><span class='modal-item-info'>Task Numer:</span> ${stockItem.transferredFrom.taskNumber}</p>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeTimeDateString(stockItem.transferredFrom.date) + "</p>");
+     $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeDateTimeString(stockItem.transferredFrom.date) + "</p>");
 
      $(modalBody).append(`<h5 class='modal-item-section'>Transferred To</h5>`);
      if( stockItem.transferredTo == undefined ){
@@ -124,17 +125,18 @@ function modalFillItemInformation(stockItem){
           $(modalBody).append(`<p><span class='modal-item-info'>User Name:</span> ${stockItem.transferredTo.userName}</p>`);
           $(modalBody).append(`<p><span class='modal-item-info'>User Number:</span> ${stockItem.transferredTo.userNumber}</p>`);
           $(modalBody).append(`<p><span class='modal-item-info'>Task Numer:</span> ${stockItem.transferredTo.taskNumber}</p>`);
-          $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeTimeDateString(stockItem.transferredTo.date) + "</p>");
+          $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
      }
 
      $(modalBody).append(`<h5 class='modal-item-section'>System Information</h5>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Created At:</span> " + makeTimeDateString(stockItem.createdAt) + "</p>");
-     $(modalBody).append("<p><span class='modal-item-info'>Updated At:</span> " + makeTimeDateString(stockItem.updatedAt) + "</p>");
+     $(modalBody).append("<p><span class='modal-item-info'>Created At:</span> " + makeDateTimeString(stockItem.createdAt) + "</p>");
+     $(modalBody).append("<p><span class='modal-item-info'>Updated At:</span> " + makeDateTimeString(stockItem.updatedAt) + "</p>");
 }
 
 
 //----------------------------------------------------------------------------------------
-// This function returns a String with the format: "Monday, December 9, 2024."
+// This function receives a String as a parameter with the format: "2020-12-26T18:40:47.834+00:00"
+// Then, returns a String with the format: "Monday, December 9, 2024."
 //----------------------------------------------------------------------------------------
 function makeDateString(timestamp){
      const date = new Date(timestamp);
@@ -145,9 +147,10 @@ function makeDateString(timestamp){
 
 
 //----------------------------------------------------------------------------------------
-// This function returns a String with the format: "Saturday, December 26, 2020. 15:40 PM"
+// This function receives a String as a parameter with the format: "2020-12-26T18:40:47.834+00:00"
+// Then, returns a String with the format: "Saturday, December 26, 2020. 15:40 PM"
 //----------------------------------------------------------------------------------------
-function makeTimeDateString(timestamp){
+function makeDateTimeString(timestamp){
      const date = new Date(timestamp);
      let timeStr = date.getHours() + ':' + date.getMinutes();
      if( date.getHours() > 12) timeStr += ' PM';

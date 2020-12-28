@@ -1,18 +1,18 @@
 "use strict";
 
 //----------------------------------------------------------------------------------------
-// This function is supposed to execute when the page is completely loaded.
-// First of all, it builds the table header with the columns names in the array tHeaders.
-// A hidden <th> is created at the final of the header to keep the ID of each stock item.
-// All the column containing the Item Ids is hidden from the view.
-// Then, akes the AJAX requisition to retrieve all stock items from the database.
+// This function will execute when the page is completely loaded.
+// First of all, it builds the table header filling the columns names with the content in the array tHeaders.
+// A hidden <th> is created at the end of the header to keep the ID of each stock item.
+// The column containing the Item Ids is hidden from the view. JavaScript will handle it.
+// Finally, it makes an AJAX requisition to retrieve all stock items from the database.
 //----------------------------------------------------------------------------------------
 $( document ).ready( () => {
+     
      const tHeaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
-
-     for (let i = 0; i < tHeaders.length; i++){
+     for (let i = 0; i < tHeaders.length; i++)
           $('.table-stock-items thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
-     }
+     
      $('.table-stock-items thead').append("<th scope='col' hidden>ID</th>");
 
      $.ajax({
@@ -47,6 +47,8 @@ $( document ).ready( () => {
 
 //----------------------------------------------------------------------------------------
 // This function fills the inventory table with the data received from the server.
+// It receives two parameters: one containing all the stock items found in the database
+// and another with all the models registered.
 //----------------------------------------------------------------------------------------
 function fillTableStockItems({ stockItems, itemModels }){
      
@@ -92,7 +94,8 @@ function fillTableStockItems({ stockItems, itemModels }){
 
 
 //----------------------------------------------------------------------------------------
-// When a row of the table is clicked, the hidden id (last <td> of each table row) is saved into a variable.
+// This function add the Even Listener to each row of the Invenotory Table (.table-stock-items).
+// When a row is clicked, the hidden id (last <td> of each table row) is saved into a variable.
 // Then, this id is appended to a hidden <span> tag located in the modal body.
 // Finally, the modal is triggered to show up.
 //----------------------------------------------------------------------------------------
