@@ -26,7 +26,7 @@ const StockItemSchema = new mongoose.Schema({
           lowercase: true,
           default: 'available'
      },
-     transferedFrom: {
+     transferredFrom: {
           taskNumber: {
                type: String,
                required: true
@@ -48,7 +48,7 @@ const StockItemSchema = new mongoose.Schema({
                default: Date.now
           }
      },
-     transferedTo: {
+     transferredTo: {
           taskNumber: String,
           userName: String,
           userNumber: Number,
