@@ -59,11 +59,12 @@ function fetchStockItemInfo(id){
           url: `/inventory/items/${id}`,
           type: 'GET',
           contentType: 'application/json',
+          headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTIxNzQ4NywiZXhwIjoxNjA5MzAzODg3fQ.jED9Wye7DtjsJ0EAIB_-7OM9Kqll2dzkjUOOhE1u330' },
           //headers: {
           //     'Authorization': `Bearer ${accessToken}`
           //},
           //beforeSend: (xhr, settings) => {
-          //     xhr.setRequestHeader('authorization', `Bearer ${accessToken}`);
+          //     xhr.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTIxNzQ4NywiZXhwIjoxNjA5MzAzODg3fQ.jED9Wye7DtjsJ0EAIB_-7OM9Kqll2dzkjUOOhE1u330');
           //},
           data: {}
         })
