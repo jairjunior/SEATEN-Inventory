@@ -96,11 +96,34 @@ router.post('/items', async (req, res) => {
 
 
 //----------------------------------------------------------------------------------------
-// Update an item already stored in the database
+// Record information about transfering an item to a person.
+// After success, it will return the item updated.
+// It also update automatically the date at the "updatedAt" field.
 //----------------------------------------------------------------------------------------
-router.put('/items/:id', async (req, res) => {
-     console.log(req.body);
-     res.send({ user: req.userId, msg: 'Update a specific item.' });
+router.put('/items/transfer/:itemId', async (req, res) => {
+     const locationStr = req.body.division + ' | ' + req.body.branch + ' | ' + req.body.department;
+     
+     try {
+          const stockItemUpdated = await StockItem.findByIdAndUpdate(req.params.itemId, {
+               transferredTo: {
+                    taskNumber: req.body.reqType + req.body.reqNumber,
+                    userName: req.body.fullUserName,
+                    userNumber: req.body.userNumber,
+                    date: Date.now(),
+                    transferredBy: req.userId
+               },
+               location: locationStr,
+               status: 'taken'
+          }, {new: true});
+
+          console.log(`System Log: Stock Item (id: ${req.params.itemId}) transferred successfully.`);
+          return res.send({ ok: true, stockItemUpdated });
+     }
+     catch(err) {
+          console.error('ERROR: Failed to transfer item.');
+          console.error(err);
+          return res.status(400).send({ ok: false, error: 'Failed to transfer new item.' });
+     }
 });
 
 

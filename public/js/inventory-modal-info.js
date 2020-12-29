@@ -72,6 +72,7 @@ function fetchStockItemInfo(id){
                console.log(`Retrieve stock item information - GET request status: ${textStatus}`);
                $('.my-modal-spinner').hide();
                const { stockItem } = data;
+               console.log(data);
                if(stockItem === null)
                     showModalErrorMsg();
                else
@@ -131,10 +132,12 @@ function modalFillItemInformation(stockItem){
      if( stockItem.transferredTo == undefined ){
           $(modalBody).append(`<p>This device was not transferred yet.</p>`);
      } else {
+          let fullName = stockItem.transferredTo.transferredBy.firstName + ' ' + stockItem.transferredTo.transferredBy.lastName;
+          let userPermission = '(' + stockItem.transferredTo.transferredBy.permission + ')' 
           $(modalBody).append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredTo.userName}</p>`);
           $(modalBody).append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredTo.userNumber}</p>`);
           $(modalBody).append(`<p><span class='modal-item-info'>Task Numer: </span>${stockItem.transferredTo.taskNumber}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>Transferred By: </span>${stockItem.transferredTo.transferredBy}</p>`);
+          $(modalBody).append(`<p><span class='modal-item-info'>Transferred By: </span>${fullName} <span class="text-red">${userPermission}</span></p>`);
           $(modalBody).append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
      }
 
@@ -169,7 +172,6 @@ function makeDateTimeString(timestamp){
      if(mins.toString().length == 1) mins = '0' + mins;
 
      let timeStr = hours + ':' + mins;
-     console.log(timeStr);
      if( date.getHours() > 12) timeStr += ' PM';
      else timeStr += ' AM';
      return makeDateString(timestamp) + ' ' + timeStr;

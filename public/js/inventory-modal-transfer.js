@@ -127,7 +127,7 @@ $('.modal-btn-transfer').click( () => {
 //----------------------------------------------------------------------------------------
 function submitFormTransfer(objFormData){
      $.ajax({
-          url: `/inventory/items/${objFormData.stockItemId}`,
+          url: `/inventory/items/transfer/${objFormData.stockItemId}`,
           type: 'PUT',
           contentType: 'application/json',
           //headers: {
