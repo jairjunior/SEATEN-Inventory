@@ -103,43 +103,44 @@ function modalFillItemInformation(stockItem){
           availability += ' 👍';
      else if(stockItem.status === 'taken')
           availability += ' ❌';
-     $(modalBody).append(`<p><span class='modal-item-info'>Status:</span> ${availability}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>Status: </span>${availability}</p>`);
      
-     $(modalBody).append(`<p><span class='modal-item-info'>Location:</span> ${stockItem.location}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>Location: </span>${stockItem.location}</p>`);
 
      $(modalBody).append(`<p class="mb-0"><span class='modal-item-info'>Specifications:</span></p>`);
      $(modalBody).append(`<ul class='modal-list-specs pl-4'></ul>`);
      var specs = stockItem.itemModelId.specs;
      for(let spec in specs){
           let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
-          $('.modal-list-specs').append(`<li><span class='modal-item-info'>${specStr}:</span> ${specs[spec]}</li>`);
+          $('.modal-list-specs').append(`<li><span class='modal-item-info'>${specStr}: </span>${specs[spec]}</li>`);
      }
 
      $(modalBody).append(`<h5 class='modal-item-section'>Management Information</h5>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Contract Number:</span> ${stockItem.itemModelId.contractNumber}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Process Number:</span> ${stockItem.itemModelId.processNumber}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>Contract Number: </span>${stockItem.itemModelId.contractNumber}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>Process Number: </span>${stockItem.itemModelId.processNumber}</p>`);
      $(modalBody).append("<p><span class='modal-item-info'>Warranty Expiration Date:</span> " + makeDateString(stockItem.itemModelId.warrantyExpirationDate) + "</p>");
 
      $(modalBody).append(`<h5 class='modal-item-section'>Transferred From</h5>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Department:</span> ${stockItem.transferredFrom.department}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>User Name:</span> ${stockItem.transferredFrom.userName}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>User Number:</span> ${stockItem.transferredFrom.userNumber}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Task Numer:</span> ${stockItem.transferredFrom.taskNumber}</p>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeDateTimeString(stockItem.transferredFrom.date) + "</p>");
+     $(modalBody).append(`<p><span class='modal-item-info'>Department: </span>${stockItem.transferredFrom.department}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredFrom.userName}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredFrom.userNumber}</p>`);
+     $(modalBody).append(`<p><span class='modal-item-info'>Task Numer: </span>${stockItem.transferredFrom.taskNumber}</p>`);
+     $(modalBody).append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredFrom.date) + "</p>");
 
      $(modalBody).append(`<h5 class='modal-item-section'>Transferred To</h5>`);
      if( stockItem.transferredTo == undefined ){
           $(modalBody).append(`<p>This device was not transferred yet.</p>`);
      } else {
-          $(modalBody).append(`<p><span class='modal-item-info'>User Name:</span> ${stockItem.transferredTo.userName}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>User Number:</span> ${stockItem.transferredTo.userNumber}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>Task Numer:</span> ${stockItem.transferredTo.taskNumber}</p>`);
-          $(modalBody).append("<p><span class='modal-item-info'>Date:</span> " + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
+          $(modalBody).append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredTo.userName}</p>`);
+          $(modalBody).append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredTo.userNumber}</p>`);
+          $(modalBody).append(`<p><span class='modal-item-info'>Task Numer: </span>${stockItem.transferredTo.taskNumber}</p>`);
+          $(modalBody).append(`<p><span class='modal-item-info'>Transferred By: </span>${stockItem.transferredTo.transferredBy}</p>`);
+          $(modalBody).append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
      }
 
      $(modalBody).append(`<h5 class='modal-item-section'>System Information</h5>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Created At:</span> " + makeDateTimeString(stockItem.createdAt) + "</p>");
-     $(modalBody).append("<p><span class='modal-item-info'>Updated At:</span> " + makeDateTimeString(stockItem.updatedAt) + "</p>");
+     $(modalBody).append("<p><span class='modal-item-info'>Created At: </span>" + makeDateTimeString(stockItem.createdAt) + "</p>");
+     $(modalBody).append("<p><span class='modal-item-info'>Updated At: </span>" + makeDateTimeString(stockItem.updatedAt) + "</p>");
 }
 
 
@@ -161,7 +162,14 @@ function makeDateString(timestamp){
 //----------------------------------------------------------------------------------------
 function makeDateTimeString(timestamp){
      const date = new Date(timestamp);
-     let timeStr = date.getHours() + ':' + date.getMinutes();
+     let hours = date.getHours();
+     let mins = date.getMinutes();
+
+     if(hours.toString().length == 1) hours = '0' + hours;
+     if(mins.toString().length == 1) mins = '0' + mins;
+
+     let timeStr = hours + ':' + mins;
+     console.log(timeStr);
      if( date.getHours() > 12) timeStr += ' PM';
      else timeStr += ' AM';
      return makeDateString(timestamp) + ' ' + timeStr;
