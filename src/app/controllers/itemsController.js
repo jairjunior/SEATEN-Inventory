@@ -51,7 +51,7 @@ router.get('/items/:itemId', async (req, res) => {
           const stockItem = await StockItem.findById(req.params.itemId).populate({
                path: 'itemModelId',
                populate: { path: 'categoryId' }
-          });
+          }).populate('transferredTo.transferredBy');
           console.log(`System Log: Sending to the client the item document (id = ${req.params.itemId}).`);
           return res.send({ ok: true, stockItem });
      }
