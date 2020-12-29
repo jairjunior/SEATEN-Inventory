@@ -52,7 +52,11 @@ const StockItemSchema = new mongoose.Schema({
           taskNumber: String,
           userName: String,
           userNumber: Number,
-          date: Date
+          date: Date,
+          transferredBy: {
+               type: mongoose.Schema.Types.ObjectId,
+               ref: 'User'
+          }
      }
 },
 {
