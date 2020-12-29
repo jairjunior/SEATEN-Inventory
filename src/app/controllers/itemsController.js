@@ -13,7 +13,7 @@ const router = express.Router();
 //----------------------------------------------------------------------------------------
 // Send to the client the HTML file inventory.html
 //----------------------------------------------------------------------------------------
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
      console.log('System Log: Sending to the client the Inventory HTML page.');
      res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
 });
@@ -21,13 +21,17 @@ router.get('/', async (req, res) => {
 
 //----------------------------------------------------------------------------------------
 // Return a list containing all the items stored in the database
+// As all the items (in stockitem collection) have a reference field to the model colletction,
+// The app returns both collections in separeted objects.
+// This is done to reduce the size of the response. So, the front-end needs to associate
+// each id in the "itemModelId" field (stockItems object) to a respective model in the itemModels object.
 //----------------------------------------------------------------------------------------
 router.get('/items', async (req, res) => {
      try {
           const stockItems = await StockItem.find();
           const itemModels = await Model.find();
           console.log('System Log: Sending to the client the whole Inventory List with the Models registered.');
-          return res.send({ stockItems, itemModels });
+          return res.send({ ok: true, stockItems, itemModels });
      }
      catch (error) {
           console.error('ERROR: Cannot list items.');
@@ -39,18 +43,20 @@ router.get('/items', async (req, res) => {
 
 //----------------------------------------------------------------------------------------
 // Return a specific item according to the id
+// It returns all the information populating the "itemModelId" field as well the "categoryId"
+// inside the model collection.
 //----------------------------------------------------------------------------------------
-router.get('/items/:id', async (req, res) => {
+router.get('/items/:itemId', async (req, res) => {
      try {
-          const stockItem = await StockItem.findById(req.params.id).populate({
+          const stockItem = await StockItem.findById(req.params.itemId).populate({
                path: 'itemModelId',
                populate: { path: 'categoryId' }
           });
-          console.log(`System Log: Sending to the client the item document (id = ${req.params.id}).`);
-          return res.send({ stockItem });
+          console.log(`System Log: Sending to the client the item document (id = ${req.params.itemId}).`);
+          return res.send({ ok: true, stockItem });
      }
      catch (error) {
-          console.error('ERROR: Cannot retrieve item.');
+          console.error('ERROR: Cannot retrieve item from database.');
           console.error(error);
           return res.status(400).send({ ok: false, error: 'Cannot retrieve item.' });
      }
@@ -58,7 +64,11 @@ router.get('/items/:id', async (req, res) => {
 
 
 //----------------------------------------------------------------------------------------
-// Register a new item in the inventory
+// Register a new item in the inventory.
+// Cannot register a new item with repeated inventory number.
+// This route tests if the field "category" matches the one referenced by the "itemModelId" field.
+// For this, the model is fetched populating the field "categoryId" with the information from
+// the category collection.
 //----------------------------------------------------------------------------------------
 router.post('/items', async (req, res) => {
      const { category, itemModelId, inventoryNumber } = req.body;
@@ -71,7 +81,7 @@ router.post('/items', async (req, res) => {
           if(!model) 
                return res.status(400).send({ error: 'Item Model not registered in database.' });
           if( category !== model.categoryId.name )
-               return res.status(400).send({ error: 'The category field in your requisition needs to be the same as the chosen model.' });
+               return res.status(400).send({ error: "The 'category' value needs to be the same as the chosen model." });
 
           const newItem = await StockItem.create(req.body);
           console.log(`System Log: New item (${category} - ${inventoryNumber}) registered successfully.`);
@@ -97,8 +107,17 @@ router.put('/items/:id', async (req, res) => {
 //----------------------------------------------------------------------------------------
 // Delete an item from the database
 //----------------------------------------------------------------------------------------
-router.delete('/items/:id', async (req, res) => {
-     res.send({ user: req.userId, msg: 'Delete a specific item.' });
+router.delete('/items/:itemId', async (req, res) => {
+     try {
+          const stockItem = await StockItem.findByIdAndDelete(req.params.itemId);
+          console.log(`System Log: Item deleted from database (id = ${req.params.itemId}).`);
+          return res.send({ ok: true, msg: 'Item successfully deleted.', stockItem });
+     }
+     catch (error) {
+          console.error('ERROR: Cannot delete item from database.');
+          console.error(error);
+          return res.status(400).send({ ok: false, error: 'Cannot delete item from database.' });
+     }
 });
 
 
