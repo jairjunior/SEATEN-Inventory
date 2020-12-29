@@ -33,6 +33,20 @@ function buildTransferForm(){
                <form class="mt-3" id="formTransferTo">
 
                     <fieldset class="form-group">
+                         <legend>Item Info</legend>
+                         <div class="form-row">
+                              <div class="form-group col-md-6">
+                                   <label for="transferItemName">Name and Model</label>
+                                   <input type="tel" class="form-control" id="transferItemName" name="itemName" required disabled>
+                              </div>
+                              <div class="form-group col-md-6">
+                                   <label for="transferInventoryNumber">Inventory Number</label>
+                                   <input type="tel" class="form-control" id="transferInventoryNumber" name="inventoryNumber" required disabled>
+                              </div>
+                         </div>
+                    </fieldset>
+
+                    <fieldset class="form-group">
                          <legend>User Info</legend>
                          <div class="form-row">
                               <div class="form-group col-md-9">
@@ -46,12 +60,12 @@ function buildTransferForm(){
                          </div>
                          <div class="form-row">
                               <div class="form-group col-md-4">
-                                   <label for="transferDepartment">Division</label>
-                                   <input type="text" class="form-control" id="transferDepartment" name="division" placeholder="STI" required>
+                                   <label for="transferDivision">Division</label>
+                                   <input type="text" class="form-control" id="transferDivision" name="division" placeholder="STI" required>
                               </div>
                               <div class="form-group col-md-4">
-                                   <label for="transferDepartment">Branch</label>
-                                   <input type="text" class="form-control" id="transferDepartment" name="branch" placeholder="SUTEC" required>
+                                   <label for="transferBranch">Branch</label>
+                                   <input type="text" class="form-control" id="transferBranch" name="branch" placeholder="SUTEC" required>
                               </div>
                               <div class="form-group col-md-4">
                                    <label for="transferDepartment">Department</label>
@@ -75,11 +89,6 @@ function buildTransferForm(){
                                         <input type="tel" class="form-control" id="transferReqNumber" name="reqNumber" placeholder="00017645" required>
                                    </div>
                               </div>
-                    </fieldset>
-
-                    <fieldset class="form-group" hidden>
-                              <legend>Selected Item ID (Hidden)</legend>
-                              <input type="text" class="form-control" id="transferItemId" name="stockItemId" disabled>
                     </fieldset>
 
                </form>`);
