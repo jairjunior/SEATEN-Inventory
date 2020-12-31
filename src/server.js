@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-
+const path = require('path');
 
 app.use(express.json());                               // for parsing application/json
 app.use(express.urlencoded({ extended: true }));       // for parsing application/x-www-form-urlencoded
@@ -11,10 +11,8 @@ require('./app/controllers/index')(app);               // import all controllers
 
 
 app.get('/', (req, res) => {
-     res.send({ 
-          ok: true,
-          message: 'Welcome to the SEATEN Inventory web application!'
-      });
+     console.log('System Log: Sending to the client the HTML Login page.');
+     res.sendFile( path.join(__dirname + '../../public/views/login.html') );
 });
 
 
