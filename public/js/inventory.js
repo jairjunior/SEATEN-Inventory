@@ -1,42 +1,39 @@
 "use strict";
 
 //----------------------------------------------------------------------------------------
-// This function will execute when the page is completely loaded.
 // First of all, it builds the table header filling the columns names with the content in the array tHeaders.
 // A hidden <th> is created at the end of the header to keep the ID of each stock item.
 // The column containing the Item Ids is hidden from the view. JavaScript will handle it.
 // Finally, it makes an AJAX requisition to retrieve all stock items from the database.
 //----------------------------------------------------------------------------------------
-$( document ).ready( () => {
+function loadInventoryTable(){
      const tHeaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
      for (let i = 0; i < tHeaders.length; i++){
-          $('.table-stock-items thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
+          $('.table-inventory thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
      }
-     $('.table-stock-items thead').append("<th scope='col' hidden>ID</th>");
+     $('.table-inventory thead').append("<th scope='col' hidden>ID</th>");
      fetchStockItemsList();
-});
+}
 
 //----------------------------------------------------------------------------------------
 // Retrieves all stock items from the database.
-// On success, it fills the table (.table-stock-items) with the items returned from the server
+// On success, it fills the table (.table-inventory) with the items returned from the server
 // and finally it adds an event listener to detect clicks on any table row.
 //----------------------------------------------------------------------------------------
 function fetchStockItemsList(){
+     const token = localStorage.getItem('bearerToken');
+
      $.ajax({
           url: '/inventory/items',
           type: 'GET',
-          contentType: 'application/json',
-          //headers: {
-          //     'Authorization': `Bearer ${accessToken}`
-          //},
-          //beforeSend: (xhr, settings) => {
-          //     xhr.setRequestHeader('authorization', `Bearer ${accessToken}`);
-          //},
-          data: {}
+          dataType: 'json',
+          beforeSend: (xhr, settings) => {
+               xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+          }
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve complete list of stock items - GET request status: ${textStatus}`);
+               console.log(`Succeed to retrieve list of stock items - status: ${textStatus}`);
                console.log(data);
                $('.my-table-spinner').hide();
                fillTableStockItems(data);
@@ -94,19 +91,19 @@ function fillTableStockItems({ stockItems, itemModels }){
           tdId.textContent = stockItem._id;
 
           trTableStockItems.append(tdStockItem, tdInventoryNumber, tdStatus, tdLocation, tdId);
-          $('.table-stock-items tbody').append(trTableStockItems);
+          $('.table-inventory tbody').append(trTableStockItems);
      }
 }
 
 
 //----------------------------------------------------------------------------------------
-// This function add the Even Listener to each row of the Invenotory Table (.table-stock-items).
+// This function add the Even Listener to each row of the Invenotory Table (.table-inventory).
 // When a row is clicked, the hidden id (last <td> of each table row) is saved into a variable.
 // Then, this id is appended to a hidden <span> tag located in the modal body.
 // Finally, the modal is triggered to show up.
 //----------------------------------------------------------------------------------------
 function setClickableTableRows(){
-     $('.table-stock-items').click( (event) => {
+     $('.table-inventory').click( (event) => {
           let clickedRow = $(event.target).closest('tr');
           
           if(clickedRow.length === 1){

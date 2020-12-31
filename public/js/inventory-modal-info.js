@@ -55,25 +55,22 @@ function hideAndShowModalButtons(buttonToBeShown){
 // passing the parameter id of the item throught the URL.
 //----------------------------------------------------------------------------------------
 function fetchStockItemInfo(id){
+     const token = localStorage.getItem('bearerToken');
+     
      $.ajax({
           url: `/inventory/items/${id}`,
           type: 'GET',
-          contentType: 'application/json',
-          headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTIxNzQ4NywiZXhwIjoxNjA5MzAzODg3fQ.jED9Wye7DtjsJ0EAIB_-7OM9Kqll2dzkjUOOhE1u330' },
-          //headers: {
-          //     'Authorization': `Bearer ${accessToken}`
-          //},
-          //beforeSend: (xhr, settings) => {
-          //     xhr.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGU0NTM5ZjA5OTA3NDYxNDNlYTk2OCIsImlhdCI6MTYwOTIxNzQ4NywiZXhwIjoxNjA5MzAzODg3fQ.jED9Wye7DtjsJ0EAIB_-7OM9Kqll2dzkjUOOhE1u330');
-          //},
-          data: {}
+          dataType: 'json',
+          beforeSend: (xhr, settings) => {
+               xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+          }
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Retrieve stock item information - GET request status: ${textStatus}`);
+               console.log(`Retrieve stock item information - status: ${textStatus}`);
                $('.my-modal-spinner').hide();
                const { stockItem } = data;
-               console.log(data);
+               console.log('Stock Item info:', data);
                if(stockItem === null)
                     showModalErrorMsg();
                else

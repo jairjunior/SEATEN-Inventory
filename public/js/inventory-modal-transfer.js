@@ -126,23 +126,29 @@ $('.modal-btn-transfer').click( () => {
 // Data is first converted to JSON and then sent through an UPDATE HTTP request.
 //----------------------------------------------------------------------------------------
 function submitFormTransfer(objFormData){
+     const token = localStorage.getItem('bearerToken');
+     
      $.ajax({
           url: `/inventory/items/transfer/${objFormData.stockItemId}`,
           type: 'PUT',
           contentType: 'application/json',
-          //headers: {
-          //     'Authorization': `Bearer ${accessToken}`
-          //},
-          //beforeSend: (xhr, settings) => {
-          //     xhr.setRequestHeader('authorization', `Bearer ${accessToken}`);
-          //},
-          data: JSON.stringify(objFormData)
+          data: JSON.stringify(objFormData),
+          dataType: 'json',
+          beforeSend: (xhr, settings) => {
+               xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+          }
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Transfer stock item - PUT request status: ${textStatus}`);
                console.log('Response: ', data);
                console.log('jqXHR object: ', jqXHR);
+               $('#inventoryModal').modal('hide');
+               $('.table-inventory thead').empty();
+               $('.table-inventory tbody').empty();
+               $('.table-inventory tfoot').empty();
+               $('.my-table-spinner').show();
+               loadInventoryTable();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {

@@ -13,6 +13,12 @@ body {
 
 /*********************************************************************/
 
+main.container {
+     min-height: 71vh;
+}
+
+/*********************************************************************/
+
 .main-title {
      margin: 1em 0 1.3em;
 }
@@ -25,17 +31,17 @@ body {
 
 /*********************************************************************/
 
-.table-stock-items thead th {
+.table-inventory thead th {
      font-weight: bold;
      vertical-align: middle;
 }
 
 /* Aligns all the <th> and <td> tags at the center, except the first ones in each row */
-.table-stock-items th:not(:first-child), .table-stock-items tr td:not(:first-child) {
+.table-inventory th:not(:first-child), .table-inventory tr td:not(:first-child) {
      text-align: center;
 }
 
-.table-stock-items tr:hover{
+.table-inventory tr:hover{
      cursor: pointer;
 }
 
