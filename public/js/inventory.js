@@ -55,8 +55,8 @@ function fetchStockItemsList(){
 //----------------------------------------------------------------------------------------
 function fillTableStockItems({ stockItems, itemModels }){
      
-     for(let index in stockItems){
-          const stockItem = stockItems[index];
+     for(let item in stockItems){
+          const stockItem = stockItems[item];
 
           const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId })
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);

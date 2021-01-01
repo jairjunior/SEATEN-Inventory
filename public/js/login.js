@@ -75,9 +75,11 @@ function loadApplicationPage({ token }){
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Load app page request - status: ${textStatus}`);
-               //console.log('Response: ', data);
-               //console.log('jqXHR object: ', jqXHR);
-               
+               document.title = 'ICOS | SEATEN Inventory';
+               window.history.pushState({}, 'ICOS | SEATEN Inventory', '/inventory');
+               $(`link[href*="login.css"]`).remove();
+               $('html head').append(`<link rel="stylesheet" href="../css/navbar.css">`);
+               $('html head').append(`<link rel="stylesheet" href="../css/inventory.css">`);
                $('body').empty();
                $('body').html(data);
                loadInventoryTable();

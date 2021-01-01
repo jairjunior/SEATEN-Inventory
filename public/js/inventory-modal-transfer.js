@@ -144,10 +144,7 @@ function submitFormTransfer(objFormData){
                console.log('Response: ', data);
                console.log('jqXHR object: ', jqXHR);
                $('#inventoryModal').modal('hide');
-               $('.table-inventory thead').empty();
-               $('.table-inventory tbody').empty();
-               $('.table-inventory tfoot').empty();
-               $('.my-table-spinner').show();
+               clearTableContent();
                loadInventoryTable();
           }
      })
@@ -156,4 +153,15 @@ function submitFormTransfer(objFormData){
           console.error(`jqXHR object: ${jqXHR}`);
           console.error(`Error: ${errorThrown}`);
      });
+}
+
+
+//----------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------
+function clearTableContent(){
+     $('.table-inventory thead').empty();
+     $('.table-inventory tbody').empty();
+     $('.table-inventory tfoot').empty();
+     $('.my-table-spinner').show();
 }
