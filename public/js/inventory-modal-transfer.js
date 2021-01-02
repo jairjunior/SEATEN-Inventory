@@ -51,7 +51,8 @@ function buildTransferForm(){
                          <div class="form-row">
                               <div class="form-group col-md-9">
                                    <label for="transferUserName">Full Name</label>
-                                   <input type="text" class="form-control" id="transferUserName" name="fullUserName" required>
+                                   <input type="text" class="form-control" id="transferUserName" aria-describedby="transferUserNameFeedback" name="fullUserName" required>
+                                   <div id="transferUserNameFeedback"></div>
                               </div>
                               <div class="form-group col-md-3">
                                    <label for="transferUserNumber">User Number</label>
@@ -105,17 +106,46 @@ $('.modal-btn-transfer').click( () => {
      let idSelectedItem = localStorage.getItem('idSelectedItem');
      if( !idSelectedItem ) return console.error('ERROR: No Id found in Local Storage. Please, contact the System Admin to fix this bug.');
      
-     let formData = $('#formTransferTo').serializeArray();
-     formData.push({ name: 'stockItemId', value: idSelectedItem });
+     if ( validadeTransferForm() ){
+          let formData = $('#formTransferTo').serializeArray();
+          formData.push({ name: 'stockItemId', value: idSelectedItem });
 
-     var objFormData = {};
-     formData.forEach( (currentElement) => {
-          var { name, value } = currentElement;
-          objFormData[name] = value;
-     });
-     console.log('Dados do form a serem enviados:', objFormData)
-     submitFormTransfer(objFormData);
+          var objFormData = {};
+          formData.forEach( (currentElement) => {
+               var { name, value } = currentElement;
+               objFormData[name] = value;
+          });
+          console.log('Dados do form a serem enviados:', objFormData);
+          //submitFormTransfer(objFormData);
+     }
+     else{
+          return console.error('ERROR: Form data is invalid. Please, review all the fields.');
+     }
+
+     
 });
+
+
+//----------------------------------------------------------------------------------------
+// This function validates the Transfer Form and return "true" if all the fields are ok.
+//----------------------------------------------------------------------------------------
+function validadeTransferForm(){
+     var formIsValid = true;
+
+     let fullUserName = $('#transferUserName').val()
+     if( fullUserName.length == 0 || fullUserName.split(' ').length < 2 ){
+          $('#transferUserName').removeClass('is-valid').addClass('is-invalid');
+          $('#transferUserName').focus().select();
+          $('#transferUserNameFeedback').removeClass('invalid-feedback').addClass('invalid-feedback').text('Please, provide full user name.');
+          formIsValid = false;
+     } else {
+          $('#transferUserName').removeClass('is-invalid').addClass('is-valid');
+          $('#transferUserNameFeedback').removeClass('invalid-feedback').addClass('valid-feedback').text('Ok.');
+     }
+
+
+     return formIsValid;
+}
 
 
 //----------------------------------------------------------------------------------------
@@ -155,7 +185,7 @@ function submitFormTransfer(objFormData){
 
 
 //----------------------------------------------------------------------------------------
-//
+// Clears the content of the main table
 //----------------------------------------------------------------------------------------
 function clearTableContent(){
      $('.table-inventory thead').empty();
