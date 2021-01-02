@@ -19,7 +19,7 @@ const StockItemSchema = new mongoose.Schema({
      },
      location: {
           type: String,
-          default: 'SEATEN - Stockroom'
+          default: 'STI | SUTEC | SEATEN'
      },
      status: {
           type: String,

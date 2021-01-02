@@ -101,19 +101,32 @@ router.post('/items', async (req, res) => {
 // It also update automatically the date at the "updatedAt" field.
 //----------------------------------------------------------------------------------------
 router.put('/items/transfer/:itemId', async (req, res) => {
-     const locationStr = req.body.division + ' | ' + req.body.branch + ' | ' + req.body.department;
+     const division = req.body.division.trim().toUpperCase();
+     const branch = req.body.branch.trim().toUpperCase();
+     const department = req.body.department.trim().toUpperCase();
+     const locationStr =  `${division} | ${branch} | ${department}`;
      
+     const fullUserName = req.body.fullUserName.trim().replace(/\s+/g, ' ').split(' ').reduce( (fullName, str) => {
+          if( str.match( /de/i ) || str.match( /da/i ) ) 
+               return fullName + ' ' + str.toLowerCase();
+          else return fullName + ' ' + str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+     },'');
+
+     var statusStr = '';
+     if( department.slice(0,6) === 'SEATEN' ) statusStr = 'available';
+     else statusStr = 'taken';
+           
      try {
           const stockItemUpdated = await StockItem.findByIdAndUpdate(req.params.itemId, {
                transferredTo: {
-                    taskNumber: req.body.reqType + req.body.reqNumber,
-                    userName: req.body.fullUserName,
-                    userNumber: req.body.userNumber,
+                    taskNumber: req.body.reqType.trim() + req.body.reqNumber.trim(),
+                    userName: fullUserName,
+                    userNumber: req.body.userNumber.trim(),
                     date: Date.now(),
                     transferredBy: req.userId
                },
                location: locationStr,
-               status: 'taken'
+               status: statusStr
           }, {new: true});
 
           console.log(`System Log: Stock Item (id: ${req.params.itemId}) transferred successfully.`);
