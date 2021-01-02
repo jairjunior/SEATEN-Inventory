@@ -56,21 +56,25 @@ function buildTransferForm(){
                               </div>
                               <div class="form-group col-md-3">
                                    <label for="transferUserNumber">User Number</label>
-                                   <input type="tel" class="form-control" id="transferUserNumber" name="userNumber" required>
+                                   <input type="tel" class="form-control" id="transferUserNumber" aria-describedby="transferUserNumberFeedback" name="userNumber" required>
+                                   <div id="transferUserNumberFeedback"></div>
                               </div>
                          </div>
                          <div class="form-row">
                               <div class="form-group col-md-4">
                                    <label for="transferDivision">Division</label>
-                                   <input type="text" class="form-control" id="transferDivision" name="division" placeholder="STI" required>
+                                   <input type="text" class="form-control" id="transferDivision" aria-describedby="transferDivisionFeedback" name="division" placeholder="STI" required>
+                                   <div id="transferDivisionFeedback"></div>
                               </div>
                               <div class="form-group col-md-4">
                                    <label for="transferBranch">Branch</label>
-                                   <input type="text" class="form-control" id="transferBranch" name="branch" placeholder="SUTEC" required>
+                                   <input type="text" class="form-control" id="transferBranch" aria-describedby="transferBranchFeedback" name="branch" placeholder="SUTEC" required>
+                                   <div id="transferBranchFeedback"></div>
                               </div>
                               <div class="form-group col-md-4">
                                    <label for="transferDepartment">Department</label>
-                                   <input type="text" class="form-control" id="transferDepartment" name="department" placeholder="SEATEN" required>
+                                   <input type="text" class="form-control" id="transferDepartment" aria-describedby="transferDepartmentFeedback" name="department" placeholder="SEATEN" required>
+                                   <div id="transferDepartmentFeedback"></div>
                               </div>
                          </div>
                     </fieldset>
@@ -87,12 +91,16 @@ function buildTransferForm(){
                                    </div>
                                    <div class="form-group col-md-9">
                                         <label for="transferReqNumber">Number</label>
-                                        <input type="tel" class="form-control" id="transferReqNumber" name="reqNumber" placeholder="00017645" required>
+                                        <input type="tel" class="form-control" id="transferReqNumber" name="reqNumber" aria-describedby="transferReqNumberFeedback" placeholder="00017123" required>
+                                        <div id="transferReqNumberFeedback"></div>
                                    </div>
                               </div>
                     </fieldset>
 
-               </form>`);
+               </form>`
+     );
+
+     $('#transferUserName').focus().select();
 }
 
 
@@ -106,7 +114,7 @@ $('.modal-btn-transfer').click( () => {
      let idSelectedItem = localStorage.getItem('idSelectedItem');
      if( !idSelectedItem ) return console.error('ERROR: No Id found in Local Storage. Please, contact the System Admin to fix this bug.');
      
-     if ( validadeTransferForm() ){
+     if ( validateTransferForm() ){
           let formData = $('#formTransferTo').serializeArray();
           formData.push({ name: 'stockItemId', value: idSelectedItem });
 
@@ -115,38 +123,88 @@ $('.modal-btn-transfer').click( () => {
                var { name, value } = currentElement;
                objFormData[name] = value;
           });
-          console.log('Dados do form a serem enviados:', objFormData);
-          //submitFormTransfer(objFormData);
+          console.log('Transfer Form data:', objFormData);
+          submitFormTransfer(objFormData);
      }
      else{
           return console.error('ERROR: Form data is invalid. Please, review all the fields.');
      }
-
-     
 });
 
 
 //----------------------------------------------------------------------------------------
 // This function validates the Transfer Form and return "true" if all the fields are ok.
 //----------------------------------------------------------------------------------------
-function validadeTransferForm(){
+function validateTransferForm(){
      var formIsValid = true;
 
-     let fullUserName = $('#transferUserName').val()
-     if( fullUserName.length == 0 || fullUserName.split(' ').length < 2 ){
-          $('#transferUserName').removeClass('is-valid').addClass('is-invalid');
-          $('#transferUserName').focus().select();
-          $('#transferUserNameFeedback').removeClass('invalid-feedback').addClass('invalid-feedback').text('Please, provide full user name.');
+     let reqNumber = $('#transferReqNumber').val().trim();
+     if( reqNumber.length == 0 || reqNumber.split(' ').length > 1 || reqNumber.length > 8 || reqNumber.slice(0,3) != '000' || hasLetters(reqNumber) || hasSpecialChar(reqNumber) ){
+          setFormFieldInvalid('#transferReqNumber', '#transferReqNumberFeedback', 'Provide a valid requisition number');
           formIsValid = false;
-     } else {
-          $('#transferUserName').removeClass('is-invalid').addClass('is-valid');
-          $('#transferUserNameFeedback').removeClass('invalid-feedback').addClass('valid-feedback').text('Ok.');
-     }
+     } else { setFormFieldValid('#transferReqNumber', '#transferReqNumberFeedback', 'Ok'); }
 
+     let department = $('#transferDepartment').val().trim();
+     if( department.length == 0 || department.split(' ').length > 1 || department.length > 20 || hasNumbers(department) || hasSpecialChar(department) ){
+          setFormFieldInvalid('#transferDepartment', '#transferDepartmentFeedback', 'Provide a valid department name');
+          formIsValid = false;
+     } else { setFormFieldValid('#transferDepartment', '#transferDepartmentFeedback', 'Ok'); }
+
+     let branch = $('#transferBranch').val().trim();
+     if( branch.length == 0 || branch.split(' ').length > 1 || branch.length > 8 || hasNumbers(branch) || hasSpecialChar(branch) ){
+          setFormFieldInvalid('#transferBranch', '#transferBranchFeedback', 'Provide a valid branch name');
+          formIsValid = false;
+     } else { setFormFieldValid('#transferBranch', '#transferBranchFeedback', 'Ok'); }
+
+     let division = $('#transferDivision').val().trim();
+     if( division.length == 0 || division.split(' ').length > 1 || division.length > 3 || hasNumbers(division) || hasSpecialChar(division) ){
+          setFormFieldInvalid('#transferDivision', '#transferDivisionFeedback', 'Provide a valid division name');
+          formIsValid = false;
+     } else { setFormFieldValid('#transferDivision', '#transferDivisionFeedback', 'Ok'); }
+
+     let userNumber = $('#transferUserNumber').val().trim();
+     if( userNumber.length == 0 || userNumber.split(' ').length > 1 || parseInt( userNumber ) <= 0 || parseInt( userNumber ) > 1999 || hasLetters(userNumber) || hasSpecialChar(userNumber) ){
+          setFormFieldInvalid('#transferUserNumber', '#transferUserNumberFeedback', 'Invalid user number');
+          formIsValid = false;
+     } else { setFormFieldValid('#transferUserNumber', '#transferUserNumberFeedback', 'Ok'); }
+
+     let fullUserName = $('#transferUserName').val().trim().replace(/\s+/g, ' ');
+     if( fullUserName.length == 0 || fullUserName.split(' ').length < 2 || hasNumbers(fullUserName) || hasSpecialChar(fullUserName) ){
+          setFormFieldInvalid('#transferUserName', '#transferUserNameFeedback', 'Please, provide full user name');
+          formIsValid = false;
+     } else { setFormFieldValid('#transferUserName', '#transferUserNameFeedback', 'Ok'); }
 
      return formIsValid;
 }
 
+function hasSpecialChar(str){
+     if( str.match(/[$-/:-?{-~!"^_`\[\]#@]/) !== null )
+     return true;
+     else return false;
+}
+
+function hasLetters(str){
+     if( str.match(/[a-z]/i) !== null )
+     return true;
+     else return false;
+}
+
+function hasNumbers(str){
+     if( str.match(/[0-9]/i) !== null ) 
+     return true;
+     else return false;
+}
+
+function setFormFieldInvalid(fieldId, feedbackId, text){
+     $(fieldId).focus().select();
+     $(fieldId).removeClass('is-valid').addClass('is-invalid');
+     $(feedbackId).removeClass('valid-feedback').addClass('invalid-feedback').text(text);
+}
+
+function setFormFieldValid(fieldId, feedbackId, text){
+     $(fieldId).removeClass('is-invalid').addClass('is-valid');
+     $(feedbackId).removeClass('invalid-feedback').addClass('valid-feedback').text(text);
+}
 
 //----------------------------------------------------------------------------------------
 // This function submits the data passed through the Transfer Form (#formTransferTo)
@@ -170,7 +228,7 @@ function submitFormTransfer(objFormData){
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Transfer stock item - PUT request status: ${textStatus}`);
                console.log('Response: ', data);
-               console.log('jqXHR object: ', jqXHR.responseText);
+               console.log('jqXHR responseText: ', jqXHR.responseText);
                $('#inventoryModal').modal('hide');
                clearTableContent();
                loadInventoryTable();
@@ -181,15 +239,4 @@ function submitFormTransfer(objFormData){
           console.error(`jqXHR object: ${jqXHR.responseText}`);
           console.error(`Error: ${errorThrown}`);
      });
-}
-
-
-//----------------------------------------------------------------------------------------
-// Clears the content of the main table
-//----------------------------------------------------------------------------------------
-function clearTableContent(){
-     $('.table-inventory thead').empty();
-     $('.table-inventory tbody').empty();
-     $('.table-inventory tfoot').empty();
-     $('.my-table-spinner').show();
 }
