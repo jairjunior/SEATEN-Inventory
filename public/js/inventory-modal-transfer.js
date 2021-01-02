@@ -113,7 +113,7 @@ $('.modal-btn-transfer').click( () => {
           var { name, value } = currentElement;
           objFormData[name] = value;
      });
-     //console.log('Dados do form a serem enviados:', objFormData)
+     console.log('Dados do form a serem enviados:', objFormData)
      submitFormTransfer(objFormData);
 });
 
@@ -140,7 +140,7 @@ function submitFormTransfer(objFormData){
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Transfer stock item - PUT request status: ${textStatus}`);
                console.log('Response: ', data);
-               console.log('jqXHR object: ', jqXHR);
+               console.log('jqXHR object: ', jqXHR.responseText);
                $('#inventoryModal').modal('hide');
                clearTableContent();
                loadInventoryTable();
@@ -148,7 +148,7 @@ function submitFormTransfer(objFormData){
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
           console.error(`Status: ${textStatus}`);
-          console.error(`jqXHR object: ${jqXHR}`);
+          console.error(`jqXHR object: ${jqXHR.responseText}`);
           console.error(`Error: ${errorThrown}`);
      });
 }

@@ -12,8 +12,8 @@ $( document ).ready( () => {
 //----------------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------------
-$('#formLogin').submit( (e) => {
-     e.preventDefault();
+$('#formLogin').submit( (event) => {
+     event.preventDefault();
      let formData = $('#formLogin').serializeArray();
 
      var objFormData = {};

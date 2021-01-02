@@ -72,6 +72,28 @@ main.container {
      width: 100%;
 }
 
+.inventory-modal-pills .nav-item{
+     margin: 0 2px;
+}
+
+.inventory-modal-pills .my-pill-link {
+     color: darkgreen;
+}
+
+.inventory-modal-pills .my-pill-link:hover {
+     color: darkgreen;
+     background-color: rgba(0, 100, 0, 0.158);
+}
+
+.inventory-modal-pills .my-pill-link.active {
+     background-color: #23884C;
+     color: white;
+}
+
+.inventory-modal-pills .my-pill-link.active:hover {
+     color: white;
+}
+
 .modal .nav-link i.fas::after {
      content: " ";
      white-space: pre;
@@ -85,12 +107,16 @@ main.container {
 .modal-item-title {
      margin-top: 0.5em;
      padding-bottom: 0.3em;
+     font-weight: 900;
      border-bottom: 1px solid lightgray;
-     display: inline-block;
 }
 
 .modal-item-section {
      margin-top: 2em;
+     padding: 7px;
+     display: inline-block;
+     background-color: #E5E5E5;
+     border-radius: 5px;
 }
 
 .modal div.modal-body p {

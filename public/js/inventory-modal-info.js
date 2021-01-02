@@ -101,7 +101,7 @@ function modalFillItemInformation(stockItem){
      $('.my-modal-spinner').hide();
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody).append(`<h4 class='modal-item-title'>${stockItem.category} - ${stockItem.itemModelId.brand} ${stockItem.itemModelId.name}</h4>`);
-     $(modalBody).append(`<h5 class='modal-item-section mt-4'>General Information</h5>`);
+     $(modalBody).append(`<h5 class='modal-item-section mt-3'>General Information</h5>`);
 
      let inventoryNumberStr = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
      $(modalBody).append(`<p><span class='modal-item-info'>Inventory Number:</span> ${inventoryNumberStr}</p>`);
