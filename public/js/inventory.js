@@ -120,3 +120,14 @@ function setClickableTableRows(){
           }
      });
 }
+
+
+//----------------------------------------------------------------------------------------
+// Clears the content of the main table
+//----------------------------------------------------------------------------------------
+function clearTableContent(){
+     $('.table-inventory thead').empty();
+     $('.table-inventory tbody').empty();
+     $('.table-inventory tfoot').empty();
+     $('.my-table-spinner').show();
+}
