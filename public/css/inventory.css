@@ -64,6 +64,10 @@ main.container {
 
 /*********************************************************************/
 
+#inventoryModal .modal-body {
+     padding: 1.5rem;
+}
+
 .inventory-modal-pills {
      width: 100%;
 }
@@ -111,10 +115,29 @@ fieldset.form-group {
      margin-bottom: 2rem;
  }
 
-
  fieldset.form-group legend {
      width: auto;
      padding: 0 10px;
+ }
+
+ fieldset.item-info {
+     border-color: rgba(255, 0, 0, 0.3);
+ }
+
+ fieldset.item-info legend{
+     color: red;
+ }
+
+ #transferItemName {
+     color: red;
+     font-size: 1.4em;
+     font-weight: bolder;
+ }
+
+ #transferInventoryNumber {
+     color: red;
+     font-size: 1.4em;
+     font-weight: bolder;
  }
 
 /*********************************************************************/
@@ -132,14 +155,29 @@ fieldset.form-group {
 /*********************************************************************/
 
 @media screen and (max-width: 991px){
+     #inventoryModal .modal-body {
+          padding: 0.8rem;
+     }
+     
+     fieldset.form-group {
+          padding: 0.5rem 0.5rem 1rem;
+     }
+
      .modal button.close {
-          /*padding: .5rem .5rem;*/
           display: none;
      }
 
      .inventory-modal-pills .nav-link {
           padding: .5rem .5rem;
      }
+
+     #transferItemName {
+          font-size: 1.1em;
+      }
+     
+      #transferInventoryNumber {
+          font-size: 1.1em;
+      }
 
      .page-footer {
           min-height: 10vh;
