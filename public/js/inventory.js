@@ -58,7 +58,7 @@ function fillTableStockItems({ stockItems, itemModels }){
      for(let item in stockItems){
           const stockItem = stockItems[item];
 
-          const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId })
+          const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId });
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
 
           let trTableStockItems = document.createElement('TR');
@@ -97,22 +97,21 @@ function fillTableStockItems({ stockItems, itemModels }){
 
 
 //----------------------------------------------------------------------------------------
-// This function add the Even Listener to each row of the Invenotory Table (.table-inventory).
-// When a row is clicked, the hidden id (last <td> of each table row) is saved into a variable.
-// Then, this id is appended to a hidden <span> tag located in the modal body.
-// Finally, the modal is triggered to show up.
+// This function add the Event Listener to each row of the Inventory Table (.table-inventory).
+// When a row is clicked, the hidden id (last <td> of each table row) is saved into a variable
+// and then it is saved into Local Storage for later use. Then, the modal body is cleared, 
+// the buttons are hidden/shown and it's finally triggered to show up.
 //----------------------------------------------------------------------------------------
 function setClickableTableRows(){
      $('.table-inventory').click( (event) => {
           let clickedRow = $(event.target).closest('tr');
           
           if(clickedRow.length === 1){
-               let id = $(clickedRow).find('td:last').text();
-               console.log('Id of selected item: ', id);
+               let idSelectedItem = $(clickedRow).find('td:last').text();
+               localStorage.setItem( "idSelectedItem", idSelectedItem );
+               console.log('Id: ', idSelectedItem);
 
-               let modalBody = $('#inventoryModal div.modal-body');
-               $(modalBody).children().not('.my-modal-spinner').remove();
-               $(modalBody).append("<span id='modalItemId' hidden>"+ id +"</span>");
+               clearModalBody();
 
                $("#inventoryModal .modal-footer button").hide();
                $('.modal-btn-close').show();

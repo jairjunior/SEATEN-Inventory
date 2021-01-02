@@ -11,8 +11,8 @@ $('#modalPillTransfer').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillTransfer .nav-link').addClass('active');
      clearModalBody();
-     hideAndShowModalButtons('.modal-btn-cancel, .modal-btn-transfer');
      $('.my-modal-spinner').hide();
+     hideAndShowModalButtons('.modal-btn-cancel, .modal-btn-transfer');
      buildTransferForm();
 })
 
@@ -25,23 +25,23 @@ $('#modalPillTransfer').click( () => {
 // is already embedded in the Beared Token sent alongside with the HTTP request.
 //----------------------------------------------------------------------------------------
 function buildTransferForm(){
-     let id = $('#modalItemId').text();
-
+     let item = JSON.parse( localStorage.getItem( 'selectedItem') );
+     let inventoryNumberStr = item.inventoryNumber.slice(0,3) + ' ' + item.inventoryNumber.slice(3,6) + '.' + item.inventoryNumber.slice(6);
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody)
      .append(  `<h4 class="modal-item-title mb-4">Transfer Item</h4>
                <form class="mt-3" id="formTransferTo">
 
-                    <fieldset class="form-group">
+                    <fieldset class="form-group item-info">
                          <legend>Item Info</legend>
                          <div class="form-row">
-                              <div class="form-group col-md-6">
+                              <div class="form-group col-md-8">
                                    <label for="transferItemName">Name and Model</label>
-                                   <input type="tel" class="form-control" id="transferItemName" name="itemName" required disabled>
+                                   <input type="tel" class="form-control" id="transferItemName" name="itemName" value="${item.category} - ${item.itemModelId.brand} ${item.itemModelId.name}" required disabled>
                               </div>
-                              <div class="form-group col-md-6">
+                              <div class="form-group col-md-4">
                                    <label for="transferInventoryNumber">Inventory Number</label>
-                                   <input type="tel" class="form-control" id="transferInventoryNumber" name="inventoryNumber" required disabled>
+                                   <input type="tel" class="form-control" id="transferInventoryNumber" name="inventoryNumber" value="${inventoryNumberStr}" required disabled>
                               </div>
                          </div>
                     </fieldset>
@@ -92,8 +92,6 @@ function buildTransferForm(){
                     </fieldset>
 
                </form>`);
-
-               $('#transferItemId').val(id);
 }
 
 
@@ -104,18 +102,18 @@ function buildTransferForm(){
 // as a PUT HTTP request
 //----------------------------------------------------------------------------------------
 $('.modal-btn-transfer').click( () => {
-     let id = $('#modalItemId').text();
-     if( !id ) return console.error('ERROR: No Id found in the hidden form <span> tag. Please, contact the System Admin to fix this bug.');
+     let idSelectedItem = localStorage.getItem('idSelectedItem');
+     if( !idSelectedItem ) return console.error('ERROR: No Id found in Local Storage. Please, contact the System Admin to fix this bug.');
      
      let formData = $('#formTransferTo').serializeArray();
-     formData.push({ name: 'stockItemId', value: id });
+     formData.push({ name: 'stockItemId', value: idSelectedItem });
 
      var objFormData = {};
      formData.forEach( (currentElement) => {
           var { name, value } = currentElement;
           objFormData[name] = value;
      });
-     console.log('Form data in JSON format to be sent: ', JSON.stringify(objFormData) );
+     //console.log('Dados do form a serem enviados:', objFormData)
      submitFormTransfer(objFormData);
 });
 

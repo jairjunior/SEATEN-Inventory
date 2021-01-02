@@ -49,7 +49,7 @@ function submitToLogin(userInfo){
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
           console.error(`Error Status: ${textStatus}`);
-          console.error(`jqXHR object: ${jqXHR}`);
+          console.error(`jqXHR object: ${jqXHR.responseText}`);
           console.error(`ERROR: ${errorThrown}`);
      });
 }

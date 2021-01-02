@@ -10,10 +10,19 @@ $('#inventoryModal').on('shown.bs.modal', () => {
 
 
 //----------------------------------------------------------------------------------------
+// This function is triggered when the Inventory Modal is hidden. Just clears the Local Storage keys.
+//----------------------------------------------------------------------------------------
+$('#inventoryModal').on('hidden.bs.modal', () => {
+     localStorage.removeItem("idSelectedItem");
+     localStorage.removeItem("selectedItem");
+});
+
+
+//----------------------------------------------------------------------------------------
 // Whenever the "Info" Nav Pill (in the Inventory Modal header) is clicked,
 // it will select the respective pill by adding the 'active' class to the <a> tag.
 // After this, it clears all the visible content from the modal body and hides/shows the footer buttons.
-// Then, it gets the item Id from the hidden <span> (#modalItemId) in modal body.
+// Then, it gets the item Id from the Local Storage.
 // Finally, it retrieves from the server an object with all information related to the selected item.
 //----------------------------------------------------------------------------------------
 $('#modalPillInfo').click( () => {
@@ -21,18 +30,17 @@ $('#modalPillInfo').click( () => {
      $('#modalPillInfo .nav-link').addClass('active');
      clearModalBody();
      hideAndShowModalButtons('.modal-btn-close');
-     let id = $('#modalItemId').text();
-     fetchStockItemInfo(id);
+     let idSelectedItem = localStorage.getItem('idSelectedItem');
+     fetchStockItemInfo(idSelectedItem);
 });
 
 
 //----------------------------------------------------------------------------------------
-// Clears all the visible content from the Modal Body, except the spinner
-// and the <span> tag containing the selected item id.
+// Clears all the visible content from the Modal Body, except the spinner.
 //----------------------------------------------------------------------------------------
 function clearModalBody(){
      let modalBody = $('#inventoryModal div.modal-body');
-     $(modalBody).children().not('.my-modal-spinner, #modalItemId').remove();
+     $(modalBody).children().not('.my-modal-spinner').remove();
      $('.my-modal-spinner').show();
 }
 
@@ -68,9 +76,9 @@ function fetchStockItemInfo(id){
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Retrieve stock item information - status: ${textStatus}`);
-               $('.my-modal-spinner').hide();
-               const { stockItem } = data;
                console.log('Stock Item info:', data);
+               const { stockItem } = data;
+               localStorage.setItem( "selectedItem", JSON.stringify(stockItem) );
                if(stockItem === null)
                     showModalErrorMsg();
                else
@@ -90,6 +98,7 @@ function fetchStockItemInfo(id){
 // Then, it fills the Modal Body with this information using jQuery.
 //----------------------------------------------------------------------------------------
 function modalFillItemInformation(stockItem){
+     $('.my-modal-spinner').hide();
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody).append(`<h4 class='modal-item-title'>${stockItem.category} - ${stockItem.itemModelId.brand} ${stockItem.itemModelId.name}</h4>`);
      $(modalBody).append(`<h5 class='modal-item-section mt-4'>General Information</h5>`);
@@ -134,7 +143,7 @@ function modalFillItemInformation(stockItem){
           let userPermission = '(' + stockItem.transferredTo.transferredBy.permission + ')' 
           $(modalBody).append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredTo.userName}</p>`);
           $(modalBody).append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredTo.userNumber}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>Task Numer: </span>${stockItem.transferredTo.taskNumber}</p>`);
+          $(modalBody).append(`<p><span class='modal-item-info'>Task Number: </span>${stockItem.transferredTo.taskNumber}</p>`);
           $(modalBody).append(`<p><span class='modal-item-info'>Transferred By: </span>${fullName} <span class="text-red">${userPermission}</span></p>`);
           $(modalBody).append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
      }
