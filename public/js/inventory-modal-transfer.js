@@ -227,16 +227,39 @@ function submitFormTransfer(objFormData){
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Transfer stock item - PUT request status: ${textStatus}`);
-               console.log('Response: ', data);
-               console.log('jqXHR responseText: ', jqXHR.responseText);
+               console.log('Response data: ', data);
+
                $('#inventoryModal').modal('hide');
+               let successAlertMsg = `The <strong>${ $('#transferItemName').val().split(' ')[0] } (${ $('#transferInventoryNumber').val() })</strong> was successfully transferred.`;
+               showInventoryAlert('success', successAlertMsg);
                clearTableContent();
                loadInventoryTable();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
           console.error(`Status: ${textStatus}`);
-          console.error(`jqXHR object: ${jqXHR.responseText}`);
+          console.error(`jqXHR responseText: ${jqXHR.responseText}`);
           console.error(`Error: ${errorThrown}`);
+          
+          $('#inventoryModal').modal('hide');
+          let errorAlertMsg = `<strong>Failed</strong> to transfer <strong>${ $('#transferItemName').val().split(' ')[0] } (${ $('#transferInventoryNumber').val() })</strong>.`;
+          showInventoryAlert('danger', errorAlertMsg);
      });
+}
+
+function showInventoryAlert(type, innerMsg){
+     var symbol = '';
+     if(type == 'success') symbol = `<i class="fas fa-check-circle"></i>`;
+     if(type == 'danger') symbol = `<i class="fas fa-exclamation-triangle"></i>`;
+
+     $('main.container header.container').after(`
+          <div class="my-alert alert alert-${type} mt-5 d-flex justify-content-between align-items-center" role="alert">
+               <div>
+                    ${symbol} ${innerMsg}
+               </div>
+               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+               </button>
+          </div>
+     `);
 }
