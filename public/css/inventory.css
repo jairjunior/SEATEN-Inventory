@@ -161,17 +161,52 @@ fieldset.form-group {
      color: red;
  }
 
- #transferItemName {
+ #transferItemName, #transferInventoryNumber {
      color: red;
      font-size: 1.4em;
      font-weight: bolder;
  }
 
- #transferInventoryNumber {
-     color: red;
-     font-size: 1.4em;
-     font-weight: bolder;
+/*********************************************************************/
+
+.opacity-layer {
+     background-color: rgba(0,0,0,0.8);
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100vw;
+     height: 100vh;
+     z-index: 1050;
  }
+
+#confirmationModal .modal-header {
+     background-color: crimson;
+     height: 8vh;
+}
+
+#confirmationModal .modal-header div {
+     height: 100%;
+}
+
+#confirmationModal .modal-header i.fas {
+     transform: scale(3.0);
+     color: gold;
+}
+
+#confirmationModal .modal-header i.fas::after {
+     content: "     ";
+     white-space: pre;
+}
+
+#modalBtnConfirm {
+     background-color: crimson;
+     border-color: crimson;
+     transition: background-color 0.3s;
+}
+
+#modalBtnConfirm:hover {
+     background-color: rgb(185, 16, 50);
+}
 
 /*********************************************************************/
 
@@ -206,11 +241,15 @@ fieldset.form-group {
 
      #transferItemName {
           font-size: 1.1em;
-      }
+     }
      
       #transferInventoryNumber {
           font-size: 1.1em;
-      }
+     }
+
+      #confirmationModal .modal-header {
+          height: 11vh;
+     }
 
      .page-footer {
           min-height: 10vh;

@@ -110,7 +110,7 @@ router.put('/items/transfer/:itemId', async (req, res) => {
           if( str.match( /de/i ) || str.match( /da/i ) ) 
                return fullName + ' ' + str.toLowerCase();
           else return fullName + ' ' + str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-     },'');
+     });
 
      var statusStr = '';
      if( department.slice(0,6) === 'SEATEN' ) statusStr = 'available';

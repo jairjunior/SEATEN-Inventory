@@ -29,7 +29,7 @@ $('#modalPillInfo').click( () => {
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillInfo .nav-link').addClass('active');
      clearModalBody();
-     hideAndShowModalButtons('.modal-btn-close');
+     hideAndShowModalButtons('#modalBtnClose');
      let idSelectedItem = localStorage.getItem('idSelectedItem');
      fetchStockItemInfo(idSelectedItem);
 });

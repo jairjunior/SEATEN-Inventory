@@ -96,7 +96,7 @@
 
 
 
-<aside class="modal fade" id="inventoryModal" tabindex="-1" aria-labelledby="inventoryModalTitle" aria-describedby="inventoryModalDescription">
+<aside class="modal fade" id="inventoryModal" tabindex="-1">
      <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content">
 
@@ -127,16 +127,43 @@
                </div>
 
                <div class="modal-footer">
-                    <button type="button" class="modal-btn-transfer btn btn-success">Transfer</button>
-                    <button type="button" class="modal-btn-update btn btn-success">Update</button>
-                    <button type="button" class="modal-btn-close btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="modal-btn-cancel btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="modalBtnTransfer" class="btn btn-success">Transfer item</button>
+                    <button type="button" id="modalBtnUpdate" class="btn btn-success">Update</button>
+                    <button type="button" id="modalBtnClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="modalBtnCancel" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                </div>
 
           </div>
      </div>
 </aside>
 
+
+<div id="opacityLayer"></div>
+
+
+<aside class="modal fade" id="confirmationModal" tabindex="-1">
+     <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+
+               <div class="modal-header">
+                    <div class="pl-5 d-flex justify-content-start align-items-center">
+                         <i class="fas fa-exclamation-triangle"></i>
+                         <h5 class="modal-title">Confirmation</h5>
+                     </div>
+               </div>
+
+               <div class="modal-body d-flex align-items-center">
+
+               </div>
+
+               <div class="modal-footer">
+                    <button type="button" id="modalBtnConfirm" class="btn btn-primary">Save changes</button>
+                    <button type="button" id="modalBtnAbort" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+               </div>
+
+          </div>
+     </div>
+</aside>
 
 
 <footer class="page-footer d-flex align-items-center">
