@@ -12,7 +12,7 @@ $('#modalPillTransfer').click( () => {
      $('#modalPillTransfer .nav-link').addClass('active');
      clearModalBody();
      $('.my-modal-spinner').hide();
-     hideAndShowModalButtons('.modal-btn-cancel, .modal-btn-transfer');
+     hideAndShowModalButtons('#modalBtnCancel, #modalBtnTransfer');
      buildTransferForm();
 })
 
@@ -107,10 +107,11 @@ function buildTransferForm(){
 //----------------------------------------------------------------------------------------
 // When the button "Transfer" on the modal is clicked, it gets all the data from the form
 // and adds the id of the selected item in the end of the array.
-// Then, it converts the array to an object and calls the function to send it to the server
+// Then, it converts the array to an object and shows the confirmation modal on the screen.
+// It awaits for the user to confirm and finally calls the function to send it to the server
 // as a PUT HTTP request
 //----------------------------------------------------------------------------------------
-$('.modal-btn-transfer').click( () => {
+$('#modalBtnTransfer').click( async () => {
      let idSelectedItem = localStorage.getItem('idSelectedItem');
      if( !idSelectedItem ) return console.error('ERROR: No Id found in Local Storage. Please, contact the System Admin to fix this bug.');
      
@@ -124,13 +125,61 @@ $('.modal-btn-transfer').click( () => {
                objFormData[name] = value;
           });
           console.log('Transfer Form data:', objFormData);
-          submitFormTransfer(objFormData);
+          
+          showModalConfirmation(objFormData);
+          try {
+               await waitConfirmation();
+               console.log('O usuário confirmou a ação.');
+               $('#opacityLayer').toggleClass('opacity-layer', false);
+               $('#confirmationModal').modal('hide');
+               submitFormTransfer(objFormData);
+          }
+          catch(error) {
+               console.log('O usuário cancelou a ação.');
+               $('#opacityLayer').toggleClass('opacity-layer', false);
+               $('#inventoryModal').modal('hide');
+          }
      }
      else{
           return console.error('ERROR: Form data is invalid. Please, review all the fields.');
      }
 });
 
+
+//----------------------------------------------------------------------------------------
+// This function shows the Confirmation Modal on the screen.
+// This function is called when the user click in the Transfer button to submit the Transfer Form.
+//----------------------------------------------------------------------------------------
+function showModalConfirmation(objFormData) {
+     $('#opacityLayer').toggleClass('opacity-layer', true);
+     $('#confirmationModal').modal('show');
+     $('#confirmationModal .modal-body').empty();
+     $('#confirmationModal .modal-body').append(`
+          <div class="confirmation-msg">
+               <p class="mb-4">Please, confirm the information below before saving the changes.</p>     
+               <p><strong>Stock Item: </strong>${ $('#transferItemName').val() }</p>
+               <p><strong>Stock Item: </strong>${ $('#transferInventoryNumber').val() }</p>
+               <p><strong>User: </strong>${objFormData.fullUserName}</p>
+               <p><strong>User Number: </strong>${objFormData.userNumber}</p>
+          </div>`
+     );
+}
+
+
+//----------------------------------------------------------------------------------------
+// This function return a promise that will be resolved only if the user confir the action.
+// If the user clicks on Cancel button it will reject.
+//----------------------------------------------------------------------------------------
+function waitConfirmation(){
+     return new Promise( (resolve, reject) => {
+          $('#modalBtnConfirm').click( (event) => {
+               resolve(event);
+          });
+          $('#modalBtnAbort').click( (event) => {
+               reject(event);
+          });
+     });
+}
 
 //----------------------------------------------------------------------------------------
 // This function validates the Transfer Form and return "true" if all the fields are ok.
@@ -230,8 +279,7 @@ function submitFormTransfer(objFormData){
                console.log('Response data: ', data);
 
                $('#inventoryModal').modal('hide');
-               let successAlertMsg = `The <strong>${ $('#transferItemName').val().split(' ')[0] } (${ $('#transferInventoryNumber').val() })</strong> was successfully transferred.`;
-               showInventoryAlert('success', successAlertMsg);
+               showInventoryAlert('success');
                clearTableContent();
                loadInventoryTable();
           }
@@ -243,11 +291,18 @@ function submitFormTransfer(objFormData){
           
           $('#inventoryModal').modal('hide');
           let errorAlertMsg = `<strong>Failed</strong> to transfer <strong>${ $('#transferItemName').val().split(' ')[0] } (${ $('#transferInventoryNumber').val() })</strong>.`;
-          showInventoryAlert('danger', errorAlertMsg);
+          showInventoryAlert('danger');
      });
 }
 
-function showInventoryAlert(type, innerMsg){
+
+//----------------------------------------------------------------------------------------
+// The function shows an Alert component above the table everytime the Transfer Form is subimited.
+// The message will be passed as a parameter and the "type" must match a Bootstrap class for Alert.
+// According to the "type", there will be a corresponding symbol. 
+//----------------------------------------------------------------------------------------
+function showInventoryAlert(type){
+     const innerMsg = `The <strong>${ $('#transferItemName').val().split(' ')[0] } (${ $('#transferInventoryNumber').val() })</strong> was successfully transferred.`;
      var symbol = '';
      if(type == 'success') symbol = `<i class="fas fa-check-circle"></i>`;
      if(type == 'danger') symbol = `<i class="fas fa-exclamation-triangle"></i>`;

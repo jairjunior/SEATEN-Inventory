@@ -114,7 +114,7 @@ function setClickableTableRows(){
                clearModalBody();
 
                $("#inventoryModal .modal-footer button").hide();
-               $('.modal-btn-close').show();
+               $('#modalBtnClose').show();
 
                $('#inventoryModal').modal('show');
           }
