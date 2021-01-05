@@ -101,56 +101,73 @@ function modalFillItemInformation(stockItem){
      $('.my-modal-spinner').hide();
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody).append(`<h4 class='modal-item-title'>${stockItem.category} - ${stockItem.itemModelId.brand} ${stockItem.itemModelId.name}</h4>`);
-     $(modalBody).append(`<h5 class='modal-item-section mt-3'>General Information</h5>`);
+     
+     createCollapseInfo(modalBody, 'General Information', 'modalGeneralInfo');
 
      let inventoryNumberStr = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
-     $(modalBody).append(`<p><span class='modal-item-info'>Inventory Number:</span> ${inventoryNumberStr}</p>`);
+     $('#modalGeneralInfo .card-body').append(`<p><span class='modal-item-info'>Inventory Number:</span> ${inventoryNumberStr}</p>`);
      
      let availability = stockItem.status.charAt(0).toUpperCase() + stockItem.status.slice(1);
      if(stockItem.status === 'available')
           availability += ' 👍';
      else if(stockItem.status === 'taken')
           availability += ' ❌';
-     $(modalBody).append(`<p><span class='modal-item-info'>Status: </span>${availability}</p>`);
-     
-     $(modalBody).append(`<p><span class='modal-item-info'>Location: </span>${stockItem.location}</p>`);
-
-     $(modalBody).append(`<p class="mb-0"><span class='modal-item-info'>Specifications:</span></p>`);
-     $(modalBody).append(`<ul class='modal-list-specs pl-4'></ul>`);
+     $('#modalGeneralInfo .card-body').append(`<p><span class='modal-item-info'>Status: </span>${availability}</p>`);
+     $('#modalGeneralInfo .card-body').append(`<p><span class='modal-item-info'>Location: </span>${stockItem.location}</p>`);
+     $('#modalGeneralInfo .card-body').append(`<p class="mb-0"><span class='modal-item-info'>Specifications:</span></p>`);
+     $('#modalGeneralInfo .card-body').append(`<ul class='modal-list-specs pl-4'></ul>`);
      var specs = stockItem.itemModelId.specs;
      for(let spec in specs){
           let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
           $('.modal-list-specs').append(`<li><span class='modal-item-info'>${specStr}: </span>${specs[spec]}</li>`);
      }
 
-     $(modalBody).append(`<h5 class='modal-item-section'>Management Information</h5>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Contract Number: </span>${stockItem.itemModelId.contractNumber}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Process Number: </span>${stockItem.itemModelId.processNumber}</p>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Warranty Expiration Date:</span> " + makeDateString(stockItem.itemModelId.warrantyExpirationDate) + "</p>");
 
-     $(modalBody).append(`<h5 class='modal-item-section'>Transferred From</h5>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Department: </span>${stockItem.transferredFrom.department}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredFrom.userName}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredFrom.userNumber}</p>`);
-     $(modalBody).append(`<p><span class='modal-item-info'>Task Numer: </span>${stockItem.transferredFrom.taskNumber}</p>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredFrom.date) + "</p>");
+     createCollapseInfo(modalBody, 'Management Information', 'modalManagementInfo');
+     $('#modalManagementInfo .card-body').append(`<p><span class='modal-item-info'>Contract Number: </span>${stockItem.itemModelId.contractNumber}</p>`);
+     $('#modalManagementInfo .card-body').append(`<p><span class='modal-item-info'>Process Number: </span>${stockItem.itemModelId.processNumber}</p>`);
+     $('#modalManagementInfo .card-body').append("<p><span class='modal-item-info'>Warranty Expiration Date:</span> " + makeDateString(stockItem.itemModelId.warrantyExpirationDate) + "</p>");
 
-     $(modalBody).append(`<h5 class='modal-item-section'>Transferred To</h5>`);
+     createCollapseInfo(modalBody, 'Transferred From', 'modalTransferredFromInfo');
+     $('#modalTransferredFromInfo .card-body').append(`<p><span class='modal-item-info'>Department: </span>${stockItem.transferredFrom.department}</p>`);
+     $('#modalTransferredFromInfo .card-body').append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredFrom.userName}</p>`);
+     $('#modalTransferredFromInfo .card-body').append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredFrom.userNumber}</p>`);
+     $('#modalTransferredFromInfo .card-body').append(`<p><span class='modal-item-info'>Task Numer: </span>${stockItem.transferredFrom.taskNumber}</p>`);
+     $('#modalTransferredFromInfo .card-body').append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredFrom.date) + "</p>");
+
+     createCollapseInfo(modalBody, 'Transferred To', 'modalTransferredToInfo');
      if( stockItem.transferredTo == undefined ){
-          $(modalBody).append(`<p>This device was not transferred yet.</p>`);
+          $('#modalTransferredToInfo .card-body').append(`<p>This device was not transferred yet.</p>`);
      } else {
           let fullName = stockItem.transferredTo.transferredBy.firstName + ' ' + stockItem.transferredTo.transferredBy.lastName;
           let userPermission = '(' + stockItem.transferredTo.transferredBy.permission + ')' 
-          $(modalBody).append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredTo.userName}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredTo.userNumber}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>Task Number: </span>${stockItem.transferredTo.taskNumber}</p>`);
-          $(modalBody).append(`<p><span class='modal-item-info'>Transferred By: </span>${fullName} <span class="text-red">${userPermission}</span></p>`);
-          $(modalBody).append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
+          $('#modalTransferredToInfo .card-body').append(`<p><span class='modal-item-info'>User Name: </span>${stockItem.transferredTo.userName}</p>`);
+          $('#modalTransferredToInfo .card-body').append(`<p><span class='modal-item-info'>User Number: </span>${stockItem.transferredTo.userNumber}</p>`);
+          $('#modalTransferredToInfo .card-body').append(`<p><span class='modal-item-info'>Task Number: </span>${stockItem.transferredTo.taskNumber}</p>`);
+          $('#modalTransferredToInfo .card-body').append(`<p><span class='modal-item-info'>Transferred By: </span>${fullName} <span class="text-red">${userPermission}</span></p>`);
+          $('#modalTransferredToInfo .card-body').append("<p><span class='modal-item-info'>Date: </span>" + makeDateTimeString(stockItem.transferredTo.date) + "</p>");
      }
 
-     $(modalBody).append(`<h5 class='modal-item-section'>System Information</h5>`);
-     $(modalBody).append("<p><span class='modal-item-info'>Created At: </span>" + makeDateTimeString(stockItem.createdAt) + "</p>");
-     $(modalBody).append("<p><span class='modal-item-info'>Updated At: </span>" + makeDateTimeString(stockItem.updatedAt) + "</p>");
+     createCollapseInfo(modalBody, 'System Information', 'modalSystemInfo');
+     $('#modalSystemInfo .card-body').append("<p><span class='modal-item-info'>Created At: </span>" + makeDateTimeString(stockItem.createdAt) + "</p>");
+     $('#modalSystemInfo .card-body').append("<p><span class='modal-item-info'>Updated At: </span>" + makeDateTimeString(stockItem.updatedAt) + "</p>");
+}
+
+
+function createCollapseInfo(parent, title, bodyId){
+     $(parent).append(`
+          <h5 class='modal-item-section'>
+               <a data-toggle="collapse" href="#${bodyId}" role="button" aria-expanded="false" aria-controls="${bodyId}">
+                    ${title} <i class="fas fa-caret-down"></i>
+               </a>
+          </h5>
+     `);
+     $(parent).append(`
+          <div class="collapse" id="${bodyId}">
+               <div class="card card-body">
+               </div>
+          <div>
+     `);
 }
 
 

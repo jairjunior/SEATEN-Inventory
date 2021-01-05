@@ -71,10 +71,6 @@ main.container {
 
 /*********************************************************************/
 
-#inventoryModal .modal-body {
-     padding: 1.5rem;
-}
-
 .inventory-modal-pills {
      width: 100%;
 }
@@ -106,6 +102,15 @@ main.container {
      white-space: pre;
 }
 
+#inventoryModal .modal-body {
+     padding: 1.5rem;
+}
+
+#inventoryModal .modal-item-section a {
+     text-decoration: none;
+     color: black
+}
+
 .my-modal-spinner {
      display: block;
      margin: 100px auto;
@@ -119,11 +124,15 @@ main.container {
 }
 
 .modal-item-section {
-     margin-top: 2em;
+     margin-top: 1em;
      padding: 7px;
-     display: inline-block;
+     display: table;
      background-color: #E5E5E5;
      border-radius: 5px;
+}
+
+.card.card-body {
+     border-style: none;
 }
 
 .modal div.modal-body p {
@@ -186,6 +195,10 @@ fieldset.form-group {
 
 #confirmationModal .modal-header div {
      height: 100%;
+}
+
+#confirmationModal .modal-header h4 {
+     color: white;
 }
 
 #confirmationModal .modal-header i.fas {
