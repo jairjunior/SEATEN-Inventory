@@ -106,7 +106,7 @@ main.container {
      padding: 1.5rem;
 }
 
-#inventoryModal .modal-item-section a {
+#inventoryModal .modal-collapse-info {
      text-decoration: none;
      color: black
 }
@@ -252,6 +252,9 @@ fieldset.form-group {
           padding: .5rem .5rem;
      }
 
+     .modal-item-title small {
+          display: none;
+     }
      #transferItemName {
           font-size: 1.1em;
      }

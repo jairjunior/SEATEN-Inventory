@@ -96,15 +96,17 @@ function fetchStockItemInfo(id){
 //----------------------------------------------------------------------------------------
 // This function gets all the data related to a specific item as parameter,
 // Then, it fills the Modal Body with this information using jQuery.
+// Finally, it adds an event listener to each collapse link in order to toggle the arrow
+// direction every time a section is clicked to show its content.
 //----------------------------------------------------------------------------------------
 function modalFillItemInformation(stockItem){
      $('.my-modal-spinner').hide();
      let modalBody = $('#inventoryModal div.modal-body');
-     $(modalBody).append(`<h4 class='modal-item-title'>${stockItem.category} - ${stockItem.itemModelId.brand} ${stockItem.itemModelId.name}</h4>`);
+     let inventoryNumberStr = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
+     
+     $(modalBody).append(`<h4 class='modal-item-title'>${stockItem.category} - ${stockItem.itemModelId.brand} ${stockItem.itemModelId.name} <small>(${inventoryNumberStr})</small></h4>`);
      
      createCollapseInfo(modalBody, 'General Information', 'modalGeneralInfo');
-
-     let inventoryNumberStr = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
      $('#modalGeneralInfo .card-body').append(`<p><span class='modal-item-info'>Inventory Number:</span> ${inventoryNumberStr}</p>`);
      
      let availability = stockItem.status.charAt(0).toUpperCase() + stockItem.status.slice(1);
@@ -151,16 +153,28 @@ function modalFillItemInformation(stockItem){
      createCollapseInfo(modalBody, 'System Information', 'modalSystemInfo');
      $('#modalSystemInfo .card-body').append("<p><span class='modal-item-info'>Created At: </span>" + makeDateTimeString(stockItem.createdAt) + "</p>");
      $('#modalSystemInfo .card-body').append("<p><span class='modal-item-info'>Updated At: </span>" + makeDateTimeString(stockItem.updatedAt) + "</p>");
+
+     $('.modal-collapse-info').click( (event) => {
+          let element = $(event.currentTarget).find('i.fas');
+
+          if( $(element).hasClass('fa-caret-down') ){
+               $(element).removeClass('fa-caret-down');
+               $(element).addClass('fa-caret-up');
+          } else {
+               $(element).removeClass('fa-caret-up');
+               $(element).addClass('fa-caret-down');
+          }
+     });
 }
 
 
 function createCollapseInfo(parent, title, bodyId){
      $(parent).append(`
-          <h5 class='modal-item-section'>
-               <a data-toggle="collapse" href="#${bodyId}" role="button" aria-expanded="false" aria-controls="${bodyId}">
+          <a class="modal-collapse-info" data-toggle="collapse" href="#${bodyId}" role="button" aria-expanded="false" aria-controls="${bodyId}">
+               <h5 class='modal-item-section'>
                     ${title} <i class="fas fa-caret-down"></i>
-               </a>
-          </h5>
+               </h5>
+          </a>
      `);
      $(parent).append(`
           <div class="collapse" id="${bodyId}">

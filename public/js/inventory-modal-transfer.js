@@ -126,9 +126,9 @@ $('#modalBtnTransfer').click( async () => {
           });
           console.log('Transfer Form data:', objFormData);
           
-          showModalConfirmation(objFormData);
+          showModalTransferConfirmation(objFormData);
           try {
-               await waitConfirmation();
+               await waitTransferConfirmation();
                console.log('O usuário confirmou a ação.');
                $('#opacityLayer').toggleClass('opacity-layer', false);
                $('#confirmationModal').modal('hide');
@@ -150,7 +150,7 @@ $('#modalBtnTransfer').click( async () => {
 // This function shows the Confirmation Modal on the screen.
 // This function is called when the user click in the Transfer button to submit the Transfer Form.
 //----------------------------------------------------------------------------------------
-function showModalConfirmation(objFormData) {
+function showModalTransferConfirmation(objFormData) {
      $('#opacityLayer').toggleClass('opacity-layer', true);
      $('#confirmationModal').modal('show');
      $('#confirmationModal .modal-body').empty();
@@ -170,7 +170,7 @@ function showModalConfirmation(objFormData) {
 // This function return a promise that will be resolved only if the user confir the action.
 // If the user clicks on Cancel button it will reject.
 //----------------------------------------------------------------------------------------
-function waitConfirmation(){
+function waitTransferConfirmation(){
      return new Promise( (resolve, reject) => {
           $('#modalBtnConfirm').click( (event) => {
                resolve(event);
