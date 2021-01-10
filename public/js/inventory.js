@@ -35,9 +35,14 @@ function fetchStockItemsList(){
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Succeed to retrieve list of stock items - status: ${textStatus}`);
                console.log(data);
-               $('.my-table-spinner').hide();
-               fillTableStockItems(data);
+
+               const { stockItems, itemModels } = data;
+               localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
+               localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
+               $('.table-spinner').hide();
+               fillTableStockItems(stockItems, itemModels);
                setClickableTableRows();
+               setTableFilter();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -53,8 +58,8 @@ function fetchStockItemsList(){
 // It receives two parameters: one containing all the stock items found in the database
 // and another with all the models registered.
 //----------------------------------------------------------------------------------------
-function fillTableStockItems({ stockItems, itemModels }){
-     
+function fillTableStockItems(stockItems, itemModels){
+
      for(let item in stockItems){
           const stockItem = stockItems[item];
 
@@ -62,24 +67,26 @@ function fillTableStockItems({ stockItems, itemModels }){
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
 
           let trTableStockItems = document.createElement('TR');
-          //trTableStockItems.classList.add('table-stock-row');
           
           let tdStockItem = document.createElement('TD');
           tdStockItem.textContent = `${stockItem.category} - ${model.brand} ${model.name}`;
           
           let tdInventoryNumber = document.createElement('TD');
-          let inventoryNumberStr = stockItem.inventoryNumber.slice(0,3) + ' ' + stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
-          tdInventoryNumber.textContent = inventoryNumberStr;
+          let inventoryNumberPrefix = stockItem.inventoryNumber.slice(0,3);
+          let inventoryNumberStr = stockItem.inventoryNumber.slice(3,6) + '.' + stockItem.inventoryNumber.slice(6);
+          tdInventoryNumber.innerHTML = `<span class='inventoryNumberPrefix'>${inventoryNumberPrefix}</span> ${inventoryNumberStr}`;
           
           let tdStatus = document.createElement('TD');
           let statusBadge = document.createElement('SPAN');
           if(stockItem.status === 'available'){
                statusBadge.classList.add('badge', 'badge-available');
-               statusBadge.textContent = '👍 AVAILABLE';
+               statusBadge.textContent = '👍';
+               statusBadge.innerHTML += "<span class='itemStatusText'> AVAILABLE</span>";
           }
           else if(stockItem.status === 'taken'){
                statusBadge.classList.add('badge', 'badge-taken');
-               statusBadge.textContent = '❌ TAKEN';
+               statusBadge.textContent = '❌';
+               statusBadge.innerHTML += "<span class='itemStatusText'> TAKEN</span>";
           }
           tdStatus.append(statusBadge);
 
@@ -129,5 +136,55 @@ function clearTableContent(){
      $('.table-inventory thead').empty();
      $('.table-inventory tbody').empty();
      $('.table-inventory tfoot').empty();
-     $('.my-table-spinner').show();
+     $('.table-spinner').show();
+}
+
+
+//----------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------
+function setTableFilter(){
+     $('#tableFilterField').attr({
+          disabled: false,
+          tabindex: '0'
+     });
+
+     $('#tableFilterField').on('input', (event) => {
+          let filterText = $(event.target).val().trim();
+          
+          if( filterText.length >= 3 ){
+               $('.table-inventory tbody').empty();
+               $('#pNothingFound').hide();
+               $('.table-spinner').show();
+               
+               const {stockItems, itemModels} = getItemsFromLocalStorage();
+               let filterPattern = new RegExp(filterText, 'i');
+               const foundItems = stockItems.filter( (item) => { return filterPattern.test( item.category ) });
+
+               if(foundItems.length > 0){
+                    console.log('Items found: ', foundItems);
+                    $('.table-spinner').hide();
+                    fillTableStockItems(foundItems, itemModels);
+               }
+               else{
+                    $('.table-spinner').hide();
+                    $('#pNothingFound').show();
+               }
+          }
+          else {
+               const {stockItems, itemModels} = getItemsFromLocalStorage();
+               $('#pNothingFound').hide();
+               $('.table-spinner').hide();
+               $('.table-inventory tbody').empty();
+               fillTableStockItems(stockItems, itemModels);
+          }
+     });
+
+}
+
+
+function getItemsFromLocalStorage(){
+     const stockItems = JSON.parse( localStorage.getItem('stockItems') );
+     const itemModels = JSON.parse( localStorage.getItem('itemModels') );
+     return {stockItems, itemModels}
 }

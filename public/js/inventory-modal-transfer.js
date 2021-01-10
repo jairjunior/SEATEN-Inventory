@@ -25,7 +25,7 @@ $('#modalPillTransfer').click( () => {
 // is already embedded in the Beared Token sent alongside with the HTTP request.
 //----------------------------------------------------------------------------------------
 function buildTransferForm(){
-     let item = JSON.parse( localStorage.getItem( 'selectedItem') );
+     let item = JSON.parse( localStorage.getItem('selectedItem') );
      let inventoryNumberStr = item.inventoryNumber.slice(0,3) + ' ' + item.inventoryNumber.slice(3,6) + '.' + item.inventoryNumber.slice(6);
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody)

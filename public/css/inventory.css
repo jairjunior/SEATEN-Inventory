@@ -52,6 +52,10 @@ main.container {
      cursor: pointer;
 }
 
+.table-inventory tr td{
+     vertical-align: middle;
+}
+
 .badge-available {
      background-color: rgb(3, 210, 3);
      border: 3px solid rgb(2, 180, 2);
@@ -64,9 +68,15 @@ main.container {
      color: white;
 }
 
-.my-table-spinner {
+.table-spinner {
      display: block;
      margin: 100px auto;
+}
+
+#pNothingFound {
+     margin: 50px 0;
+     color: crimson;
+     display: none;
 }
 
 /*********************************************************************/
@@ -236,6 +246,10 @@ fieldset.form-group {
 /*********************************************************************/
 
 @media screen and (max-width: 991px){
+     .itemStatusText, .inventoryNumberPrefix {
+          display: none;
+     }
+     
      #inventoryModal .modal-body {
           padding: 0.8rem;
      }
