@@ -144,10 +144,7 @@ function clearTableContent(){
 //
 //----------------------------------------------------------------------------------------
 function setTableFilter(){
-     $('#tableFilterField').attr({
-          disabled: false,
-          tabindex: '0'
-     });
+     $('#tableFilterField').attr({ disabled: false, tabindex: '0' });
 
      $('#tableFilterField').on('input', (event) => {
           let filterText = $(event.target).val().trim();
@@ -157,9 +154,15 @@ function setTableFilter(){
                $('#pNothingFound').hide();
                $('.table-spinner').show();
                
+               var foundItems = new Array();
                const {stockItems, itemModels} = getItemsFromLocalStorage();
-               let filterPattern = new RegExp(filterText, 'i');
-               const foundItems = stockItems.filter( (item) => { return filterPattern.test( item.category ) });
+               const filterPattern = new RegExp(filterText, 'i');
+               foundItems = foundItems.concat( filterByCategory(stockItems, filterPattern) );
+               foundItems = foundItems.concat( filterByInventoryNumber(stockItems, filterPattern) );
+               foundItems = foundItems.concat( filterByLocation(stockItems, filterPattern) );
+               foundItems = foundItems.concat( filterByUser(stockItems, filterPattern) );
+               foundItems = foundItems.concat( filterByReqNumber(stockItems, filterPattern) );
+               foundItems = foundItems.concat( filterByModel(stockItems, itemModels, filterPattern) );
 
                if(foundItems.length > 0){
                     console.log('Items found: ', foundItems);
@@ -180,6 +183,53 @@ function setTableFilter(){
           }
      });
 
+}
+
+function filterByCategory(stockItems, filterPattern){
+     return stockItems.filter( item => { return filterPattern.test( item.category ) });
+}
+
+function filterByInventoryNumber(stockItems, filterPattern){
+     return stockItems.filter( item => { return filterPattern.test( item.inventoryNumber ) });
+}
+
+function filterByLocation(stockItems, filterPattern){
+     return stockItems.filter( item => { return filterPattern.test( item.location ) });
+}
+
+function filterByUser(stockItems, filterPattern){
+     return stockItems.filter( item => { 
+          if(item.transferredTo)
+               return filterPattern.test( item.transferredTo.userName );
+          else 
+               return false;
+     });
+}
+
+function filterByReqNumber(stockItems, filterPattern){
+     return stockItems.filter( item => { 
+          if(item.transferredTo)
+               return filterPattern.test( item.transferredTo.taskNumber );
+          else 
+               return false;
+     });
+}
+
+function filterByModel(stockItems, itemModels, filterPattern){
+     var models = itemModels.filter( model => {
+          if( filterPattern.test( model.brand ) || filterPattern.test( model.name ) )
+               return true;
+          else 
+               return false;
+     });
+
+     var foundItems = new Array();
+     models.forEach( model => {
+          let modelPattern = new RegExp(model._id);
+          let items = stockItems.filter( item => { return modelPattern.test( item.itemModelId ) });
+          foundItems = foundItems.concat(items);
+     });
+     return foundItems;
 }
 
 
