@@ -7,7 +7,8 @@
 // hides/shows the footer buttons and spinner.
 // Finally, it build the "Transfer Item" form inside the modal body.
 //----------------------------------------------------------------------------------------
-$('#modalPillTransfer').click( () => {
+$('#modalPillTransfer').click( event => {
+     event.preventDefault();
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillTransfer .nav-link').addClass('active');
      clearModalBody();

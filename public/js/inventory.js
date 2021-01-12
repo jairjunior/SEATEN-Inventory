@@ -1,6 +1,15 @@
 "use strict";
 
 //----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+$(window).on('beforeunload', (event) => {
+     event.preventDefault();
+     return confirm('Are you sure you want to reload the application?')
+});
+
+
+//----------------------------------------------------------------------------------------
 // First of all, it builds the table header filling the columns names with the content in the array tHeaders.
 // A hidden <th> is created at the end of the header to keep the ID of each stock item.
 // The column containing the Item Ids is hidden from the view. JavaScript will handle it.

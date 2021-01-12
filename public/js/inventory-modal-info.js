@@ -25,7 +25,8 @@ $('#inventoryModal').on('hidden.bs.modal', () => {
 // Then, it gets the item Id from the Local Storage.
 // Finally, it retrieves from the server an object with all information related to the selected item.
 //----------------------------------------------------------------------------------------
-$('#modalPillInfo').click( () => {
+$('#modalPillInfo').click( event => {
+     event.preventDefault();
      $('.inventory-modal-pills .nav-link').removeClass('active');
      $('#modalPillInfo .nav-link').addClass('active');
      clearModalBody();

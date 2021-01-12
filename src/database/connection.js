@@ -5,9 +5,10 @@ const dbUser = process.env.DB_SYSTEM_ADMIN_USERNAME;
 const dbPassword = process.env.DB_SYSTEM_ADMIN_PASSWORD;
 
 const mongoAtlasURI = `mongodb+srv://${dbUser}:${dbPassword}@database.rrtt9.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+const localhostURI = `mongodb://localhost:27017/DataBase`;
 
 (async () => {
-     await mongoose.connect( mongoAtlasURI, 
+     await mongoose.connect( localhostURI, 
           {    
                useNewUrlParser: true,
                useUnifiedTopology: true,
