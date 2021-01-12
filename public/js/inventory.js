@@ -1,7 +1,7 @@
 "use strict";
 
 //----------------------------------------------------------------------------------------
-// 
+// Detects when user tries to reload the application page. Asks for confirmation.
 //----------------------------------------------------------------------------------------
 $(window).on('beforeunload', (event) => {
      event.preventDefault();
@@ -18,15 +18,15 @@ $(window).on('beforeunload', (event) => {
 function loadInventoryTable(){
      const tHeaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
      for (let i = 0; i < tHeaders.length; i++){
-          $('.table-inventory thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
+          $('#inventoryTable thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
      }
-     $('.table-inventory thead').append("<th scope='col' hidden>ID</th>");
+     $('#inventoryTable thead').append("<th scope='col' hidden>ID</th>");
      fetchStockItemsList();
 }
 
 //----------------------------------------------------------------------------------------
 // Retrieves all stock items from the database.
-// On success, it fills the table (.table-inventory) with the items returned from the server
+// On success, it fills the table (#inventoryTable) with the items returned from the server
 // and finally it adds an event listener to detect clicks on any table row.
 //----------------------------------------------------------------------------------------
 function fetchStockItemsList(){
@@ -69,8 +69,10 @@ function fetchStockItemsList(){
 //----------------------------------------------------------------------------------------
 function fillTableStockItems(stockItems, itemModels){
 
-     for(let item in stockItems){
-          const stockItem = stockItems[item];
+     const itemsPerPage = ( stockItems.length < $('#itemsPerPage').val() ) ? stockItems.length : $('#itemsPerPage').val();
+
+     for(let i = 0; i < itemsPerPage; i++){
+          const stockItem = stockItems[i];
 
           const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId });
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
@@ -107,19 +109,57 @@ function fillTableStockItems(stockItems, itemModels){
           tdId.textContent = stockItem._id;
 
           trTableStockItems.append(tdStockItem, tdInventoryNumber, tdStatus, tdLocation, tdId);
-          $('.table-inventory tbody').append(trTableStockItems);
+          $('#inventoryTable tbody').append(trTableStockItems);
      }
+     
+     makeTablePagination(stockItems.length);
 }
 
 
 //----------------------------------------------------------------------------------------
-// This function add the Event Listener to each row of the Inventory Table (.table-inventory).
+// 
+//----------------------------------------------------------------------------------------
+function makeTablePagination(numItems){
+     console.log('Total of items: ', numItems);
+     const numberOfPages = Math.ceil( numItems / $('#itemsPerPage').val() );
+     console.log('Total of pages: ', numberOfPages);
+
+     $('#tablePagination').empty();
+     $('#tablePagination').html(`
+          <nav aria-label="Inventory Table Pagination">
+               <ul class="pagination">
+                    <li id="tablePaginationPrevious" class="page-item disabled">
+                         <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    
+                    <li class="page-item active" aria-current="page">
+                         <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                    </li>
+                    
+                    <li id="tablePaginationNext" class="page-item disabled">
+                         <a class="page-link" href="#">Next</a>
+                    </li>
+               </ul>
+          </nav>
+     `);
+
+// <li class="page-item"><a class="page-link" href="#">2</a></li>
+}
+
+$('#itemsPerPage').change( () => {
+     clearTableContent();
+     loadInventoryTable();
+});
+
+
+//----------------------------------------------------------------------------------------
+// This function add the Event Listener to each row of the Inventory Table (#inventoryTable).
 // When a row is clicked, the hidden id (last <td> of each table row) is saved into a variable
 // and then it is saved into Local Storage for later use. Then, the modal body is cleared, 
 // the buttons are hidden/shown and it's finally triggered to show up.
 //----------------------------------------------------------------------------------------
 function setClickableTableRows(){
-     $('.table-inventory').click( (event) => {
+     $('#inventoryTable').click( event => {
           let clickedRow = $(event.target).closest('tr');
           
           if(clickedRow.length === 1){
@@ -142,12 +182,15 @@ function setClickableTableRows(){
 // Clears the content of the main table
 //----------------------------------------------------------------------------------------
 function clearTableContent(){
-     $('.table-inventory thead').empty();
-     $('.table-inventory tbody').empty();
-     $('.table-inventory tfoot').empty();
+     $('#inventoryTable thead').empty();
+     $('#inventoryTable tbody').empty();
+     $('#inventoryTable tfoot').empty();
      $('.table-spinner').show();
 }
 
+function clearTableBody(){
+     $('#inventoryTable tbody').empty();
+}
 
 //----------------------------------------------------------------------------------------
 //
@@ -159,7 +202,7 @@ function setTableFilter(){
           let filterText = $(event.target).val().trim();
           
           if( filterText.length >= 3 ){
-               $('.table-inventory tbody').empty();
+               $('#inventoryTable tbody').empty();
                $('#pNothingFound').hide();
                $('.table-spinner').show();
                
@@ -187,7 +230,7 @@ function setTableFilter(){
                const {stockItems, itemModels} = getItemsFromLocalStorage();
                $('#pNothingFound').hide();
                $('.table-spinner').hide();
-               $('.table-inventory tbody').empty();
+               $('#inventoryTable tbody').empty();
                fillTableStockItems(stockItems, itemModels);
           }
      });
@@ -242,6 +285,9 @@ function filterByModel(stockItems, itemModels, filterPattern){
 }
 
 
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
 function getItemsFromLocalStorage(){
      const stockItems = JSON.parse( localStorage.getItem('stockItems') );
      const itemModels = JSON.parse( localStorage.getItem('itemModels') );

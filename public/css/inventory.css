@@ -38,21 +38,25 @@ main.container {
 
 /*********************************************************************/
 
-.table-inventory thead th {
+#inventoryTable {
+     border-bottom: 1px solid rgba(0, 0, 0, 0.198);
+}
+
+#inventoryTable thead th {
      font-weight: bold;
      vertical-align: middle;
 }
 
 /* Aligns all the <th> and <td> tags at the center, except the first ones in each row */
-.table-inventory th:not(:first-child), .table-inventory tr td:not(:first-child) {
+#inventoryTable th:not(:first-child), #inventoryTable tr td:not(:first-child) {
      text-align: center;
 }
 
-.table-inventory tr:hover{
+#inventoryTable tr:hover{
      cursor: pointer;
 }
 
-.table-inventory tr td{
+#inventoryTable tr td{
      vertical-align: middle;
 }
 
