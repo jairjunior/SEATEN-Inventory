@@ -21,7 +21,7 @@ function loadInventoryTable(){
           $('#inventoryTable thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
      }
      $('#inventoryTable thead').append("<th scope='col' hidden>ID</th>");
-     //$('#itemsPerPage').attr('disabled', true);
+     $('#paginationContainer').attr('hidden', true);
      fetchStockItemsList();
      setClickableTableRows();
      setTableFilter();
@@ -52,7 +52,7 @@ function fetchStockItemsList(){
                localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
                localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
                $('.table-spinner').hide();
-               makeTableStockItems(stockItems, itemModels);
+               fillTableStockItems(stockItems, itemModels);
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -68,7 +68,7 @@ function fetchStockItemsList(){
 // It receives two parameters: one containing all the stock items found in the database
 // and another with all the models registered.
 //----------------------------------------------------------------------------------------
-function makeTableStockItems(stockItems, itemModels){
+function fillTableStockItems(stockItems, itemModels){
 
      const itemsPerPage = ( stockItems.length < $('#itemsPerPage').val() ) ? stockItems.length : $('#itemsPerPage').val();
 
@@ -122,13 +122,13 @@ function makeTableStockItems(stockItems, itemModels){
 //----------------------------------------------------------------------------------------
 function makeTablePagination(numItems){
      const numberOfPages = Math.ceil( numItems / $('#itemsPerPage').val() );
+     if(numberOfPages < 1) throw "Number of table pages cannot be less than 1.";
 
      console.log('Total of items: ', numItems);
      console.log('Total of pages: ', numberOfPages);
 
-     $('#itemsPerPage').attr('disabled', false);
-     $('#tablePagination').empty();
-     $('#tablePagination').html(`
+     $('#paginationContainer').attr('hidden', false);
+     $('#tablePagination').empty().html(`
           <nav aria-label="Inventory Table Pagination">
                <ul class="pagination">
                     <li id="tablePaginationPrevious" class="page-item disabled">
@@ -230,7 +230,7 @@ function setTableFilter(){
                if(foundItems.length > 0){
                     console.log('Items found: ', foundItems);
                     $('.table-spinner').hide();
-                    makeTableStockItems(foundItems, itemModels);
+                    fillTableStockItems(foundItems, itemModels);
                }
                else{
                     $('.table-spinner').hide();
@@ -242,7 +242,7 @@ function setTableFilter(){
                $('#pNothingFound').hide();
                $('.table-spinner').hide();
                $('#inventoryTable tbody').empty();
-               makeTableStockItems(stockItems, itemModels);
+               fillTableStockItems(stockItems, itemModels);
           }
      });
 
