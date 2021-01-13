@@ -44,7 +44,9 @@ function submitToLogin(userInfo){
                console.log('Response: ', data);
                //console.log('jqXHR object: ', jqXHR);
 
-               loadApplicationPage(data);
+               const { token } = data;
+               localStorage.setItem("bearerToken", token);
+               loadApplicationPage( token );
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -58,11 +60,10 @@ function submitToLogin(userInfo){
 //----------------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------------
-function loadApplicationPage({ token }){
+function loadApplicationPage( token ){
      if(!token){
           return console.error('ERROR: Authentication Token was not provided.');
      }
-     localStorage.setItem("bearerToken", token);
 
      $.ajax({
           url: `/inventory`,
@@ -80,8 +81,7 @@ function loadApplicationPage({ token }){
                $(`link[href*="login.css"]`).remove();
                $('html head').append(`<link rel="stylesheet" href="../css/navbar.css">`);
                $('html head').append(`<link rel="stylesheet" href="../css/inventory.css">`);
-               $('body').empty();
-               $('body').html(data);
+               $('body').empty().html(data);
                loadInventoryTable();
           }
      })
