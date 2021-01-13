@@ -67,23 +67,25 @@
           <form class="filter-stock-items">
                <div class="form-group">
                     <legend class="h5">Filter</legend>
-                    <label for="tableFilterField" class="sr-only">
+                    <label for="tableFilterInputField" class="sr-only">
                          Use the field below to search within the inventory.
                     </label>
                     <div class="input-group mb-2">
                          <div class="input-group-prepend">
                               <div class="input-group-text">🔎</div>
                          </div>
-                         <input type="text" class="form-control" id="tableFilterField" aria-describedby="filter" tabindex="-1" disabled placeholder="Search by category, model, inventory number, user or Service Now ticket">
+                         <input type="text" class="form-control" id="tableFilterInputField" placeholder="Search by category, model, inventory number, user or Service Now ticket" disabled>
                     </div>
                </div>
           </form>
+
 
           <table class="table table-hover table-responsive-sm" id="inventoryTable">
                <thead></thead>
                <tbody></tbody>
                <tfoot></tfoot>
           </table>
+
 
           <div class="container" id="paginationContainer" hidden>
                <div class="row">
