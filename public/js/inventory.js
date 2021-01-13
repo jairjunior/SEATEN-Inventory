@@ -21,7 +21,10 @@ function loadInventoryTable(){
           $('#inventoryTable thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
      }
      $('#inventoryTable thead').append("<th scope='col' hidden>ID</th>");
+     //$('#itemsPerPage').attr('disabled', true);
      fetchStockItemsList();
+     setClickableTableRows();
+     setTableFilter();
 }
 
 //----------------------------------------------------------------------------------------
@@ -49,9 +52,7 @@ function fetchStockItemsList(){
                localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
                localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
                $('.table-spinner').hide();
-               fillTableStockItems(stockItems, itemModels);
-               setClickableTableRows();
-               setTableFilter();
+               makeTableStockItems(stockItems, itemModels);
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -67,7 +68,7 @@ function fetchStockItemsList(){
 // It receives two parameters: one containing all the stock items found in the database
 // and another with all the models registered.
 //----------------------------------------------------------------------------------------
-function fillTableStockItems(stockItems, itemModels){
+function makeTableStockItems(stockItems, itemModels){
 
      const itemsPerPage = ( stockItems.length < $('#itemsPerPage').val() ) ? stockItems.length : $('#itemsPerPage').val();
 
@@ -120,10 +121,12 @@ function fillTableStockItems(stockItems, itemModels){
 // 
 //----------------------------------------------------------------------------------------
 function makeTablePagination(numItems){
-     console.log('Total of items: ', numItems);
      const numberOfPages = Math.ceil( numItems / $('#itemsPerPage').val() );
+
+     console.log('Total of items: ', numItems);
      console.log('Total of pages: ', numberOfPages);
 
+     $('#itemsPerPage').attr('disabled', false);
      $('#tablePagination').empty();
      $('#tablePagination').html(`
           <nav aria-label="Inventory Table Pagination">
@@ -132,7 +135,7 @@ function makeTablePagination(numItems){
                          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
                     </li>
                     
-                    <li class="page-item active" aria-current="page">
+                    <li class="pagination-number page-item active" aria-current="page">
                          <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
                     </li>
                     
@@ -143,12 +146,34 @@ function makeTablePagination(numItems){
           </nav>
      `);
 
+     if( numberOfPages > 1 && numberOfPages <= 5 ){
+          for(let i = 2; i <= numberOfPages; i++){
+               $('#tablePaginationNext').before(`
+                    <li class="pagination-number page-item">
+                         <a class="page-link" href="#">${i}</span></a>
+                    </li>
+               `);
+          }
+          $('#tablePaginationNext').removeClass('disabled');
+     }
+     else if( numberOfPages > 5 ){
+
+     }
+
+     $('#tablePagination .page-link').click( event => {
+          event.preventDefault();
+     });
+
 // <li class="page-item"><a class="page-link" href="#">2</a></li>
 }
 
 $('#itemsPerPage').change( () => {
      clearTableContent();
      loadInventoryTable();
+});
+
+$('#tablePagination .page-item').click( event => {
+     event.preventDefault();
 });
 
 
@@ -179,20 +204,6 @@ function setClickableTableRows(){
 
 
 //----------------------------------------------------------------------------------------
-// Clears the content of the main table
-//----------------------------------------------------------------------------------------
-function clearTableContent(){
-     $('#inventoryTable thead').empty();
-     $('#inventoryTable tbody').empty();
-     $('#inventoryTable tfoot').empty();
-     $('.table-spinner').show();
-}
-
-function clearTableBody(){
-     $('#inventoryTable tbody').empty();
-}
-
-//----------------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------------
 function setTableFilter(){
@@ -219,7 +230,7 @@ function setTableFilter(){
                if(foundItems.length > 0){
                     console.log('Items found: ', foundItems);
                     $('.table-spinner').hide();
-                    fillTableStockItems(foundItems, itemModels);
+                    makeTableStockItems(foundItems, itemModels);
                }
                else{
                     $('.table-spinner').hide();
@@ -231,7 +242,7 @@ function setTableFilter(){
                $('#pNothingFound').hide();
                $('.table-spinner').hide();
                $('#inventoryTable tbody').empty();
-               fillTableStockItems(stockItems, itemModels);
+               makeTableStockItems(stockItems, itemModels);
           }
      });
 
@@ -282,6 +293,17 @@ function filterByModel(stockItems, itemModels, filterPattern){
           foundItems = foundItems.concat(items);
      });
      return foundItems;
+}
+
+
+//----------------------------------------------------------------------------------------
+// Clears all the content of the main table
+//----------------------------------------------------------------------------------------
+function clearTableContent(){
+     $('#inventoryTable thead').empty();
+     $('#inventoryTable tbody').empty();
+     $('#inventoryTable tfoot').empty();
+     $('.table-spinner').show();
 }
 
 
