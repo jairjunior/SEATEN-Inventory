@@ -125,41 +125,24 @@ function fillTableStockItems(stockItems, itemModels){
 //----------------------------------------------------------------------------------------
 function makeTablePagination(numItems){
      const numberOfPages = Math.ceil( numItems / $('#itemsPerPage').val() );
-     if(numberOfPages < 1) throw "Number of table pages cannot be less than 1.";
-
-     //console.log('Total of items: ', numItems);
-     //console.log('Total of pages: ', numberOfPages);
+     if(numberOfPages < 1) throw "ERROR: Number of table pages cannot be less than 1.";
 
      $('#paginationContainer').attr('hidden', false);
-     $('#tablePagination').empty().html(`
-          <nav aria-label="Inventory Table - Pagination">
-               <ul class="pagination">
-                    <li id="tablePaginationPrevious" class="page-item disabled">
-                         <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                    </li>
-                    
-                    <li class="pagination-number page-item active" aria-current="page">
-                         <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-                    </li>
-                    
-                    <li id="tablePaginationNext" class="page-item disabled">
-                         <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
-                    </li>
-               </ul>
-          </nav>
-     `);
 
-     if( numberOfPages > 1 && numberOfPages <= 5 ){
-          $('#tablePaginationNext').removeClass('disabled');
-          $('#tablePaginationNext a.page-link').attr({ 'aria-disabled': false, 'tabindex': '0' });
+     if( numberOfPages == 1 ){
+          initializeTablePagination({ 'previous': 'disabled', 'next': 'disabled' });
+     }
+     else if( numberOfPages > 1 && numberOfPages <= 5 ){
+          initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
+
           for(let i = 2; i <= numberOfPages; i++){
                let paginationNumberHTML = createPaginationNumber(i);
                $('#tablePaginationNext').before(paginationNumberHTML);
           }
      }
      else if( numberOfPages > 5 ){
-          $('#tablePaginationNext').removeClass('disabled');
-          $('#tablePaginationNext a.page-link').attr({ 'aria-disabled': false, 'tabindex': '0' });
+          initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
+
           for(let i = 2; i <= 5; i++){
                let paginationNumberHTML;
                if ( i == 2 || i == 3 ){
@@ -181,8 +164,33 @@ function makeTablePagination(numItems){
 }
 
 
+function initializeTablePagination(config){
+     if( config.previous === 'disabled' ){
+          $('#tablePaginationPrevious').addClass('disabled');
+          $('#tablePaginationPrevious a.page-link').attr({ 'tabindex': '-1', 'aria-disabled': true });
+     } 
+     else if( config.previous === 'enabled' ){
+          $('#tablePaginationPrevious').removeClass('disabled');
+          $('#tablePaginationPrevious a.page-link').attr({ 'tabindex': '0', 'aria-disabled': false });
+     }
+     
+     if( config.next === 'disabled' ){
+          $('#tablePaginationNext').addClass('disabled');
+          $('#tablePaginationNext a.page-link').attr({ 'tabindex': '-1', 'aria-disabled': true });
+     }
+     else if( config.next === 'enabled' ){
+          $('#tablePaginationNext').removeClass('disabled');
+          $('#tablePaginationNext a.page-link').attr({ 'tabindex': '0', 'aria-disabled': false });
+     }
+     
+     // there will be always a page number 1
+     $('#tablePagination ul.pagination .page-number').not('#pageNumberOne').remove();
+     $('#pageNumberOne').addClass('active').attr({ 'aria-current': 'page' });
+}
+
+
 function createPaginationNumber(innerText){
-     return    `<li class="pagination-number page-item ${ (innerText === '...') ? 'disabled' : '' }">
+     return    `<li class="page-item page-number ${ (innerText === '...') ? 'disabled' : '' }">
                     <a class="page-link" href="#" ${ (innerText === '...') ? "tabindex='-1' aria-disabled='true'" : '' }>${innerText}</span></a>
                </li>`
 }
@@ -229,15 +237,15 @@ function setClickableTableRows(){
 //----------------------------------------------------------------------------------------
 function setTableFilter(){
      $('#tableFilterInputField').on('input', (event) => {
+          const {stockItems, itemModels} = getItemsFromLocalStorage();
           let filterText = $(event.target).val().trim();
-          
+
           if( filterText.length >= 3 ){
                $('#inventoryTable tbody').empty();
                $('#pNothingFound').hide();
                $('.table-spinner').show();
                
                var foundItems = new Array();
-               const {stockItems, itemModels} = getItemsFromLocalStorage();
                const filterPattern = new RegExp(filterText, 'i');
                foundItems = foundItems.concat( filterByCategory(stockItems, filterPattern) );
                foundItems = foundItems.concat( filterByInventoryNumber(stockItems, filterPattern) );
@@ -258,7 +266,6 @@ function setTableFilter(){
                }
           }
           else {
-               const {stockItems, itemModels} = getItemsFromLocalStorage();
                $('#pNothingFound').hide();
                $('.table-spinner').hide();
                $('#inventoryTable tbody').empty();
