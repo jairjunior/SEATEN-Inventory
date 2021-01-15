@@ -18,17 +18,15 @@ $('#itemsPerPage').change( () => {
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-function makeTablePagination(numOfItems){
+function makeTablePagination(numOfItems, pageNumber){
     const numberOfPages = Math.ceil( numOfItems / $('#itemsPerPage').val() );
-    if(numberOfPages < 1) throw "ERROR: Number of table pages cannot be less than 1.";
-
-    $('#paginationContainer').attr('hidden', false);
+    if(numberOfPages < 1) return console.error("ERROR: Number of table pages cannot be less than 1.");
 
 
     if( numberOfPages == 1 ){
          initializeTablePagination({ 'previous': 'disabled', 'next': 'disabled' });
     }
-    else if( numberOfPages > 1 && numberOfPages <= 5 ){
+    else if( numberOfPages >= 2 && numberOfPages <= 5 ){
          initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
 
          for(let i = 2; i <= numberOfPages; i++){
@@ -49,6 +47,13 @@ function makeTablePagination(numOfItems){
     }
 
     setEventHandlersForPagination();
+
+    if(pageNumber == numberOfPages)
+        $('#tablePagination .page-number').last().addClass('active').attr({ 'aria-current': 'page' });
+    else
+        $('#tablePagination .page-number').eq(pageNumber-1).addClass('active').attr({ 'aria-current': 'page' });
+    
+    $('#paginationContainer').attr('hidden', false);
 }
 
 
@@ -74,14 +79,13 @@ function initializeTablePagination(options){
          $('#tablePaginationNext a.page-link').attr({ 'tabindex': '0', 'aria-disabled': false });
     }
     
-    // there will be always a page number 1
-    $('#tablePagination ul.pagination .page-number').not('#pageNumberOne').remove();
-    $('#pageNumberOne').addClass('active').attr({ 'aria-current': 'page' });
+    $('#tablePagination .page-number, #tablePagination .page-ellipsis').not('#pageNumberOne').remove();
+    $('#pageNumberOne').removeClass('active').attr({ 'aria-current': false });
 }
 
 
 function createPaginationNumber(innerText){
-    return    `<li class="page-item page-number ${ (innerText === '...') ? 'disabled' : '' }">
+    return    `<li class="page-item ${ (innerText === '...') ? 'page-ellipsis disabled' : 'page-number' }">
                    <a class="page-link" href="#" ${ (innerText === '...') ? "tabindex='-1' aria-disabled='true'" : '' }>${innerText}</span></a>
               </li>`
 }
@@ -96,7 +100,7 @@ function setEventHandlersForPagination(){
     });
 
     
-    $('#tablePagination .page-number').click( event => {
+    $('#tablePagination ul.pagination .page-number').click( event => {
         if( ! $(event.target.parentNode).hasClass('active') ){
             $('#tablePagination .page-number.active').removeClass('active');
             $(event.target.parentNode).addClass('active');
@@ -104,43 +108,35 @@ function setEventHandlersForPagination(){
             const pageNumber = $(event.target).text().trim().split(' ')[0];
             console.log('Página selecionada: ', pageNumber);
 
-            const itemsPerPage = $('#itemsPerPage').val();
-            console.log('Items por página: ', itemsPerPage);
-
+            $('#inventoryTable tbody').empty();
+            
             const {stockItems, itemModels} = getItemsFromLocalStorage();
 
-            let firstIndex = itemsPerPage * (pageNumber - 1);
-            let lastIndex = firstIndex + itemsPerPage;
-            let itemsToShow = stockItems.slice(firstIndex, lastIndex);
-            console.log('Items to show: ', itemsToShow);
-
-            $('#inventoryTable tbody').empty();
-            fillTableStockItems(itemsToShow, itemModels);
+            if( $('#tableFilterInputField').val().trim().length >= 3 ){
+                const filterText = $('#tableFilterInputField').val().trim();
+                console.log('Texto no campo filtro: ', filterText);
+                const foundItems = filterStockItems(stockItems, itemModels, filterText);
+                console.log('items filtrados: ', foundItems);
+                fillTableStockItems(foundItems, itemModels, pageNumber);
+            }
+            else{
+                fillTableStockItems(stockItems, itemModels, pageNumber);
+            }
         }
     });
 
 
-    $('#tablePaginationPrevious a.page-link').click( event => {
+    $('#tablePaginationPrevious').click( event => {
         
-        if( $(event.target.parentNode).hasClass('disabled') ){
-            console.log('Estou desabilitado.');
-        }
-        else{
-            console.log('<< Página anterior');
-        }
+        console.log('<< Página anterior');
         
         console.log( $('#tablePagination .page-number.active').text() );
     });
 
 
-    $('#tablePaginationNext a.page-link').click( event => {
+    $('#tablePaginationNext').click( event => {
         
-        if( $(event.target.parentNode).hasClass('disabled') ){
-            console.log('Estou desabilitado.');
-        }
-        else{
-            console.log('Página seguinte >>');
-        }
+        console.log('Página seguinte >>');
         
         console.log( $('#tablePagination .page-number.active').text() );
     });

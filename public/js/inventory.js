@@ -51,6 +51,9 @@ function fetchStockItemsList(){
                console.log(data);
 
                const { stockItems, itemModels } = data;
+               localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
+               localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
+               
                $('.table-spinner').hide();
                fillTableStockItems(stockItems, itemModels);
                $('#tableFilterInputField').attr('disabled', false);
@@ -69,15 +72,30 @@ function fetchStockItemsList(){
 // It receives two parameters: one containing all the stock items found in the database
 // and another with all the models registered.
 //----------------------------------------------------------------------------------------
-function fillTableStockItems(stockItems, itemModels){
-     localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
-     localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
-     const itemsPerPage = ( stockItems.length < $('#itemsPerPage').val() ) ? stockItems.length : $('#itemsPerPage').val();
+function fillTableStockItems(listOfItems, listOfModels, pageNumber){
+     const itemsPerPage = ( listOfItems.length < $('#itemsPerPage').val() ) ? listOfItems.length : $('#itemsPerPage').val();
+     
+     if(pageNumber === undefined) pageNumber = 1;
+     
+     let firstIndex = parseInt( itemsPerPage ) * (pageNumber - 1);
+     let lastIndex = firstIndex + parseInt( itemsPerPage );
 
-     for(let i = 0; i < itemsPerPage; i++){
-          const stockItem = stockItems[i];
+     const itemsToShow = listOfItems.slice(firstIndex, (lastIndex > listOfItems.length) ? undefined : lastIndex );
+     if(itemsToShow.length > itemsPerPage) return console.error('ERROR: In function fillTableStockItems(). Array itemsToShow is bigger than itemsPerPage.');
 
-          const model = itemModels.find( (model) => { return model._id === stockItem.itemModelId });
+
+     /*console.log('pageNumber: ', pageNumber);
+     console.log('itemsPerPage: ', itemsPerPage);
+     console.log('itemsToShow.length: ', itemsToShow.length);
+     console.log('firstIndex: ', firstIndex);
+     console.log('lastIndex: ', lastIndex);
+     console.log('itemsToShow: ', itemsToShow);*/
+
+
+     for(let i = 0; i < itemsToShow.length; i++){
+          var stockItem = itemsToShow[i];
+
+          let model = listOfModels.find( (model) => { return model._id === stockItem.itemModelId });
           if( !model ) return console.error(`ERROR: Could not find a respective model for the item (${stockItem.category}: ${stockItem.inventoryNumber}).`);
 
           let trTableStockItems = document.createElement('TR');
@@ -115,7 +133,7 @@ function fillTableStockItems(stockItems, itemModels){
           $('#inventoryTable tbody').append(trTableStockItems);
      }
      
-     makeTablePagination(stockItems.length);
+     makeTablePagination(listOfItems.length, pageNumber);
 }
 
 
@@ -156,17 +174,9 @@ function setTableFilter(){
           if( filterText.length >= 3 ){
                $('#inventoryTable tbody').empty();
                $('#pNothingFound').hide();
-               $('.table-spinner').show();
+               $('.table-spinner').show();               
                
-               var foundItems = new Array();
-               const filterPattern = new RegExp(filterText, 'i');
-               foundItems = foundItems.concat( filterByCategory(stockItems, filterPattern) );
-               foundItems = foundItems.concat( filterByInventoryNumber(stockItems, filterPattern) );
-               foundItems = foundItems.concat( filterByLocation(stockItems, filterPattern) );
-               foundItems = foundItems.concat( filterByUser(stockItems, filterPattern) );
-               foundItems = foundItems.concat( filterByReqNumber(stockItems, filterPattern) );
-               foundItems = foundItems.concat( filterByModel(stockItems, itemModels, filterPattern) );
-
+               const foundItems = filterStockItems(stockItems, itemModels, filterText);
                if(foundItems.length > 0){
                     console.log('Items found: ' + foundItems.length);
                     $('.table-spinner').hide();
@@ -185,6 +195,18 @@ function setTableFilter(){
                fillTableStockItems(stockItems, itemModels);
           }
      });
+}
+
+function filterStockItems(stockItems, itemModels, filterText){
+     var foundItems = new Array();
+     const filterPattern = new RegExp(filterText, 'i');
+     foundItems = foundItems.concat( filterByCategory(stockItems, filterPattern) );
+     foundItems = foundItems.concat( filterByInventoryNumber(stockItems, filterPattern) );
+     foundItems = foundItems.concat( filterByLocation(stockItems, filterPattern) );
+     foundItems = foundItems.concat( filterByUser(stockItems, filterPattern) );
+     foundItems = foundItems.concat( filterByReqNumber(stockItems, filterPattern) );
+     foundItems = foundItems.concat( filterByModel(stockItems, itemModels, filterPattern) );
+     return foundItems;
 }
 
 function filterByCategory(stockItems, filterPattern){
