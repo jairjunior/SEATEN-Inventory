@@ -51,8 +51,6 @@ function fetchStockItemsList(){
                console.log(data);
 
                const { stockItems, itemModels } = data;
-               localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
-               localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
                $('.table-spinner').hide();
                fillTableStockItems(stockItems, itemModels);
                $('#tableFilterInputField').attr('disabled', false);
@@ -72,7 +70,8 @@ function fetchStockItemsList(){
 // and another with all the models registered.
 //----------------------------------------------------------------------------------------
 function fillTableStockItems(stockItems, itemModels){
-
+     localStorage.setItem( 'stockItems' , JSON.stringify(stockItems) );
+     localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
      const itemsPerPage = ( stockItems.length < $('#itemsPerPage').val() ) ? stockItems.length : $('#itemsPerPage').val();
 
      for(let i = 0; i < itemsPerPage; i++){
@@ -119,92 +118,6 @@ function fillTableStockItems(stockItems, itemModels){
      makeTablePagination(stockItems.length);
 }
 
-
-//----------------------------------------------------------------------------------------
-// 
-//----------------------------------------------------------------------------------------
-function makeTablePagination(numItems){
-     const numberOfPages = Math.ceil( numItems / $('#itemsPerPage').val() );
-     if(numberOfPages < 1) throw "ERROR: Number of table pages cannot be less than 1.";
-
-     $('#paginationContainer').attr('hidden', false);
-
-     if( numberOfPages == 1 ){
-          initializeTablePagination({ 'previous': 'disabled', 'next': 'disabled' });
-     }
-     else if( numberOfPages > 1 && numberOfPages <= 5 ){
-          initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
-
-          for(let i = 2; i <= numberOfPages; i++){
-               let paginationNumberHTML = createPaginationNumber(i);
-               $('#tablePaginationNext').before(paginationNumberHTML);
-          }
-     }
-     else if( numberOfPages > 5 ){
-          initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
-
-          for(let i = 2; i <= 5; i++){
-               let paginationNumberHTML;
-               if ( i == 2 || i == 3 ){
-                    paginationNumberHTML = createPaginationNumber(i);
-               }
-               else if( i == 4 ){
-                    paginationNumberHTML = createPaginationNumber('...');
-               }
-               else if( i == 5 ){
-                    paginationNumberHTML = createPaginationNumber(numberOfPages);
-               }
-               $('#tablePaginationNext').before(paginationNumberHTML);
-          }
-     }
-
-     $('#tablePagination a.page-link').click( event => {
-          event.preventDefault();
-     });
-}
-
-
-function initializeTablePagination(config){
-     if( config.previous === 'disabled' ){
-          $('#tablePaginationPrevious').addClass('disabled');
-          $('#tablePaginationPrevious a.page-link').attr({ 'tabindex': '-1', 'aria-disabled': true });
-     } 
-     else if( config.previous === 'enabled' ){
-          $('#tablePaginationPrevious').removeClass('disabled');
-          $('#tablePaginationPrevious a.page-link').attr({ 'tabindex': '0', 'aria-disabled': false });
-     }
-     
-     if( config.next === 'disabled' ){
-          $('#tablePaginationNext').addClass('disabled');
-          $('#tablePaginationNext a.page-link').attr({ 'tabindex': '-1', 'aria-disabled': true });
-     }
-     else if( config.next === 'enabled' ){
-          $('#tablePaginationNext').removeClass('disabled');
-          $('#tablePaginationNext a.page-link').attr({ 'tabindex': '0', 'aria-disabled': false });
-     }
-     
-     // there will be always a page number 1
-     $('#tablePagination ul.pagination .page-number').not('#pageNumberOne').remove();
-     $('#pageNumberOne').addClass('active').attr({ 'aria-current': 'page' });
-}
-
-
-function createPaginationNumber(innerText){
-     return    `<li class="page-item page-number ${ (innerText === '...') ? 'disabled' : '' }">
-                    <a class="page-link" href="#" ${ (innerText === '...') ? "tabindex='-1' aria-disabled='true'" : '' }>${innerText}</span></a>
-               </li>`
-}
-
-
-$('#itemsPerPage').change( () => {
-     if( $('#tableFilterInputField').val().trim().length >= 3 ){
-          $('#tableFilterInputField').trigger( 'input' );
-     }
-     else{
-          clearTableContent();
-          loadInventoryTable();
-     }
-});
 
 //----------------------------------------------------------------------------------------
 // This function add the Event Listener to each row of the Inventory Table (#inventoryTable).
