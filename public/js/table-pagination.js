@@ -19,46 +19,72 @@ $('#itemsPerPage').change( () => {
 // 
 //----------------------------------------------------------------------------------------
 function makeTablePagination(numOfItems, pageNumber){
+    pageNumber = parseInt(pageNumber);
     const numberOfPages = Math.ceil( numOfItems / $('#itemsPerPage').val() );
     if(numberOfPages < 1) return console.error("ERROR: Number of table pages cannot be less than 1.");
 
+    
+    if(pageNumber == 1)
+        initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
+    else if(pageNumber == numberOfPages)
+        initializeTablePagination({ 'previous': 'enabled', 'next': 'disabled' });
+    else 
+        initializeTablePagination({ 'previous': 'enabled', 'next': 'enabled' });
+
 
     if( numberOfPages == 1 ){
-         initializeTablePagination({ 'previous': 'disabled', 'next': 'disabled' });
+         $('#pageNumberOne').addClass('active').attr({ 'aria-current': 'page' });
+         $('#pageNumberOne a.page-link').append(` <span class="sr-only">(current)</span>`);
     }
-    else if( numberOfPages >= 2 && numberOfPages <= 5 ){
-         initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
-
+    else if( numberOfPages >= 2 && numberOfPages <= 7 ){
          for(let i = 2; i <= numberOfPages; i++){
               let paginationNumberHTML = createPaginationNumber(i);
               $('#tablePaginationNext').before(paginationNumberHTML);
          }
     }
-    else if( numberOfPages > 5 ){
-         initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
-
-         for(let i = 2; i <= 5; i++){
-              let paginationNumberHTML;
-              if ( i == 2 || i == 3 ){ paginationNumberHTML = createPaginationNumber(i); }
-              else if( i == 4 ){ paginationNumberHTML = createPaginationNumber('...'); }
-              else if( i == 5 ){ paginationNumberHTML = createPaginationNumber(numberOfPages); }
-              $('#tablePaginationNext').before(paginationNumberHTML);
-         }
+    else if( numberOfPages > 7 && pageNumber < 5){
+        for(let i = 2; i <= 7; i++){
+            let paginationNumberHTML;
+            if ( i >= 2 && i <= 5 ) paginationNumberHTML = createPaginationNumber(i);
+            else if( i == 6 ) paginationNumberHTML = createPaginationNumber('...');
+            else if( i == 7 ) paginationNumberHTML = createPaginationNumber(numberOfPages);
+            $('#tablePaginationNext').before(paginationNumberHTML);
+        }
+    }
+    else if( numberOfPages > 7 && pageNumber >= numberOfPages-3 ){
+        for(let i = 2; i <= 7; i++){
+            let paginationNumberHTML;
+            if ( i == 2 ) paginationNumberHTML = createPaginationNumber('...');
+            else if( i >= 3 && i <= 7 ) paginationNumberHTML = createPaginationNumber( numberOfPages - (7-i) );
+            $('#tablePaginationNext').before(paginationNumberHTML);
+        }
+    }
+    else if( numberOfPages > 7 && (pageNumber > 5 || pageNumber < numberOfPages-3) ){
+        for(let i = 2; i <= 7; i++){
+            let paginationNumberHTML;
+            if ( i == 2 ) paginationNumberHTML = createPaginationNumber('...');
+            else if( i == 3 ) paginationNumberHTML = createPaginationNumber(pageNumber-1);
+            else if( i == 4 ) paginationNumberHTML = createPaginationNumber(pageNumber);
+            else if( i == 5 ) paginationNumberHTML = createPaginationNumber(pageNumber+1);
+            else if( i == 6 ) paginationNumberHTML = createPaginationNumber('...');
+            else if( i == 7 ) paginationNumberHTML = createPaginationNumber(numberOfPages);
+            $('#tablePaginationNext').before(paginationNumberHTML);
+        }
     }
 
     setEventHandlersForPagination();
 
-    if(pageNumber == numberOfPages)
-        $('#tablePagination .page-number').last().addClass('active').attr({ 'aria-current': 'page' });
-    else
-        $('#tablePagination .page-number').eq(pageNumber-1).addClass('active').attr({ 'aria-current': 'page' });
+    const activePageNumber = $(`#tablePagination .page-number a:contains('${pageNumber}')`);
+    $(activePageNumber).parent().addClass('active').attr({ 'aria-current': 'page' });
+    $(activePageNumber).append(` <span class="sr-only">(current)</span>`);
     
     $('#paginationContainer').attr('hidden', false);
 }
 
 
 //----------------------------------------------------------------------------------------
-// 
+// Set the buttons "Previous" and "Next" according to the options variable.
+// Remove any other pagination number except the number 1.
 //----------------------------------------------------------------------------------------
 function initializeTablePagination(options){
     if( options.previous === 'disabled' ){
@@ -81,6 +107,7 @@ function initializeTablePagination(options){
     
     $('#tablePagination .page-number, #tablePagination .page-ellipsis').not('#pageNumberOne').remove();
     $('#pageNumberOne').removeClass('active').attr({ 'aria-current': false });
+    $('#pageNumberOne a.page-link').find('span').remove();
 }
 
 
@@ -102,11 +129,9 @@ function setEventHandlersForPagination(){
     
     $('#tablePagination ul.pagination .page-number').click( event => {
         if( ! $(event.target.parentNode).hasClass('active') ){
-            $('#tablePagination .page-number.active').removeClass('active');
-            $(event.target.parentNode).addClass('active');
 
             const pageNumber = $(event.target).text().trim().split(' ')[0];
-            console.log('Página selecionada: ', pageNumber);
+            console.log('Selected page: ', pageNumber);
 
             $('#inventoryTable tbody').empty();
             
@@ -122,6 +147,7 @@ function setEventHandlersForPagination(){
             else{
                 fillTableStockItems(stockItems, itemModels, pageNumber);
             }
+
         }
     });
 
