@@ -2,7 +2,10 @@
 
 
 //----------------------------------------------------------------------------------------
-// 
+// Every time the user changes the number of items to be displayed in the Inventory Table
+// this event is triggered and clears all the table content and then load it again.
+// The pagination will be re-built by the function makeTablePagination(), which is called
+// by the function fillTableStockItems() in the chain.
 //----------------------------------------------------------------------------------------
 $('#itemsPerPage').change( () => {
     if( $('#tableFilterInputField').val().trim().length >= 3 ){
@@ -16,9 +19,11 @@ $('#itemsPerPage').change( () => {
 
 
 //----------------------------------------------------------------------------------------
-// 
+// This function builds the Inventory Table pagination according to the total number of
+// items to ble displayed and the value selected by the user in the #itemsPerPage <select> field.
 //----------------------------------------------------------------------------------------
 function makeTablePagination(numOfItems, pageNumber){
+
     pageNumber = parseInt(pageNumber);
     const numberOfPages = Math.ceil( numOfItems / $('#itemsPerPage').val() );
     if(numberOfPages < 1) return console.error("ERROR: Number of table pages cannot be less than 1.");
@@ -59,7 +64,7 @@ function makeTablePagination(numOfItems, pageNumber){
             $('#tablePaginationNext').before(paginationNumberHTML);
         }
     }
-    else if( numberOfPages > 7 && (pageNumber > 5 || pageNumber < numberOfPages-3) ){
+    else if( numberOfPages > 7 && (pageNumber >= 5 || pageNumber < numberOfPages-3) ){
         for(let i = 2; i <= 7; i++){
             let paginationNumberHTML;
             if ( i == 2 ) paginationNumberHTML = createPaginationNumber('...');
@@ -83,10 +88,16 @@ function makeTablePagination(numOfItems, pageNumber){
 
 
 //----------------------------------------------------------------------------------------
-// Set the buttons "Previous" and "Next" according to the options variable.
+// Set up the buttons "Previous" and "Next" according to the 'options' parameter.
+// First, removes any event handler attached to the main buttons.
 // Remove any other pagination number except the number 1.
 //----------------------------------------------------------------------------------------
 function initializeTablePagination(options){
+
+    $('#tablePaginationPrevious').off();
+    $('#pageNumberOne').off();
+    $('#tablePaginationNext').off();
+
     if( options.previous === 'disabled' ){
          $('#tablePaginationPrevious').addClass('disabled');
          $('#tablePaginationPrevious a.page-link').attr({ 'tabindex': '-1', 'aria-disabled': true });
@@ -119,7 +130,8 @@ function createPaginationNumber(innerText){
 
 
 //----------------------------------------------------------------------------------------
-// 
+// This function adds event handlers to the pagination items. Whenever one is clicked,
+// it will handle the event properly, changing the items appearing in the Inventory table.
 //----------------------------------------------------------------------------------------
 function setEventHandlersForPagination(){
     $('#tablePagination a.page-link').click( event => {
@@ -153,17 +165,44 @@ function setEventHandlersForPagination(){
 
 
     $('#tablePaginationPrevious').click( event => {
-        
-        console.log('<< Página anterior');
-        
-        console.log( $('#tablePagination .page-number.active').text() );
+        if( $('#tablePaginationPrevious').hasClass('disabled') ) return;
+
+        let pageNumber = $('#tablePagination .page-number.active').text().trim().split(' ')[0];
+        pageNumber = parseInt(pageNumber) - 1;
+        console.log('Previous page: ', pageNumber);
+        changeTablePage(pageNumber);
     });
 
 
     $('#tablePaginationNext').click( event => {
-        
-        console.log('Página seguinte >>');
-        
-        console.log( $('#tablePagination .page-number.active').text() );
+        if( $('#tablePaginationNext').hasClass('disabled') ) return;
+
+        let pageNumber = $('#tablePagination .page-number.active').text().trim().split(' ')[0];
+        pageNumber = parseInt(pageNumber) + 1;
+        console.log('Next page: ', pageNumber);
+        changeTablePage(pageNumber);
     });
+}
+
+
+//----------------------------------------------------------------------------------------
+// This function is responsible for change the page in the inventory table when one of the
+// buttons 'Next' or 'Previous' is clicked.
+// It clears the table content and then fill it again showing the corresponding items. 
+// If there are any text in the Filter field, it will first filter the items and then show 
+// the page with the found items.
+//----------------------------------------------------------------------------------------
+function changeTablePage(pageNumber){
+    $('#inventoryTable tbody').empty();
+        
+    const {stockItems, itemModels} = getItemsFromLocalStorage();
+
+    if( $('#tableFilterInputField').val().trim().length >= 3 ){
+        const filterText = $('#tableFilterInputField').val().trim();
+        const foundItems = filterStockItems(stockItems, itemModels, filterText);
+        fillTableStockItems(foundItems, itemModels, pageNumber);
+    }
+    else{
+        fillTableStockItems(stockItems, itemModels, pageNumber);
+    }
 }
