@@ -71,6 +71,7 @@ router.get('/items/:itemId', async (req, res) => {
 // the category collection.
 //----------------------------------------------------------------------------------------
 router.post('/items', async (req, res) => {
+     req.body.transferLog.transferredBy = req.userId;
      const { category, itemModelId, inventoryNumber } = req.body;
      
      try {
@@ -78,12 +79,13 @@ router.post('/items', async (req, res) => {
                return res.status(400).send({ error: 'Item already registered.' });
 
           const model = await Model.findById(itemModelId).populate('categoryId');
-          if(!model) 
+          if( !model ) 
                return res.status(400).send({ error: 'Item Model not registered in database.' });
           if( category !== model.categoryId.name )
                return res.status(400).send({ error: "The 'category' value needs to be the same as the chosen model." });
 
-          const newItem = await StockItem.create(req.body);
+          const newItem = await StockItem.create( req.body );
+
           console.log(`System Log: New item (${category} - ${inventoryNumber}) registered successfully.`);
           return res.send({ ok: true, newItem });
      }
@@ -96,38 +98,23 @@ router.post('/items', async (req, res) => {
 
 
 //----------------------------------------------------------------------------------------
-// Record information about transfering an item to a person.
+// Record information about transfering an item to another person.
 // After success, it will return the item updated.
 // It also update automatically the date at the "updatedAt" field.
 //----------------------------------------------------------------------------------------
 router.put('/items/transfer/:itemId', async (req, res) => {
-     const division = req.body.division.trim().toUpperCase();
-     const branch = req.body.branch.trim().toUpperCase();
-     const department = req.body.department.trim().toUpperCase();
-     const locationStr =  `${division} | ${branch} | ${department}`;
      
-     const fullUserName = req.body.fullUserName.trim().replace(/\s+/g, ' ').split(' ').reduce( (fullName, str) => {
-          if( str.match( /de/i ) || str.match( /da/i ) ) 
-               return fullName + ' ' + str.toLowerCase();
-          else return fullName + ' ' + str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-     });
+     req.body.transferredBy = req.userId;
+     console.log('Transfer requisition: ', req.body);
 
-     var statusStr = '';
-     if( department.slice(0,6) === 'SEATEN' ) statusStr = 'available';
-     else statusStr = 'taken';
-           
      try {
-          const stockItemUpdated = await StockItem.findByIdAndUpdate(req.params.itemId, {
-               transferredTo: {
-                    taskNumber: req.body.reqType.trim() + req.body.reqNumber.trim(),
-                    userName: fullUserName,
-                    userNumber: req.body.userNumber.trim(),
-                    date: Date.now(),
-                    transferredBy: req.userId
-               },
-               location: locationStr,
-               status: statusStr
-          }, {new: true});
+          const stockItemUpdated = await StockItem.findByIdAndUpdate( { _id: req.params.itemId }, {
+               location: req.body.toDepartment,
+               status: 'TAKEN',
+               $push: { transferLog: req.body }
+          },
+          { new: true }
+          );
 
           console.log(`System Log: Stock Item (id: ${req.params.itemId}) transferred successfully.`);
           return res.send({ ok: true, stockItemUpdated });

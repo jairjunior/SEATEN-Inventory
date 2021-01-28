@@ -26,38 +26,49 @@ const StockItemSchema = new mongoose.Schema({
           lowercase: true,
           default: 'available'
      },
-     transferredFrom: {
-          taskNumber: {
-               type: String,
-               required: true
-          },
-          department: {
-               type: String,
-               required: true
-          },
-          userName: {
-               type: String,
-               required: true
-          },
-          userNumber: {
-               type: Number,
-               required: true
-          },
-          date: {
-               type: Date,
-               default: Date.now
-          }
-     },
-     transferredTo: {
-          taskNumber: String,
-          userName: String,
-          userNumber: Number,
-          date: Date,
-          transferredBy: {
-               type: mongoose.Schema.Types.ObjectId,
-               ref: 'User'
-          }
-     }
+     transferLog: [{
+               reqNumber: {
+                    type: String,
+                    required: true
+               },
+               fromDepartment: {
+                    type: String,
+                    required: true
+               },
+               fromUserName: {
+                    type: String,
+                    required: true
+               },
+               fromUserNumber: {
+                    type: Number,
+                    required: true
+               },
+               toDepartment: {
+                    type: String,
+                    required: true
+               },
+               toUserName: {
+                    type: String,
+                    required: true
+               },
+               toUserNumber: {
+                    type: Number,
+                    required: true
+               },
+               reason: {
+                    type: String,
+                    required: true
+               },
+               transferredBy: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User',
+                    required: true
+               },
+               date: {
+                    type: Date,
+                    default: Date.now
+               }
+     }]
 },
 {
      timestamps: true
