@@ -83,6 +83,10 @@ main.container {
      display: none;
 }
 
+#tablePaginationPrevious i.fas, #tablePaginationNext i.fas {
+     display: none;
+}
+
 /*********************************************************************/
 
 .inventory-modal-pills {
@@ -251,6 +255,15 @@ fieldset.form-group {
 
 @media screen and (max-width: 991px){
      .itemStatusText, .inventoryNumberPrefix {
+          display: none;
+     }
+
+     #tablePaginationPrevious i.fas, #tablePaginationNext i.fas {
+          display: block;
+          padding: 2px 0;
+     }
+
+     #tablePaginationPrevious span, #tablePaginationNext span {
           display: none;
      }
      
