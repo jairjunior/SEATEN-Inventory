@@ -51,7 +51,7 @@ router.get('/items/:itemId', async (req, res) => {
           const stockItem = await StockItem.findById(req.params.itemId).populate({
                path: 'itemModelId',
                populate: { path: 'categoryId' }
-          }).populate('transferredTo.transferredBy');
+          }).populate('transferHistory.transferredBy');
           console.log(`System Log: Sending to the client the item document (id = ${req.params.itemId}).`);
           return res.send({ ok: true, stockItem });
      }
@@ -71,7 +71,8 @@ router.get('/items/:itemId', async (req, res) => {
 // the category collection.
 //----------------------------------------------------------------------------------------
 router.post('/items', async (req, res) => {
-     req.body.transferLog.transferredBy = req.userId;
+     
+     req.body.transferHistory.transferredBy = req.userId;
      const { category, itemModelId, inventoryNumber } = req.body;
      
      try {
@@ -111,7 +112,7 @@ router.put('/items/transfer/:itemId', async (req, res) => {
           const stockItemUpdated = await StockItem.findByIdAndUpdate( { _id: req.params.itemId }, {
                location: req.body.toDepartment,
                status: 'TAKEN',
-               $push: { transferLog: req.body }
+               $push: { transferHistory: req.body }
           },
           { new: true }
           );

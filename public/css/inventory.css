@@ -7,8 +7,12 @@ body {
      background-color:#FEFEFE;
 }
 
-.text-red{
+.text-red {
      color: rgb(167, 1, 1);
+}
+
+.only-bottom-border {
+     border-bottom: 1px solid rgba(0, 0, 0, 0.473);
 }
 
 /*********************************************************************/
@@ -144,9 +148,16 @@ main.container {
 .modal-item-section {
      margin-top: 1em;
      padding: 7px;
-     display: table;
      background-color: #E5E5E5;
      border-radius: 5px;
+}
+
+.transfer-log-title {
+     font-size: 1.2em;
+     font-weight: bolder;
+     background-color: #F9F9F9;
+     padding: 0.3em;
+     border-radius: 3px;
 }
 
 .card.card-body {

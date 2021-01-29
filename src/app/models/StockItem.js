@@ -26,7 +26,7 @@ const StockItemSchema = new mongoose.Schema({
           lowercase: true,
           default: 'available'
      },
-     transferLog: [{
+     transferHistory: [{
                reqNumber: {
                     type: String,
                     required: true
