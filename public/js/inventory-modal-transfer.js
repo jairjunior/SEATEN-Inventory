@@ -38,7 +38,7 @@ function buildTransferForm(){
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody)
      .append(  `<h4 class="modal-item-title mb-4">Transfer Item</h4>
-               <form class="mt-3" id="formTransferTo">
+               <form class="mt-3" id="formTransfer">
 
                     <fieldset class="form-group item-info">
                          <legend>Item Info</legend>
@@ -65,7 +65,7 @@ function buildTransferForm(){
                          <div class="form-row">
                               <div class="form-group col-md-12">
                                    <label for='transferReason'>Select:</label>
-                                   <select class='form-control' id='transferReason' required>
+                                   <select class='form-control' name='reason' id='transferReason' aria-describedby="transferReasonFeedback" required>
                                         <option value='' selected disabled>---</option>
                                         <option value='New installation'>New installation</option>
                                         <option value='Replacement'>Replacement</option>
@@ -75,13 +75,14 @@ function buildTransferForm(){
                                         <option value='Repair / Warranty'>Repair / Warranty</option>
                                         <option value='Keep in stock'>Keep in stock</option>
                                    </select>
+                                   <div id="transferReasonFeedback"></div>
                               </div>
                          </div>
                          <div class="form-row" id='transferOldItemRow' hidden>
                               <div class="form-group col-md-12">
                                    <label for="transferOldItem">Old Item</label>
                                    <input type="text" class="form-control" id="transferOldItem" aria-describedby="transferOldItemFeedback" name="oldItem" placeholder="inventory number">
-                                   <div id="transferDepartmentFeedback"></div>
+                                   <div id="transferOldItemFeedback"></div>
                               </div>
                          </div>
                     </fieldset>
@@ -91,12 +92,12 @@ function buildTransferForm(){
                          <div class="form-row">
                               <div class="form-group col-md-9">
                                    <label for="transferUserName">Full User Name</label>
-                                   <input type="text" class="form-control" id="transferUserName" aria-describedby="transferUserNameFeedback" name="fullUserName" required>
+                                   <input type="text" class="form-control" id="transferUserName" aria-describedby="transferUserNameFeedback" name="toUserName" required>
                                    <div id="transferUserNameFeedback"></div>
                               </div>
                               <div class="form-group col-md-3">
                                    <label for="transferUserNumber">User Number</label>
-                                   <input type="tel" class="form-control" id="transferUserNumber" aria-describedby="transferUserNumberFeedback" name="userNumber" required>
+                                   <input type="tel" class="form-control" id="transferUserNumber" aria-describedby="transferUserNumberFeedback" name="toUserNumber" required>
                                    <div id="transferUserNumberFeedback"></div>
                               </div>
                          </div>
@@ -176,7 +177,7 @@ $('#modalBtnTransfer').click( async () => {
      if( !idSelectedItem ) return console.error('ERROR: No Id found in Local Storage. Please, contact the System Admin to fix this bug.');
      
      if ( validateTransferForm() ){
-          let formData = $('#formTransferTo').serializeArray();
+          let formData = $('#formTransfer').serializeArray();
           formData.push({ name: 'stockItemId', value: idSelectedItem });
 
           var objFormData = {};
@@ -184,6 +185,33 @@ $('#modalBtnTransfer').click( async () => {
                var { name, value } = currentElement;
                objFormData[name] = value;
           });
+
+          const item = JSON.parse( localStorage.getItem('selectedItem') );
+          const lastTransfer = item.transferHistory[item.transferHistory.length-1];
+          objFormData.fromUserName = lastTransfer.toUserName;
+          objFormData.fromUserNumber = lastTransfer.toUserNumber;
+          objFormData.fromDepartment = lastTransfer.toDepartment;
+
+          var statusStr = '';
+          if( objFormData.department === 'SEATEN' && objFormData.reason !== 'Repair / Warranty' ) statusStr = 'available';
+          else if(objFormData.department === 'SEATEN' && objFormData.reason === 'Repair / Warranty') statusStr = 'fixing';
+          else if(objFormData.reason === 'Donation') statusStr = 'donation';
+          else statusStr = 'taken';
+          objFormData.status = statusStr;
+
+          const division = objFormData.division.trim().toUpperCase();
+          const branch = objFormData.branch.trim().toUpperCase();
+          const department = objFormData.department.trim().toUpperCase();
+          const locationStr =  `${division} | ${branch} | ${department}`;
+          objFormData.toDepartment = locationStr;
+          delete objFormData.division;
+          delete objFormData.branch;
+          delete objFormData.department;
+
+          let reqNumber = objFormData.reqType + objFormData.reqNumber.trim();
+          objFormData.reqNumber = reqNumber;
+          delete objFormData.reqType;
+
           console.log('Transfer Form data:', objFormData);
           
           showModalTransferConfirmation(objFormData);
@@ -219,8 +247,8 @@ function showModalTransferConfirmation(objFormData) {
                <p class="mb-4">Please, confirm the information below before saving the changes.</p>     
                <p><strong>Stock Item: </strong>${ $('#transferItemName').val() }</p>
                <p><strong>Stock Item: </strong>${ $('#transferInventoryNumber').val() }</p>
-               <p><strong>User: </strong>${objFormData.fullUserName}</p>
-               <p><strong>User Number: </strong>${objFormData.userNumber}</p>
+               <p><strong>User: </strong>${objFormData.toUserName}</p>
+               <p><strong>User Number: </strong>${objFormData.toUserNumber}</p>
           </div>`
      );
 }
@@ -279,9 +307,23 @@ function validateTransferForm(){
 
      let fullUserName = $('#transferUserName').val().trim().replace(/\s+/g, ' ');
      if( fullUserName.length == 0 || fullUserName.split(' ').length < 2 || hasNumbers(fullUserName) || hasSpecialChar(fullUserName) ){
-          setFormFieldInvalid('#transferUserName', '#transferUserNameFeedback', 'Please, provide full user name');
+          setFormFieldInvalid('#transferUserName', '#transferUserNameFeedback', 'Provide full user name');
           formIsValid = false;
      } else { setFormFieldValid('#transferUserName', '#transferUserNameFeedback', 'Ok'); }
+
+     if( !$('#transferOldItemRow').prop('hidden') ) {
+          let oldItemNumber = $('#transferOldItem').val().trim().replace(/\s+/g, ' ');
+          if( oldItemNumber.length != 6 || oldItemNumber.split(' ').length > 1 || hasLetters(oldItemNumber) || hasSpecialChar(oldItemNumber) ){
+               setFormFieldInvalid('#transferOldItem', '#transferOldItemFeedback', 'Use only numbers');
+               formIsValid = false;
+          } else { setFormFieldValid('#transferOldItem', '#transferOldItemFeedback', 'Ok'); }
+     }
+
+     let reason = $('#transferReason').val();
+     if( reason === null ){
+          setFormFieldInvalid('#transferReason', '#transferReasonFeedback', 'Please, select a reason for this transfer');
+          formIsValid = false;
+     } else { setFormFieldValid('#transferReason', '#transferReasonFeedback', 'Ok'); }
 
      return formIsValid;
 }
@@ -316,7 +358,7 @@ function setFormFieldValid(fieldId, feedbackId, text){
 }
 
 //----------------------------------------------------------------------------------------
-// This function submits the data passed through the Transfer Form (#formTransferTo)
+// This function submits the data passed through the Transfer Form (#formTransfer)
 // This form is built inside the modal body when the "Transfer" tab is selected.
 // Data is first converted to JSON and then sent through an UPDATE HTTP request.
 //----------------------------------------------------------------------------------------
