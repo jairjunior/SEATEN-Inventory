@@ -15,6 +15,8 @@ $('#inventoryModal').on('shown.bs.modal', () => {
 $('#inventoryModal').on('hidden.bs.modal', () => {
      localStorage.removeItem("idSelectedItem");
      localStorage.removeItem("selectedItem");
+     $('.inventory-modal-pills .nav-link').removeClass('active');
+     $('#modalPillInfo .nav-link').addClass('active');
 });
 
 
