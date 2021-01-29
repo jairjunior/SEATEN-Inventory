@@ -119,6 +119,10 @@ function modalFillItemInformation(stockItem){
           availability += ' 👍';
      else if(stockItem.status === 'taken')
           availability += ' ❌';
+     else if(stockItem.status === 'fixing')
+          availability += ' 🔧';
+     else if(stockItem.status === 'donation')
+          availability += ' 🎁';
 
      $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Status: </span>${availability}</p>`);
      $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Location: </span>${stockItem.location}</p>`);
@@ -152,6 +156,10 @@ function modalFillItemInformation(stockItem){
           $(newTransferInfo).append(`<h6 class='text-red transfer-log-title'><bold>Log ${i+1}<bold></h6>`);
           $(newTransferInfo).append(`<p><span class='modal-item-info'>Requisition Number: </span>${transferLog.reqNumber}</p>`);
           $(newTransferInfo).append(`<p><span class='modal-item-info'>Reason: </span>${transferLog.reason}</p>`);
+          if(transferLog.oldItem)
+               $(newTransferInfo).append(`<p><span class='modal-item-info'>Old Item: </span>${transferLog.oldItem}</p>`);
+          if(transferLog.remarks)
+               $(newTransferInfo).append(`<p><span class='modal-item-info'>Remarks: </span>${transferLog.remarks}</p>`);
           
           $(newTransferInfo).append(`<p class="mb-0"><span class='modal-item-info'>FROM:</span></p>`);
           $(newTransferInfo).append(`

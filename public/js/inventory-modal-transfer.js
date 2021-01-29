@@ -67,19 +67,20 @@ function buildTransferForm(){
                                    <label for='transferReason'>Select:</label>
                                    <select class='form-control' id='transferReason' required>
                                         <option value='' selected disabled>---</option>
-                                        <option value='new'>New workstation</option>
-                                        <option value='replacement'>Replacement</option>
-                                        <option value='department'>Department change</option>
-                                        <option value='donation'>Donation</option>
-                                        <option value='repair'>Repair / Warranty</option>
-                                        <option value='stock'>Keep in stock</option>
+                                        <option value='New installation'>New installation</option>
+                                        <option value='Replacement'>Replacement</option>
+                                        <option value='Without use'>Without use</option>
+                                        <option value='Department change'>Department change</option>
+                                        <option value='Donation'>Donation</option>
+                                        <option value='Repair / Warranty'>Repair / Warranty</option>
+                                        <option value='Keep in stock'>Keep in stock</option>
                                    </select>
                               </div>
                          </div>
                          <div class="form-row" id='transferOldItemRow' hidden>
                               <div class="form-group col-md-12">
-                                   <label for="transferOldItem">Old Item (inventory number)</label>
-                                   <input type="text" class="form-control" id="transferOldItem" aria-describedby="transferOldItemFeedback" name="oldItem" placeholder="015.648">
+                                   <label for="transferOldItem">Old Item</label>
+                                   <input type="text" class="form-control" id="transferOldItem" aria-describedby="transferOldItemFeedback" name="oldItem" placeholder="inventory number">
                                    <div id="transferDepartmentFeedback"></div>
                               </div>
                          </div>
@@ -140,8 +141,7 @@ function buildTransferForm(){
                          <legend>Remarks</legend>
                          <div class="form-row">
                               <div class="form-group col-md-12">
-                                   <textarea class="form-control" id="transferRemarks" name="remarks" rows='4' placeholder='Make any observation...' aria-describedby="remarksHelp"></textarea>
-                                   <small id="remarksHelp" class="form-text text-muted">(Optional)</small>
+                                   <textarea class="form-control" id="transferRemarks" name="remarks" rows='4' placeholder='Make any observation (optional)...' aria-describedby="remarksHelp"></textarea>
                               </div>
                          </div>
                     </fieldset>
@@ -152,7 +152,7 @@ function buildTransferForm(){
 
      $('#transferReason').change( () => {
           let fieldValue = $('#transferReason').val();
-          if(fieldValue === 'replacement'){
+          if(fieldValue === 'Replacement'){
                $('#transferOldItemRow').prop('hidden', false);
                $('#transferOldItem').prop('required', true);
           }

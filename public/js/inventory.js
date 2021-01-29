@@ -120,6 +120,16 @@ function fillTableStockItems(listOfItems, listOfModels, pageNumber){
                statusBadge.textContent = '❌';
                statusBadge.innerHTML += "<span class='itemStatusText'> TAKEN</span>";
           }
+          else if(stockItem.status === 'fixing'){
+               statusBadge.classList.add('badge', 'badge-fixing');
+               statusBadge.textContent = '🔧';
+               statusBadge.innerHTML += "<span class='itemStatusText'> FIXING</span>";
+          }
+          else if(stockItem.status === 'donation'){
+               statusBadge.classList.add('badge', 'badge-donation');
+               statusBadge.textContent = '🎁';
+               statusBadge.innerHTML += "<span class='itemStatusText'> DONATION</span>";
+          }
           tdStatus.append(statusBadge);
 
           let tdLocation = document.createElement('TD');
@@ -144,6 +154,8 @@ function fillTableStockItems(listOfItems, listOfModels, pageNumber){
 // the buttons are hidden/shown and it's finally triggered to show up.
 //----------------------------------------------------------------------------------------
 function setClickableTableRows(){
+     $('#inventoryTable').off();
+
      $('#inventoryTable').click( event => {
           let clickedRow = $(event.target).closest('tr');
           

@@ -76,6 +76,18 @@ main.container {
      color: white;
 }
 
+.badge-fixing {
+     background-color: rgb(255, 153, 0);
+     border: 3px solid rgb(224, 136, 2);
+     color: white;
+}
+
+.badge-donation {
+     background-color: #C0C0C0;
+     border: 3px solid #A0A0A0;
+     color: white;
+}
+
 .table-spinner {
      display: block;
      margin: 100px auto;

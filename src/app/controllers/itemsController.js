@@ -111,7 +111,7 @@ router.put('/items/transfer/:itemId', async (req, res) => {
      try {
           const stockItemUpdated = await StockItem.findByIdAndUpdate( { _id: req.params.itemId }, {
                location: req.body.toDepartment,
-               status: 'TAKEN',
+               status: (req.body.status) ? req.body.status : 'TAKEN',
                $push: { transferHistory: req.body }
           },
           { new: true }

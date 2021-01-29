@@ -59,6 +59,12 @@ const StockItemSchema = new mongoose.Schema({
                     type: String,
                     required: true
                },
+               oldItem: {
+                    type: String,
+               },
+               remarks: {
+                    type: String,
+               },
                transferredBy: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'User',
