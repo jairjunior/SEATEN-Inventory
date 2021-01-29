@@ -26,8 +26,15 @@ $('#modalPillTransfer').click( event => {
 // is already embedded in the Beared Token sent alongside with the HTTP request.
 //----------------------------------------------------------------------------------------
 function buildTransferForm(){
-     let item = JSON.parse( localStorage.getItem('selectedItem') );
+     const item = JSON.parse( localStorage.getItem('selectedItem') );
      let inventoryNumberStr = item.inventoryNumber.slice(0,3) + ' ' + item.inventoryNumber.slice(3,6) + '.' + item.inventoryNumber.slice(6);
+     var transferHistory = item.transferHistory;
+     transferHistory.sort( (logA, logB) => {
+          return logA.date - logB.date;
+     });
+     const lastTransfer = transferHistory[transferHistory.length-1];
+     const currentUser = lastTransfer.toUserName + ` (${lastTransfer.toUserNumber})`;
+
      let modalBody = $('#inventoryModal div.modal-body');
      $(modalBody)
      .append(  `<h4 class="modal-item-title mb-4">Transfer Item</h4>
@@ -38,20 +45,51 @@ function buildTransferForm(){
                          <div class="form-row">
                               <div class="form-group col-md-8">
                                    <label for="transferItemName">Name and Model</label>
-                                   <input type="tel" class="form-control" id="transferItemName" name="itemName" value="${item.category} - ${item.itemModelId.brand} ${item.itemModelId.name}" required disabled>
+                                   <input type="text" class="form-control" id="transferItemName" name="itemName" value="${item.category} - ${item.itemModelId.brand} ${item.itemModelId.name}" required disabled>
                               </div>
                               <div class="form-group col-md-4">
                                    <label for="transferInventoryNumber">Inventory Number</label>
-                                   <input type="tel" class="form-control" id="transferInventoryNumber" name="inventoryNumber" value="${inventoryNumberStr}" required disabled>
+                                   <input type="text" class="form-control" id="transferInventoryNumber" name="inventoryNumber" value="${inventoryNumberStr}" required disabled>
+                              </div>
+                         </div>
+                         <div class="form-row">
+                              <div class="form-group col-md-12">
+                                   <label for="transferCurrentUser">Current User</label>
+                                   <input type="text" class="form-control" id="transferCurrentUser" name="currentUser" value="${currentUser}" required disabled>
                               </div>
                          </div>
                     </fieldset>
 
                     <fieldset class="form-group">
-                         <legend>User Info</legend>
+                         <legend>Reason</legend>
+                         <div class="form-row">
+                              <div class="form-group col-md-12">
+                                   <label for='transferReason'>Select:</label>
+                                   <select class='form-control' id='transferReason' required>
+                                        <option value='' selected disabled>---</option>
+                                        <option value='new'>New workstation</option>
+                                        <option value='replacement'>Replacement</option>
+                                        <option value='department'>Department change</option>
+                                        <option value='donation'>Donation</option>
+                                        <option value='repair'>Repair / Warranty</option>
+                                        <option value='stock'>Keep in stock</option>
+                                   </select>
+                              </div>
+                         </div>
+                         <div class="form-row" id='transferOldItemRow' hidden>
+                              <div class="form-group col-md-12">
+                                   <label for="transferOldItem">Old Item (inventory number)</label>
+                                   <input type="text" class="form-control" id="transferOldItem" aria-describedby="transferOldItemFeedback" name="oldItem" placeholder="015.648">
+                                   <div id="transferDepartmentFeedback"></div>
+                              </div>
+                         </div>
+                    </fieldset>
+
+                    <fieldset class="form-group">
+                         <legend>Destination</legend>
                          <div class="form-row">
                               <div class="form-group col-md-9">
-                                   <label for="transferUserName">Full Name</label>
+                                   <label for="transferUserName">Full User Name</label>
                                    <input type="text" class="form-control" id="transferUserName" aria-describedby="transferUserNameFeedback" name="fullUserName" required>
                                    <div id="transferUserNameFeedback"></div>
                               </div>
@@ -82,26 +120,47 @@ function buildTransferForm(){
 
                     <fieldset class="form-group">
                          <legend>Requisition Info</legend>
-                              <div class="form-row">
-                                   <div class="form-group col-md-3">
-                                        <label for="transferReqType">Type</label>
-                                        <select id="transferReqType" class="form-control" name="reqType" required>
-                                             <option selected>RITM</option>
-                                             <option>INC</option>
-                                        </select>
-                                   </div>
-                                   <div class="form-group col-md-9">
-                                        <label for="transferReqNumber">Number</label>
-                                        <input type="tel" class="form-control" id="transferReqNumber" name="reqNumber" aria-describedby="transferReqNumberFeedback" placeholder="00017123" required>
-                                        <div id="transferReqNumberFeedback"></div>
-                                   </div>
+                         <div class="form-row">
+                              <div class="form-group col-md-3">
+                                   <label for="transferReqType">Type</label>
+                                   <select id="transferReqType" class="form-control" name="reqType" required>
+                                        <option selected>RITM</option>
+                                        <option>INC</option>
+                                   </select>
                               </div>
+                              <div class="form-group col-md-9">
+                                   <label for="transferReqNumber">Number</label>
+                                   <input type="tel" class="form-control" id="transferReqNumber" name="reqNumber" aria-describedby="transferReqNumberFeedback" placeholder="00017123" required>
+                                   <div id="transferReqNumberFeedback"></div>
+                              </div>
+                         </div>
+                    </fieldset>
+
+                    <fieldset class="form-group">
+                         <legend>Remarks</legend>
+                         <div class="form-row">
+                              <div class="form-group col-md-12">
+                                   <textarea class="form-control" id="transferRemarks" name="remarks" rows='4' placeholder='Make any observation...' aria-describedby="remarksHelp"></textarea>
+                                   <small id="remarksHelp" class="form-text text-muted">(Optional)</small>
+                              </div>
+                         </div>
                     </fieldset>
 
                </form>`
      );
 
-     $('#transferUserName').focus().select();
+
+     $('#transferReason').change( () => {
+          let fieldValue = $('#transferReason').val();
+          if(fieldValue === 'replacement'){
+               $('#transferOldItemRow').prop('hidden', false);
+               $('#transferOldItem').prop('required', true);
+          }
+          else{
+               $('#transferOldItemRow').prop('hidden', true);
+               $('#transferOldItem').prop('required', false);
+          }
+     });
 }
 
 

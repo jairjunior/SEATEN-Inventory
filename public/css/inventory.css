@@ -199,7 +199,7 @@ fieldset.form-group {
      color: red;
  }
 
- #transferItemName, #transferInventoryNumber {
+ #transferItemName, #transferInventoryNumber, #transferCurrentUser {
      color: red;
      font-size: 1.4em;
      font-weight: bolder;
@@ -297,15 +297,11 @@ fieldset.form-group {
      .modal-item-title small {
           display: none;
      }
-     #transferItemName {
+     #transferItemName, #transferInventoryNumber, #transferCurrentUser {
           font-size: 1.1em;
      }
      
-      #transferInventoryNumber {
-          font-size: 1.1em;
-     }
-
-      #confirmationModal .modal-header {
+     #confirmationModal .modal-header {
           height: 11vh;
      }
 
