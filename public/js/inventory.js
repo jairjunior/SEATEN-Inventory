@@ -176,7 +176,11 @@ function setClickableTableRows(){
 
 
 //----------------------------------------------------------------------------------------
-//
+// This function sets the event handler for the filter field above the Inventory Table.
+// To be valid, the filter text must have at least 3 characters and it can be letters and
+// number.
+// It will filter all the Stock Items using the function filterStockItems(), searching through
+// Category, Inventory Number, Location, Current User, Requisition Number and Brand/Model.
 //----------------------------------------------------------------------------------------
 function setTableFilter(){
      $('#tableFilterInputField').on('input', (event) => {
@@ -236,7 +240,8 @@ function filterByLocation(stockItems, filterPattern){
 function filterByUser(stockItems, filterPattern){
      return stockItems.filter( item => { 
           let lastTransfer = getLastTransferLog(item);
-          return filterPattern.test( lastTransfer.toUserName );
+          if(item.status === 'donation') return false;
+          else return filterPattern.test( lastTransfer.toUserName );
      });
 }
 
