@@ -242,10 +242,8 @@ function filterByUser(stockItems, filterPattern){
 
 function filterByReqNumber(stockItems, filterPattern){
      return stockItems.filter( item => { 
-          if(item.transferredTo)
-               return filterPattern.test( item.transferredTo.taskNumber );
-          else 
-               return false;
+          let lastTransfer = getLastTransferLog(item);
+          return filterPattern.test( lastTransfer.reqNumber );
      });
 }
 
