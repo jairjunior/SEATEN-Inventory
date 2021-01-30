@@ -28,11 +28,7 @@ $('#modalPillTransfer').click( event => {
 function buildTransferForm(){
      const item = JSON.parse( localStorage.getItem('selectedItem') );
      let inventoryNumberStr = item.inventoryNumber.slice(0,3) + ' ' + item.inventoryNumber.slice(3,6) + '.' + item.inventoryNumber.slice(6);
-     var transferHistory = item.transferHistory;
-     transferHistory.sort( (logA, logB) => {
-          return logA.date - logB.date;
-     });
-     const lastTransfer = transferHistory[transferHistory.length-1];
+     const lastTransfer = getLastTransferLog(item);
      const currentUser = lastTransfer.toUserName + ` (${lastTransfer.toUserNumber})`;
 
      let modalBody = $('#inventoryModal div.modal-body');
@@ -165,6 +161,15 @@ function buildTransferForm(){
 }
 
 
+function getLastTransferLog(item){
+     var transferHistory = item.transferHistory;
+     transferHistory.sort( (logA, logB) => {
+          return logA.date - logB.date;
+     });
+     return transferHistory[transferHistory.length-1];
+}
+
+
 //----------------------------------------------------------------------------------------
 // When the button "Transfer" on the modal is clicked, it gets all the data from the form
 // and adds the id of the selected item in the end of the array.
@@ -187,7 +192,7 @@ $('#modalBtnTransfer').click( async () => {
           });
 
           const item = JSON.parse( localStorage.getItem('selectedItem') );
-          const lastTransfer = item.transferHistory[item.transferHistory.length-1];
+          const lastTransfer = getLastTransferLog(item);
           objFormData.fromUserName = lastTransfer.toUserName;
           objFormData.fromUserNumber = lastTransfer.toUserNumber;
           objFormData.fromDepartment = lastTransfer.toDepartment;
@@ -207,6 +212,9 @@ $('#modalBtnTransfer').click( async () => {
           delete objFormData.division;
           delete objFormData.branch;
           delete objFormData.department;
+
+          if( objFormData.oldItem )
+               objFormData.oldItem = 'CJF ' + objFormData.oldItem.slice(0,3) + '.' + objFormData.oldItem.slice(3);
 
           let reqNumber = objFormData.reqType + objFormData.reqNumber.trim();
           objFormData.reqNumber = reqNumber;

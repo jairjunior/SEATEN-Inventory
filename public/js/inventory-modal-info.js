@@ -115,6 +115,18 @@ function modalFillItemInformation(stockItem){
      $(collapseControl).find('i.fas').addClass('fa-caret-up');
      $(collapseCard).addClass('show');
      $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Inventory Number:</span> ${inventoryNumberStr}</p>`);
+
+     var currentUser;
+     if(stockItem.status !== 'donation'){
+          let lastTransfer = getLastTransferLog(stockItem);
+          currentUser = lastTransfer.toUserName + ` (${lastTransfer.toUserNumber})`;
+     }
+     else{
+          currentUser = '---';
+          stockItem.location = '---';
+     }
+     $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Current User: </span>${currentUser}</p>`);
+     $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Current Location: </span>${stockItem.location}</p>`);
      
      let availability = stockItem.status.charAt(0).toUpperCase() + stockItem.status.slice(1);
      if(stockItem.status === 'available')
@@ -127,7 +139,6 @@ function modalFillItemInformation(stockItem){
           availability += ' 🎁';
 
      $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Status: </span>${availability}</p>`);
-     $(collapseCard).find('.card-body').append(`<p><span class='modal-item-info'>Location: </span>${stockItem.location}</p>`);
      $(collapseCard).find('.card-body').append(`<p class="mb-0"><span class='modal-item-info'>Specifications:</span></p>`);
      $(collapseCard).find('.card-body').append(`<ul class='pl-4' id='modalListOfItemSpecs'></ul>`);
      

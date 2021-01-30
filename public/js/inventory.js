@@ -196,7 +196,7 @@ function setTableFilter(){
                }
                else{
                     $('.table-spinner').hide();
-                    $('#paginationContainer').attr('hidden', true);
+                    $('#paginationContainer').prop('hidden', true);
                     $('#pNothingFound').show();
                }
           }
@@ -235,10 +235,8 @@ function filterByLocation(stockItems, filterPattern){
 
 function filterByUser(stockItems, filterPattern){
      return stockItems.filter( item => { 
-          if(item.transferredTo)
-               return filterPattern.test( item.transferredTo.userName );
-          else 
-               return false;
+          let lastTransfer = getLastTransferLog(item);
+          return filterPattern.test( lastTransfer.toUserName );
      });
 }
 
