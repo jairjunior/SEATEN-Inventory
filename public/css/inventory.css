@@ -36,8 +36,26 @@ main.container {
 
 /*********************************************************************/
 
-.filter-stock-items {
+#inventoryTableTopForm {
      margin-top: 4.5vh;
+}
+
+#tableFilterGroup {
+     padding: 0px;
+     margin: 0px;
+}
+
+#tableFilterInputGroup {
+     width: 100%;
+}
+
+#itemsPerPageGroup {
+     padding: 0px;
+     margin: 0px;
+}
+
+#itemsPerPage {
+     width: auto;
 }
 
 /*********************************************************************/
@@ -101,6 +119,11 @@ main.container {
 
 #tablePaginationPrevious i.fas, #tablePaginationNext i.fas {
      display: none;
+}
+
+#showingNumberOfItems p {
+     margin: 0px;
+     text-align: right;
 }
 
 /*********************************************************************/
@@ -290,6 +313,10 @@ fieldset.form-group {
           display: none;
      }
      
+     #showingNumberOfItems p {
+          text-align: center;
+     }
+
      #inventoryModal .modal-body {
           padding: 0.8rem;
      }

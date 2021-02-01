@@ -80,8 +80,10 @@ function fillTableStockItems(listOfItems, listOfModels, pageNumber){
      let firstIndex = parseInt( itemsPerPage ) * (pageNumber - 1);
      let lastIndex = firstIndex + parseInt( itemsPerPage );
 
-     const itemsToShow = listOfItems.slice(firstIndex, (lastIndex > listOfItems.length) ? undefined : lastIndex );
+     const itemsToShow = listOfItems.slice(firstIndex, (lastIndex > listOfItems.length) ? undefined : lastIndex);
      if(itemsToShow.length > itemsPerPage) return console.error('ERROR: In function fillTableStockItems(). Array itemsToShow is bigger than itemsPerPage.');
+
+     $('#showingNumberOfItems p').text(`Showing ${firstIndex+1}-${(lastIndex > listOfItems.length) ? listOfItems.length : lastIndex} of ${listOfItems.length} items`)
 
 
      /*console.log('pageNumber: ', pageNumber);

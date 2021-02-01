@@ -64,18 +64,34 @@
 
 
      <section>
-          <form class="filter-stock-items">
-               <div class="form-group">
-                    <legend class="h5">Filter</legend>
-                    <label for="tableFilterInputField" class="sr-only">
-                         Use the field below to search within the inventory.
+          
+          <form class="form-inline d-flex justify-content-between align-items-center mb-3" id="inventoryTableTopForm">
+               
+               <div class="form-group col-12 col-md-7 mb-3 mb-md-0" id="tableFilterGroup">
+                    <label class="sr-only" for="tableFilterInputField">
+                         Use the this field to search within the inventory.
                     </label>
-                    <div class="input-group mb-2">
+                    <div class="input-group" id="tableFilterInputGroup">
                          <div class="input-group-prepend">
                               <div class="input-group-text">🔎</div>
                          </div>
                          <input type="text" class="form-control" id="tableFilterInputField" placeholder="Search by category, model, inventory number, user or Service Now ticket" disabled>
                     </div>
+               </div>
+
+               <div class="form-group col-12 col-md-5 d-flex justify-content-center justify-content-md-end" id="itemsPerPageGroup">
+                    <label for="itemsPerPage">
+                         Items per page:
+                    </label>
+                    <select class="form-control ml-3" id="itemsPerPage">
+                         <option value="4">4</option>
+                         <option value="5">5</option>
+                         <option value="7">7</option>
+                         <option value="10">10</option>
+                         <option value="20" selected>20</option>
+                         <option value="30">30</option>
+                         <option value="40">40</option>
+                    </select>
                </div>
           </form>
 
@@ -88,7 +104,7 @@
 
 
           <div class="container" id="paginationContainer" hidden>
-               <div class="row">
+               <div class="row d-flex justify-content-between align-items-center">
                     <div class="col-md-8 d-flex justify-content-center justify-content-lg-start pt-3" id="tablePagination">
                          <nav aria-label="Inventory Table - Pagination">
                               <ul class="pagination">
@@ -113,34 +129,21 @@
                          </nav>
                     </div>
 
-                    <div class="col-md-4 d-flex justify-content-center justify-content-lg-end">
-                         <form class="form-inline">
-                              <div class="form-group">
-                                   <label for="itemsPerPage">Items per page: </label>
-                                   <select class="form-control ml-3" id="itemsPerPage">
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="7">7</option>
-                                        <option value="10">10</option>
-                                        <option value="20" selected>20</option>
-                                        <option value="30">30</option>
-                                        <option value="40">40</option>
-                                   </select>
-                              </div>
-                         </form>
+                    <div class="col-md-4" id="showingNumberOfItems">
+                         <p></p>
                     </div>
                </div>
           </div>
 
+
+          <p id='pNothingFound' class='text-center'>Nothing found 👎</p>
+
+
+          <div class="table-spinner spinner-border" role="status">
+               <span class="sr-only">Loading...</span>
+          </div>
+
      </section>
-
-
-     <p id='pNothingFound' class='text-center'>Nothing found 👎</p>
-
-
-     <div class="table-spinner spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-     </div>
 
 </main>
 

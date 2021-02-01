@@ -20,7 +20,7 @@ $('#itemsPerPage').change( () => {
 
 //----------------------------------------------------------------------------------------
 // This function builds the Inventory Table pagination according to the total number of
-// items to ble displayed and the value selected by the user in the #itemsPerPage <select> field.
+// items to be displayed and the value selected by the user in the #itemsPerPage <select> field.
 //----------------------------------------------------------------------------------------
 function makeTablePagination(numOfItems, pageNumber){
 
