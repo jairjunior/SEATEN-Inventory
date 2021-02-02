@@ -37,6 +37,7 @@ function loadRegisterPage(){
                document.title = 'ICOS | Register';
                window.history.pushState({}, 'ICOS | Register', '/app/register');
                $('body main.container').empty().html(data);
+               $('#navbarNav').collapse("toggle");
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {

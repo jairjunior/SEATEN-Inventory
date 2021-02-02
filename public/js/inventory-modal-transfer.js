@@ -228,12 +228,14 @@ $('#modalBtnTransfer').click( async () => {
                console.log('O usuário confirmou a ação.');
                $('#opacityLayer').toggleClass('opacity-layer', false);
                $('#confirmationModal').modal('hide');
+               $('#opacityLayer').remove();
                submitFormTransfer(objFormData);
           }
           catch(error) {
                console.log('O usuário cancelou a ação.');
                $('#opacityLayer').toggleClass('opacity-layer', false);
                $('#inventoryModal').modal('hide');
+               $('#opacityLayer').remove();
           }
      }
      else{
@@ -247,6 +249,7 @@ $('#modalBtnTransfer').click( async () => {
 // This function is called when the user click in the Transfer button to submit the Transfer Form.
 //----------------------------------------------------------------------------------------
 function showModalTransferConfirmation(objFormData) {
+     $('#inventoryModal').after(`<div id="opacityLayer"></div>`);
      $('#opacityLayer').toggleClass('opacity-layer', true);
      $('#confirmationModal').modal('show');
      $('#confirmationModal .modal-body').empty();
