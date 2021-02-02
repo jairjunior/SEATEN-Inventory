@@ -11,15 +11,6 @@ router.use(authMiddleware);
 
 
 //----------------------------------------------------------------------------------------
-// Send to the client the HTML file inventory.html
-//----------------------------------------------------------------------------------------
-router.get('/', (req, res) => {
-     console.log('System Log: Sending to the client the Inventory HTML page.');
-     res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
-});
-
-
-//----------------------------------------------------------------------------------------
 // Return a list containing all the items stored in the database
 // As all the items (in stockitem collection) have a reference field to the model colletction,
 // The app returns both collections in separeted objects.

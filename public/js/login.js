@@ -46,7 +46,7 @@ function submitToLogin(userInfo){
 
                const { token } = data;
                localStorage.setItem("bearerToken", token);
-               loadApplicationPage( token );
+               loadInventoryPage();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -60,13 +60,15 @@ function submitToLogin(userInfo){
 //----------------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------------
-function loadApplicationPage( token ){
+function loadInventoryPage(){
+     const token = localStorage.getItem('bearerToken');
+
      if(!token){
           return console.error('ERROR: Authentication Token was not provided.');
      }
 
      $.ajax({
-          url: `/inventory`,
+          url: '/app/inventory',
           type: 'GET',
           dataType: 'html',
           beforeSend: (xhr, settings) => {
@@ -75,9 +77,9 @@ function loadApplicationPage( token ){
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Load app page request - status: ${textStatus}`);
+               console.log(`Load Inventory page request - status: ${textStatus}`);
                document.title = 'ICOS | SEATEN Inventory';
-               window.history.pushState({}, 'ICOS | SEATEN Inventory', '/inventory');
+               window.history.pushState({}, 'ICOS | SEATEN Inventory', '/app/inventory');
                $(`link[href*="login.css"]`).remove();
                $('html head').append(`<link rel="stylesheet" href="../css/navbar.css">`);
                $('html head').append(`<link rel="stylesheet" href="../css/inventory.css">`);

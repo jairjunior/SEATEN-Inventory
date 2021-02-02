@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const authMiddleware = require('../middleware/auth');
 
 
@@ -6,13 +7,23 @@ const router = express.Router();
 router.use(authMiddleware);
 
 
-router.get('/', (req, res) => {
-     res.send({
-          ok: true,
-          msg: 'Dashboard',
-          user: req.userId
-     });
+
+//----------------------------------------------------------------------------------------
+// Send to the client the HTML file inventory.html
+//----------------------------------------------------------------------------------------
+router.get('/inventory', (req, res) => {
+     console.log('System Log: Sending to the client the Inventory HTML page.');
+     res.sendFile( path.join(__dirname + '../../../../public/views/inventory.html') );
 });
 
 
-module.exports = app => app.use('/dashboard', router);
+//----------------------------------------------------------------------------------------
+// Send to the client the HTML file register.html
+//----------------------------------------------------------------------------------------
+router.get('/register', (req, res) => {
+     console.log('System Log: Sending to the client the Register HTML page.');
+     res.sendFile( path.join(__dirname + '../../../../public/views/register.html') );
+});
+
+
+module.exports = app => app.use('/app', router);
