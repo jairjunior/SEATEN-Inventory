@@ -257,9 +257,10 @@ function showModalTransferConfirmation(objFormData) {
           <div class="confirmation-msg">
                <p class="mb-4">Please, confirm the information below before saving the changes.</p>     
                <p><strong>Stock Item: </strong>${ $('#transferItemName').val() }</p>
-               <p><strong>Stock Item: </strong>${ $('#transferInventoryNumber').val() }</p>
-               <p><strong>User: </strong>${objFormData.toUserName}</p>
-               <p><strong>User Number: </strong>${objFormData.toUserNumber}</p>
+               <p><strong>Inventory Number: </strong>${ $('#transferInventoryNumber').val() }</p>
+               <p><strong>Reason: </strong>${objFormData.reason}</p>
+               <p><strong>Recipient: </strong>${objFormData.toUserName}</p>
+               <p><strong>Recipient Number: </strong>${objFormData.toUserNumber}</p>
           </div>`
      );
 }
