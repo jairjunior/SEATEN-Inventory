@@ -17,18 +17,6 @@ body {
 
 /*********************************************************************/
 
-main.container {
-     min-height: 71vh;
-}
-
-/*********************************************************************/
-
-.main-title {
-     margin: 1em 0 1.3em;
-}
-
-/*********************************************************************/
-
 .my-alert i.fas:after {
      content: '    ';
      white-space: pre;
@@ -283,18 +271,6 @@ fieldset.form-group {
 
 /*********************************************************************/
 
-.page-footer {
-     background: rgb(35,136,76);
-     background: radial-gradient(circle, rgba(35,136,76,1) 30%, rgba(29,97,56,1) 65%);
-     margin-top: 10vh;
-     min-height: 8vh;
-     text-align: center;
-     font-size: 1em;
-     color: white;
-}
-
-/*********************************************************************/
-
 @media screen and (max-width: 991px){
      .itemStatusText, .inventoryNumberPrefix {
           display: none;
@@ -338,9 +314,5 @@ fieldset.form-group {
      
      #confirmationModal .modal-header {
           height: 11vh;
-     }
-
-     .page-footer {
-          min-height: 10vh;
      }
 }

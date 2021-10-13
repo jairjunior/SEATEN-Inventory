@@ -38,6 +38,34 @@
 }
 
 
+/*********************************************************************/
+
+main.container {
+     min-height: 71vh;
+}
+
+/*********************************************************************/
+
+.main-title {
+     margin: 1em 0 1.3em;
+}
+
+/*********************************************************************/
+
+
+.page-footer {
+     background: rgb(35,136,76);
+     background: radial-gradient(circle, rgba(35,136,76,1) 30%, rgba(29,97,56,1) 65%);
+     margin-top: 10vh;
+     min-height: 8vh;
+     text-align: center;
+     font-size: 1em;
+     color: white;
+ }
+
+
+/*********************************************************************/
+
 
 @media screen and (max-width: 1200px){
      .my-navbar-container {
@@ -69,5 +97,9 @@
           margin: 0;
           padding: 5px 2vw;
           background-color: #1f7943;
+     }
+     
+     .page-footer {
+          min-height: 10vh;
      }
 }

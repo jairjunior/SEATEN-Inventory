@@ -81,8 +81,12 @@ function loadInventoryPage(){
                document.title = 'ICOS | SEATEN Inventory';
                window.history.pushState({}, 'ICOS | SEATEN Inventory', '/app/inventory');
                $(`link[href*="login.css"]`).remove();
-               $('html head').append(`<link rel="stylesheet" href="../css/navbar.css">`);
+               $(`link[href*="register.css"]`).remove();
+               
+               if( $(`link[href*="app.css"]`).length == 0 )
+                    $('html head').append(`<link rel="stylesheet" href="../css/app.css">`);
                $('html head').append(`<link rel="stylesheet" href="../css/inventory.css">`);
+
                $('body').empty().html(data);
                loadInventoryTable();
           }

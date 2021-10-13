@@ -1,5 +1,8 @@
 "use strict";
 
+//----------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------
 $('#navbarNav a.nav-link').click( event => {
      event.preventDefault();
      if( ! $(event.target.parentNode).hasClass('active') ){
@@ -10,7 +13,7 @@ $('#navbarNav a.nav-link').click( event => {
           $(event.target).append(` <span class="sr-only">(current)</span>`);
 
           const pageToLoad = $(event.target).text().split(' ')[0].toLowerCase();
-          console.log(pageToLoad);
+          console.log(`Page to load: ${pageToLoad}`);
 
           if(pageToLoad === 'register')
                loadRegisterPage();
@@ -20,6 +23,9 @@ $('#navbarNav a.nav-link').click( event => {
 });
 
 
+//----------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------
 function loadRegisterPage(){
      const token = localStorage.getItem('bearerToken');
 
@@ -36,6 +42,8 @@ function loadRegisterPage(){
                console.log(`Load Register page request - status: ${textStatus}`);
                document.title = 'ICOS | Register';
                window.history.pushState({}, 'ICOS | Register', '/app/register');
+               $(`link[href*="inventory.css"]`).remove();
+               $('html head').append(`<link rel="stylesheet" href="../css/register.css">`);
                $('body main.container').empty().html(data);
                $('#navbarNav').collapse("toggle");
           }
