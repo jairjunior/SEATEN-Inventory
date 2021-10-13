@@ -46,7 +46,7 @@ function submitToLogin(userInfo){
 
                const { token } = data;
                localStorage.setItem("bearerToken", token);
-               loadInventoryPage();
+               loadAppStructure();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -60,15 +60,15 @@ function submitToLogin(userInfo){
 //----------------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------------
-function loadInventoryPage(){
+function loadAppStructure(){
      const token = localStorage.getItem('bearerToken');
 
      if(!token){
-          return console.error('ERROR: Authentication Token was not provided.');
+          return console.error('ERROR: Authentication Token was not found.');
      }
 
      $.ajax({
-          url: '/app/inventory',
+          url: '/app',
           type: 'GET',
           dataType: 'html',
           beforeSend: (xhr, settings) => {
@@ -77,18 +77,12 @@ function loadInventoryPage(){
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Load Inventory page request - status: ${textStatus}`);
-               document.title = 'ICOS | SEATEN Inventory';
-               window.history.pushState({}, 'ICOS | SEATEN Inventory', '/app/inventory');
+               console.log(`Load App Structure page request - status: ${textStatus}`);
                $(`link[href*="login.css"]`).remove();
-               $(`link[href*="register.css"]`).remove();
-               
-               if( $(`link[href*="app.css"]`).length == 0 )
-                    $('html head').append(`<link rel="stylesheet" href="../css/app.css">`);
-               $('html head').append(`<link rel="stylesheet" href="../css/inventory.css">`);
+               $('html head').append(`<link rel="stylesheet" href="../css/app.css">`);
 
                $('body').empty().html(data);
-               loadInventoryTable();
+               loadInventoryPage();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
@@ -96,4 +90,5 @@ function loadInventoryPage(){
           console.error(`jqXHR object: ${jqXHR}`);
           console.error(`ERROR: ${errorThrown}`);
      });
+
 }

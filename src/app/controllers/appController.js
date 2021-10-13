@@ -7,6 +7,14 @@ const router = express.Router();
 router.use(authMiddleware);
 
 
+//----------------------------------------------------------------------------------------
+// Send to the client the HTML file inventory.html
+//----------------------------------------------------------------------------------------
+router.get('/', (req, res) => {
+     console.log('System Log: Sending to the client the App HTML structure (navbar and footer mainly).');
+     res.sendFile( path.join(__dirname + '../../../../public/views/app.html') );
+});
+
 
 //----------------------------------------------------------------------------------------
 // Send to the client the HTML file inventory.html
