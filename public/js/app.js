@@ -1,7 +1,7 @@
 "use strict";
 
 //----------------------------------------------------------------------------------------
-// This function creates an event listener for the navbar menus (INVENTORY, REGISTER, DOCUMENTATION AND ACCOUNT)
+// This function creates an event listener for the top navbar links (INVENTORY, REGISTER, DOCUMENTATION AND ACCOUNT)
 // When one of the is clicked, it activates the link and calls the function to load the
 // respective page.
 //----------------------------------------------------------------------------------------
@@ -60,8 +60,9 @@ function loadInventoryPage(){
                     <script src="../js/inventory-modal-transfer.js"></script>
                     <script src="../js/inventory-modal-update.js"></script>
                `);
-               $('#navbarNav').collapse("toggle");
 
+               $('#navbarNav').collapse('hide');
+               localStorage.removeItem('itemCategories');
                loadInventoryTable();
           }
      })
@@ -101,7 +102,11 @@ function loadRegisterPage(){
                $(`script[src*="app.js"]`).after(`
                     <script src="../js/register.js"></script>
                `);
-               $('#navbarNav').collapse("toggle");
+               $('#navbarNav').collapse('toggle');
+
+               localStorage.removeItem('stockItems');
+               fetchCategoryList();
+               fetchModelList();
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
