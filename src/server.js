@@ -1,9 +1,13 @@
 const express = require('express');
-const app = express();
+const favicon = require('serve-favicon');
 const path = require('path');
+const app = express();
 
-app.use(express.json());                               // for parsing application/json
-app.use(express.urlencoded({ extended: true }));       // for parsing application/x-www-form-urlencoded
+console.log( path.join(__dirname, '../public/img/favicon.ico') );
+
+app.use( favicon( path.join(__dirname, '../public/img/favicon.ico') ) );
+app.use( express.json());                               // for parsing application/json
+app.use( express.urlencoded({ extended: true }));       // for parsing application/x-www-form-urlencoded
 app.use( express.static('public') );                   // folder for static files (html, css, js)
 require('./app/controllers/index')(app);               // import all controllers and set them to the "app"
 
