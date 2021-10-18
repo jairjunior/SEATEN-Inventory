@@ -136,10 +136,94 @@ function showModelSpecs(modelId){
         <ul class='pl-4' id='ListOfModelSpecs'></ul>
         <div class="form-group">
             <label for="inputInventoryNumber">Inventory Number:</label>
-            <input class="form-control" id="inputInventoryNumber" type="text" placeholder="">
+            <input class="form-control" id="inputInventoryNumber" type="text" value="CJF ">
         </div>
         <button type="button" id="btnRegisterNewItem" class="btn btn-success">Register New Stock Item</button>
     </div>`);
+
+
+
+    
+    $('#inputInventoryNumber').on('focus click', eventHandler => {
+        if( eventHandler.target.selectionEnd < 4 ){
+            eventHandler.target.selectionStart = eventHandler.target.value.length;
+            eventHandler.target.selectionEnd = eventHandler.target.value.length;
+        }
+    });
+
+
+
+    $('#inputInventoryNumber').on('keydown', eventHandler => {
+        const inputText = eventHandler.target.value;
+        const inputTextLength = eventHandler.target.value.length;
+        const currentCursorPosition = eventHandler.target.selectionEnd;
+        console.log('Text: ', inputText);
+        console.log('Length: ', inputTextLength);
+        console.log('Cursor Position before: ', currentCursorPosition);
+        
+        // Allows the user to use only numbers and the keys delete, backspace, arrow left and arrow right
+        if( ( eventHandler.which < 48 || eventHandler.which > 57 ) &&
+            ( eventHandler.which < 96 || eventHandler.which > 105 ) &&
+            eventHandler.key !== 'Backspace' && eventHandler.key !== 'Delete' &&
+            eventHandler.key !== 'ArrowLeft' && eventHandler.key !== 'ArrowRight' &&
+            eventHandler.key !== 'Home' && eventHandler.key !== 'End' )
+        {
+            console.log('Tecla pressionada não é válida.');
+            eventHandler.preventDefault();
+        }
+
+        // If Home key is pressed, it will position the cursor in the position 4 intead of position 0
+        if( eventHandler.key === 'Home' ){
+            eventHandler.target.selectionStart = 4;
+            eventHandler.target.selectionEnd = 4;
+        }
+
+        // If the cursor is on the position 4, it cannot be moved to the left using the ArrowLeft, Backspace or Home keys
+        if (  eventHandler.target.selectionEnd === 4 &&
+            ( eventHandler.key === 'Backspace' || eventHandler.key === 'ArrowLeft' || eventHandler.key === 'Home' ) )
+        {  
+            eventHandler.preventDefault();
+        }
+
+        // When the input field has already 11 chars, it allows only the use of the arrows and delete/backsapce keys
+        if ( inputTextLength === 11 && 
+             eventHandler.key !== 'Backspace' &&
+             eventHandler.key !== 'Delete' &&
+             eventHandler.key !== 'ArrowLeft' &&
+             eventHandler.key !== 'ArrowRight' &&
+             eventHandler.key !== 'Home' &&
+             eventHandler.key !== 'End' )
+            {
+                eventHandler.preventDefault();
+            }
+    });
+
+
+    $('#inputInventoryNumber').on('keyup', eventHandler => {
+        const inputText = eventHandler.target.value;
+        const indexOfDot = inputText.indexOf('.');
+        const currentCursorPosition = eventHandler.target.selectionEnd;
+        console.log('Cursor Position after: ', currentCursorPosition);
+
+        if( inputText.length < 11 && inputText.length >= 8){
+            if(indexOfDot < 0)
+                var newInputText = inputText.slice(0, 7) + '.' + inputText.slice(7)
+            else{
+                let tempText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
+                var newInputText = tempText.slice(0, 7) + '.' + tempText.slice(7)
+            }
+
+            eventHandler.target.value = newInputText;
+            if(eventHandler.key === 'Backspace'){
+                eventHandler.target.selectionStart = currentCursorPosition;
+                eventHandler.target.selectionEnd = currentCursorPosition;
+            }
+        }
+    });
+
+
+
+
 
     const specs = selectedModel[0].specs;
     console.log(specs);
