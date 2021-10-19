@@ -78,7 +78,7 @@ function fillCategorySelect(categoryList){
 //----------------------------------------------------------------------------------------
 $('#selectItemCategory').change( eventHandler => {
     let categoryId = $(eventHandler.target).children(':selected').val();
-    console.log('Categoria selecionada: ', categoryId);
+    console.log('Id da categoria selecionada: ', categoryId);
 
     fillModelSelect(categoryId);
 });
@@ -127,7 +127,8 @@ function showModelSpecs(modelId){
 
     const itemModelsList = JSON.parse( localStorage.getItem('itemModels') );
     let selectedModel = itemModelsList.filter( model => { return model._id === modelId });
-    console.log(selectedModel);
+    const inventoryPrefix = 'CJF '
+    console.log(selectedModel[0]);
 
     $('#modelSpecs').remove();
     $('#selectItemModel').after(`
@@ -136,23 +137,38 @@ function showModelSpecs(modelId){
         <ul class='pl-4' id='ListOfModelSpecs'></ul>
         <div class="form-group">
             <label for="inputInventoryNumber">Inventory Number:</label>
-            <input class="form-control" id="inputInventoryNumber" type="text" value="CJF ">
+            <input class="form-control" id="inputInventoryNumber" type="text" value="${inventoryPrefix}">
         </div>
         <button type="button" id="btnRegisterNewItem" class="btn btn-success">Register New Stock Item</button>
-    </div>`);
+    </div>`);    
+
+    inventoryNumberFieldCursorControl();
+    inventoryNumberFieldInputRules();
+    inventoryNumberFieldDotControl();
+
+    const specs = selectedModel[0].specs;
+     for(let spec in specs){
+          let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
+          $('#ListOfModelSpecs').append(`<li><span class='model-spec'>${specStr}: </span>${specs[spec]}</li>`);
+     }
+}
 
 
 
-    
+//----------------------------------------------------------------------------------------
+// Set of functions to format and constrain the field where the user put the inventory number
+// It will have a "CJF"
+//----------------------------------------------------------------------------------------
+function inventoryNumberFieldCursorControl(){
     $('#inputInventoryNumber').on('focus click', eventHandler => {
         if( eventHandler.target.selectionEnd < 4 ){
             eventHandler.target.selectionStart = eventHandler.target.value.length;
             eventHandler.target.selectionEnd = eventHandler.target.value.length;
         }
     });
+}
 
-
-
+function inventoryNumberFieldInputRules(){
     $('#inputInventoryNumber').on('keydown', eventHandler => {
         const inputText = eventHandler.target.value;
         const inputTextLength = eventHandler.target.value.length;
@@ -179,7 +195,7 @@ function showModelSpecs(modelId){
         }
 
         // If the cursor is on the position 4, it cannot be moved to the left using the ArrowLeft, Backspace or Home keys
-        if (  eventHandler.target.selectionEnd === 4 &&
+        if (  eventHandler.target.selectionEnd == 4 &&
             ( eventHandler.key === 'Backspace' || eventHandler.key === 'ArrowLeft' || eventHandler.key === 'Home' ) )
         {  
             eventHandler.preventDefault();
@@ -197,38 +213,38 @@ function showModelSpecs(modelId){
                 eventHandler.preventDefault();
             }
     });
+}
 
-
+function inventoryNumberFieldDotControl(){
     $('#inputInventoryNumber').on('keyup', eventHandler => {
         const inputText = eventHandler.target.value;
         const indexOfDot = inputText.indexOf('.');
         const currentCursorPosition = eventHandler.target.selectionEnd;
         console.log('Cursor Position after: ', currentCursorPosition);
 
-        if( inputText.length < 11 && inputText.length >= 8){
+        if( inputText.length < 11 && inputText.length >= 8 ){
             if(indexOfDot < 0)
                 var newInputText = inputText.slice(0, 7) + '.' + inputText.slice(7)
             else{
                 let tempText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
-                var newInputText = tempText.slice(0, 7) + '.' + tempText.slice(7)
+                var newInputText = tempText.slice(0, 7) + '.' + tempText.slice(7);
             }
-
             eventHandler.target.value = newInputText;
-            if(eventHandler.key === 'Backspace'){
-                eventHandler.target.selectionStart = currentCursorPosition;
-                eventHandler.target.selectionEnd = currentCursorPosition;
-            }
+            
+            fixCursorPosition(eventHandler, currentCursorPosition);
+        }
+        else if(inputText.length < 11 && inputText.length >= 4 && indexOfDot > 0){
+            console.log('Entrou aqui');
+            var newInputText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
+            eventHandler.target.value = newInputText;
+            fixCursorPosition(eventHandler, currentCursorPosition);
         }
     });
+}
 
-
-
-
-
-    const specs = selectedModel[0].specs;
-    console.log(specs);
-     for(let spec in specs){
-          let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
-          $('#ListOfModelSpecs').append(`<li><span class='model-spec'>${specStr}: </span>${specs[spec]}</li>`);
-     }
+function fixCursorPosition(eventHandler, currentCursorPosition){
+    if( eventHandler.key === 'Backspace' || eventHandler.key === 'Delete'){
+        eventHandler.target.selectionStart = currentCursorPosition;
+        eventHandler.target.selectionEnd = currentCursorPosition;
+    }
 }
