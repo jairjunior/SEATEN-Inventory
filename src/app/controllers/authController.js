@@ -32,16 +32,23 @@ router.post('/register', async (req, res) => {
 
 router.post('/authenticate', async (req, res) => {
      const { email, password } = req.body;
+     console.log(email);
+     console.log(password);
      
      try{
           const user = await User.findOne({ email }).select('+password');
-          console.log(user);
-          if( !user ) 
+          if( !user ){
+               console.log('User not found.')
                return res.status(400).send({ error: 'User not found.' });
-          if( !await bcrypt.compare(password, user.password) )
+          }
+          if( !await bcrypt.compare(password, user.password) ){
+               console.log('USER LOGIN:');
+               console.log(user);
                return res.status(400).send({ error: 'Invalid password.' });
+          }
           
           console.log('System Log: User authentication is valid. Access Token will be provided.');
+          console.log(user);
           
           user.password = undefined;
           return res.send({ user, token: generateToken({ id: user.id }) });
