@@ -55,8 +55,14 @@ function fetchStockItemsList(){
                localStorage.setItem( 'itemModels' , JSON.stringify(itemModels) );
                
                $('.table-spinner').hide();
-               fillTableStockItems(stockItems, itemModels);
-               $('#tableFilterInputField').attr('disabled', false);
+               if(stockItems < 1){
+                    $('.table-spinner').hide();
+                    $('#pNothingFound').show();
+               }
+               else{
+                    fillTableStockItems(stockItems, itemModels);
+                    $('#tableFilterInputField').attr('disabled', false);
+               }
           }
      })
      .fail( (jqXHR, textStatus, errorThrown) => {
