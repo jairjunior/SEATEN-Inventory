@@ -25,12 +25,16 @@ $('#itemsPerPage').change( () => {
 function makeTablePagination(numOfItems, pageNumber){
 
     pageNumber = parseInt(pageNumber);
-    const numberOfPages = Math.ceil( numOfItems / $('#itemsPerPage').val() );
-    if(numberOfPages < 1) return console.error("ERROR: Number of table pages cannot be less than 1.");
+    var numberOfPages = Math.ceil( numOfItems / $('#itemsPerPage').val() );
+    if(numberOfPages < 1) 
+        numberOfPages = 1;
+        //return console.error("ERROR: Number of table pages cannot be less than 1.");
 
     
-    if(pageNumber == 1)
+    if(pageNumber == 1 && numberOfPages > 1)
         initializeTablePagination({ 'previous': 'disabled', 'next': 'enabled' });
+    else if(pageNumber == 1 && numberOfPages == 1)
+        initializeTablePagination({ 'previous': 'disabled', 'next': 'disabled' });
     else if(pageNumber == numberOfPages)
         initializeTablePagination({ 'previous': 'enabled', 'next': 'disabled' });
     else 
