@@ -80,6 +80,18 @@ $('#selectItemCategory').change( eventHandler => {
     let categoryId = $(eventHandler.target).children(':selected').val();
     console.log('Id da categoria selecionada: ', categoryId);
 
+    /*
+    $('#modelSpecs').remove();
+    $('#fieldsetInventoryNumber').remove();
+    $('#fieldsetRequisitionInfo').remove();
+    $('#fieldsetFromUser').remove();
+    $('#fieldsetToUser').remove();
+    $('#fieldsetReason').remove();
+    $('#fieldsetRemarks').remove();
+    */
+
+    checkAndRemoveListOfModelSpecs();
+
     fillModelSelect(categoryId);
 });
 
@@ -93,15 +105,15 @@ function fillModelSelect(categoryId){
     const itemModelsList = JSON.parse( localStorage.getItem('itemModels') );
     const filteredModels = itemModelsList.filter( model => { return model.categoryId === categoryId });
 
-    $('#selectItemModel').children().slice(1).remove();
+    $('#selectItemModel option').slice(1).remove();
     $('#selectItemModel option').eq(0).prop('selected', true);
-    $('#selectItemModel').prop('disabled', false);
-    if( $('#modelSpecs').length > 0 ) $('#modelSpecs').remove();
 
     filteredModels.forEach( model => {
         let modelName = model.brand + ' ' + model.name + ' - Contract n. ' + model.contractNumber;
         $('#selectItemModel').append(`<option value='${model._id}'>${modelName}</option>`);
     });
+
+    $('#selectItemModel').prop('disabled', false);
 }
 
 
@@ -113,25 +125,28 @@ $('#selectItemModel').change( eventHandler => {
     console.log('Id do modelo selecionado: ', modelId);
 
     showModelSpecs(modelId);
+    showInventoryNumberFieldset();
+    //showRequisitionInfoFieldset();
+    //showFromUserFieldset();
+    //showToUserFieldset();
+    //showReasonFieldset();
+    //showRemarksFieldset();
 });
 
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
 function showModelSpecs(modelId){
-    if(modelId === ''){
-        $('#modelSpecs').remove();
-        return;
-    }
+    if(modelId === '') return console.error('ERROR: No ID for the item model selected.');
 
     const itemModelsList = JSON.parse( localStorage.getItem('itemModels') );
     let selectedModel = itemModelsList.filter( model => { return model._id === modelId });
-    console.log(selectedModel[0]);
+    console.log('Dados do modelo selecionado: ', selectedModel[0]);
 
-    if( $('#modelSpecs').length > 0 ) $('#modelSpecs').remove();
+    checkAndRemoveListOfModelSpecs();
 
     $('#selectItemModel').after(`
-    <div id='modelSpecs'>
+    <div id='registerModelSpecs'>
         <h5>Model Specifications:</h5>
         <ul class='pl-4' id='ListOfModelSpecs'></ul>
     </div>`);
@@ -141,6 +156,11 @@ function showModelSpecs(modelId){
           let specStr = spec.charAt(0).toUpperCase() + spec.slice(1);
           $('#ListOfModelSpecs').append(`<li><span class='model-spec'>${specStr}: </span>${specs[spec]}</li>`);
      }
+}
+
+// Auxiliary funtion
+function checkAndRemoveListOfModelSpecs(){
+    if( $('#registerModelSpecs').length > 0 ) $('#registerModelSpecs').remove();
 }
 
 
@@ -176,7 +196,10 @@ function showInventoryNumberFieldset(){
 
 //----------------------------------------------------------------------------------------
 // Set of functions to format and constrain the field where the user put the inventory number
-// These functions ensure that the inventory number keep the pattern: "CJF 123.456"
+// These 3 functions ensure that the inventory number keep the pattern: "CJF 123.456"
+// First function for controlling the caret
+// Second function for controlling the keyboard entries
+// Third function for controlling the dot position
 //----------------------------------------------------------------------------------------
 function inventoryNumberFieldCaretControl(PREFIX_LENGTH){
     $('#inputInventoryNumber').on('focus click', eventHandler => {
