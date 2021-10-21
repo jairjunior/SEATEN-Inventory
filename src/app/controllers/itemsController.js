@@ -21,7 +21,7 @@ router.get('/items', async (req, res) => {
      try {
           const stockItems = await StockItem.find();
           const itemModels = await Model.find();
-          console.log('System Log: Sending to the client the whole Inventory List with the Models registered.');
+          console.log('System Log: Sending to the client the whole Inventory List with the registered Models.');
           return res.send({ ok: true, stockItems, itemModels });
      }
      catch (error) {
