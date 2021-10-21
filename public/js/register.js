@@ -157,29 +157,47 @@ function showModelSpecs(modelId){
 
 //----------------------------------------------------------------------------------------
 // Set of functions to format and constrain the field where the user put the inventory number
-// It will have a "CJF"
+// These functions ensure that the inventory number keep the pattern: "CJF 123.456"
 //----------------------------------------------------------------------------------------
-function inventoryNumberFieldCursorControl(){
+function inventoryNumberFieldCaretControl(PREFIX_LENGTH){
     $('#inputInventoryNumber').on('focus click', eventHandler => {
-        if( eventHandler.target.selectionEnd < 4 ){
-            eventHandler.target.selectionStart = eventHandler.target.value.length;
-            eventHandler.target.selectionEnd = eventHandler.target.value.length;
+        var element = eventHandler.target;
+
+        if( element.selectionEnd < PREFIX_LENGTH ){
+            element.selectionStart = element.value.length;
+            element.selectionEnd = element.value.length;
+        }
+    });
+
+
+    $('#inputInventoryNumber').on('select', eventHandler => {
+        var element = eventHandler.target;
+
+        if( element.selectionStart < PREFIX_LENGTH && element.selectionEnd >= PREFIX_LENGTH){
+            element.selectionStart = element.selectionEnd;
+        }
+        else if( element.selectionStart >= PREFIX_LENGTH && element.selectionEnd < PREFIX_LENGTH){
+            element.selectionEnd = element.selectionStart;
+        }
+        else if( element.selectionStart < PREFIX_LENGTH && element.selectionEnd < PREFIX_LENGTH){
+            element.selectionStart = PREFIX_LENGTH;
+            element.selectionEnd = PREFIX_LENGTH;
         }
     });
 }
 
-function inventoryNumberFieldInputRules(){
+function inventoryNumberFieldKeysControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
     $('#inputInventoryNumber').on('keydown', eventHandler => {
-        const inputText = eventHandler.target.value;
-        const inputTextLength = eventHandler.target.value.length;
-        const currentCursorPosition = eventHandler.target.selectionEnd;
-        console.log('Text: ', inputText);
-        console.log('Length: ', inputTextLength);
-        console.log('Cursor Position before: ', currentCursorPosition);
+        var element = eventHandler.target;
+        const inputTextLength = element.value.length;
+        const DIGIT_CODE_0 = 48;
+        const DIGIT_CODE_9 = 57;
+        const NUMPAD_CODE_0 = 96;
+        const NUMPAD_CODE_9 = 105;
         
-        // Allows the user to use only numbers and the keys delete, backspace, arrow left and arrow right
-        if( ( eventHandler.which < 48 || eventHandler.which > 57 ) &&
-            ( eventHandler.which < 96 || eventHandler.which > 105 ) &&
+        // Allows the user to use only numbers and the keys delete, backspace, home, end, arrow left and arrow right
+        if( ( eventHandler.which < DIGIT_CODE_0 || eventHandler.which > DIGIT_CODE_9 ) &&
+            ( eventHandler.which < NUMPAD_CODE_0 || eventHandler.which > NUMPAD_CODE_9 ) &&
             eventHandler.key !== 'Backspace' && eventHandler.key !== 'Delete' &&
             eventHandler.key !== 'ArrowLeft' && eventHandler.key !== 'ArrowRight' &&
             eventHandler.key !== 'Home' && eventHandler.key !== 'End' )
@@ -188,21 +206,21 @@ function inventoryNumberFieldInputRules(){
             eventHandler.preventDefault();
         }
 
-        // If Home key is pressed, it will position the cursor in the position 4 intead of position 0
+        // If Home key is pressed, it will position the caret in the position 4 intead of position 0
         if( eventHandler.key === 'Home' ){
-            eventHandler.target.selectionStart = 4;
-            eventHandler.target.selectionEnd = 4;
+            element.selectionStart = PREFIX_LENGTH;
+            element.selectionEnd = PREFIX_LENGTH;
         }
 
-        // If the cursor is on the position 4, it cannot be moved to the left using the ArrowLeft, Backspace or Home keys
-        if (  eventHandler.target.selectionEnd == 4 &&
+        // If the caret is in the position 4, it cannot be moved to the left using the ArrowLeft, Backspace or Home keys
+        if (  element.selectionEnd == PREFIX_LENGTH &&
             ( eventHandler.key === 'Backspace' || eventHandler.key === 'ArrowLeft' || eventHandler.key === 'Home' ) )
         {  
             eventHandler.preventDefault();
         }
 
-        // When the input field has already 11 chars, it allows only the use of the arrows and delete/backsapce keys
-        if ( inputTextLength === 11 && 
+        // When the input field has already 11 chars, it allows only the use of the arrows, delete/backsapce and home/end keys
+        if ( inputTextLength === INPUT_MAX_LENGTH && 
              eventHandler.key !== 'Backspace' &&
              eventHandler.key !== 'Delete' &&
              eventHandler.key !== 'ArrowLeft' &&
@@ -215,36 +233,38 @@ function inventoryNumberFieldInputRules(){
     });
 }
 
-function inventoryNumberFieldDotControl(){
+function inventoryNumberFieldDotControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
     $('#inputInventoryNumber').on('keyup', eventHandler => {
-        const inputText = eventHandler.target.value;
+        var element = eventHandler.target;
+        const inputText = element.value;
         const indexOfDot = inputText.indexOf('.');
-        const currentCursorPosition = eventHandler.target.selectionEnd;
-        console.log('Cursor Position after: ', currentCursorPosition);
+        const currentCaretPosition = element.selectionEnd;
+        const DOT_POSITION = 8;
 
-        if( inputText.length < 11 && inputText.length >= 8 ){
+        if( inputText.length < INPUT_MAX_LENGTH && inputText.length >= DOT_POSITION ){
             if(indexOfDot < 0)
                 var newInputText = inputText.slice(0, 7) + '.' + inputText.slice(7)
             else{
                 let tempText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
                 var newInputText = tempText.slice(0, 7) + '.' + tempText.slice(7);
             }
-            eventHandler.target.value = newInputText;
+            element.value = newInputText;
             
-            fixCursorPosition(eventHandler, currentCursorPosition);
+            repositionCaret(eventHandler, currentCaretPosition);
         }
-        else if(inputText.length < 11 && inputText.length >= 4 && indexOfDot > 0){
-            console.log('Entrou aqui');
+        else if(inputText.length < INPUT_MAX_LENGTH && inputText.length >= PREFIX_LENGTH && indexOfDot >= 0){
             var newInputText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
-            eventHandler.target.value = newInputText;
-            fixCursorPosition(eventHandler, currentCursorPosition);
+            element.value = newInputText;
+            repositionCaret(eventHandler, currentCaretPosition);
         }
     });
 }
 
-function fixCursorPosition(eventHandler, currentCursorPosition){
+function repositionCaret(eventHandler, currentCaretPosition){
+    var element = eventHandler.target;
     if( eventHandler.key === 'Backspace' || eventHandler.key === 'Delete'){
-        eventHandler.target.selectionStart = currentCursorPosition;
-        eventHandler.target.selectionEnd = currentCursorPosition;
+        element.selectionStart = currentCaretPosition;
+        element.selectionEnd = currentCaretPosition;
     }
 }
+
