@@ -147,7 +147,7 @@ function setEventHandlersForPagination(){
         if( ! $(event.target.parentNode).hasClass('active') ){
 
             const pageNumber = $(event.target).text().trim().split(' ')[0];
-            console.log('Selected page: ', pageNumber);
+            //console.log('Selected page: ', pageNumber);
 
             $('#inventoryTable tbody').empty();
             
@@ -173,7 +173,7 @@ function setEventHandlersForPagination(){
 
         let pageNumber = $('#tablePagination .page-number.active').text().trim().split(' ')[0];
         pageNumber = parseInt(pageNumber) - 1;
-        console.log('Previous page: ', pageNumber);
+        //console.log('Previous page: ', pageNumber);
         changeTablePage(pageNumber);
     });
 
@@ -183,7 +183,7 @@ function setEventHandlersForPagination(){
 
         let pageNumber = $('#tablePagination .page-number.active').text().trim().split(' ')[0];
         pageNumber = parseInt(pageNumber) + 1;
-        console.log('Next page: ', pageNumber);
+        //console.log('Next page: ', pageNumber);
         changeTablePage(pageNumber);
     });
 }

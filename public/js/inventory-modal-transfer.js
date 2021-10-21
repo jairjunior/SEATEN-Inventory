@@ -40,7 +40,7 @@ function buildTransferForm(){
                          <legend>Item Info</legend>
                          <div class="form-row">
                               <div class="form-group col-md-8">
-                                   <label for="transferItemName">Name and Model</label>
+                                   <label for="transferItemName">Category and Model</label>
                                    <input type="text" class="form-control" id="transferItemName" name="itemName" value="${item.category} - ${item.itemModelId.brand} ${item.itemModelId.name}" required disabled>
                               </div>
                               <div class="form-group col-md-4">
@@ -63,13 +63,13 @@ function buildTransferForm(){
                                    <label for='transferReason'>Select:</label>
                                    <select class='form-control' name='reason' id='transferReason' aria-describedby="transferReasonFeedback" required>
                                         <option value='' selected disabled>---</option>
+                                        <option value='Donation'>Donation</option>
+                                        <option value='Keep in stock'>Keep in stock</option>
                                         <option value='New installation'>New installation</option>
+                                        <option value='Repair / Warranty'>Repair / Warranty</option>
                                         <option value='Replacement'>Replacement</option>
                                         <option value='Without use'>Without use</option>
-                                        <option value='Department change'>Department change</option>
-                                        <option value='Donation'>Donation</option>
-                                        <option value='Repair / Warranty'>Repair / Warranty</option>
-                                        <option value='Keep in stock'>Keep in stock</option>
+                                        
                                    </select>
                                    <div id="transferReasonFeedback"></div>
                               </div>
@@ -92,7 +92,7 @@ function buildTransferForm(){
                                    <div id="transferUserNameFeedback"></div>
                               </div>
                               <div class="form-group col-md-3">
-                                   <label for="transferUserNumber">User Number</label>
+                                   <label for="transferUserNumber">Registration Number</label>
                                    <input type="tel" class="form-control" id="transferUserNumber" aria-describedby="transferUserNumberFeedback" name="toUserNumber" required>
                                    <div id="transferUserNumberFeedback"></div>
                               </div>

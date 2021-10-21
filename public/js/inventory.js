@@ -202,7 +202,7 @@ function setTableFilter(){
                
                const foundItems = filterStockItems(stockItems, itemModels, filterText);
                if(foundItems.length > 0){
-                    console.log('Items found: ' + foundItems.length);
+                    //console.log('Items found: ' + foundItems.length);
                     $('.table-spinner').hide();
                     fillTableStockItems(foundItems, itemModels);
                }
