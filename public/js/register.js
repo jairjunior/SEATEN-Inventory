@@ -201,6 +201,12 @@ function showInventoryNumberFieldset(){
 // Second function for controlling the keyboard entries
 // Third function for controlling the dot position
 //----------------------------------------------------------------------------------------
+const DIGIT_CODE_0 = 48;
+const DIGIT_CODE_9 = 57;
+const NUMPAD_CODE_0 = 96;
+const NUMPAD_CODE_9 = 105;
+const DOT_POSITION = 8;
+
 function inventoryNumberFieldCaretControl(PREFIX_LENGTH){
     $('#inputInventoryNumber').on('focus click', eventHandler => {
         var element = eventHandler.target;
@@ -232,10 +238,6 @@ function inventoryNumberFieldKeysControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
     $('#inputInventoryNumber').on('keydown', eventHandler => {
         var element = eventHandler.target;
         const inputTextLength = element.value.length;
-        const DIGIT_CODE_0 = 48;
-        const DIGIT_CODE_9 = 57;
-        const NUMPAD_CODE_0 = 96;
-        const NUMPAD_CODE_9 = 105;
         
         // Allows the user to use only numbers and the keys delete, backspace, home, end, arrow left and arrow right
         if( ( eventHandler.which < DIGIT_CODE_0 || eventHandler.which > DIGIT_CODE_9 ) &&
@@ -281,9 +283,8 @@ function inventoryNumberFieldDotControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
         const inputText = element.value;
         const indexOfDot = inputText.indexOf('.');
         const currentCaretPosition = element.selectionEnd;
-        const DOT_POSITION = 8;
 
-        if( inputText.length < INPUT_MAX_LENGTH && inputText.length >= DOT_POSITION ){
+        if( inputText.length <= INPUT_MAX_LENGTH && inputText.length >= DOT_POSITION ){
             if(indexOfDot < 0)
                 var newInputText = inputText.slice(0, 7) + '.' + inputText.slice(7)
             else{
@@ -291,14 +292,12 @@ function inventoryNumberFieldDotControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
                 var newInputText = tempText.slice(0, 7) + '.' + tempText.slice(7);
             }
             element.value = newInputText;
-            
-            repositionCaret(eventHandler, currentCaretPosition);
         }
-        else if(inputText.length < INPUT_MAX_LENGTH && inputText.length >= PREFIX_LENGTH && indexOfDot >= 0){
+        else if(inputText.length <= INPUT_MAX_LENGTH && inputText.length >= PREFIX_LENGTH && indexOfDot >= 0){
             var newInputText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
             element.value = newInputText;
-            repositionCaret(eventHandler, currentCaretPosition);
         }
+        repositionCaret(eventHandler, currentCaretPosition);
     });
 }
 
@@ -307,6 +306,17 @@ function repositionCaret(eventHandler, currentCaretPosition){
     if( eventHandler.key === 'Backspace' || eventHandler.key === 'Delete'){
         element.selectionStart = currentCaretPosition;
         element.selectionEnd = currentCaretPosition;
+    }
+    else if( ( eventHandler.which >= DIGIT_CODE_0 && eventHandler.which <= DIGIT_CODE_9 ) || ( eventHandler.which >= NUMPAD_CODE_0 && eventHandler.which <= NUMPAD_CODE_9 ) ){
+        if(currentCaretPosition == 8){
+            element.selectionStart = currentCaretPosition + 1;
+            element.selectionEnd = currentCaretPosition + 1;
+        }
+        else{
+            element.selectionStart = currentCaretPosition;
+            element.selectionEnd = currentCaretPosition;
+        }
+        
     }
 }
 
