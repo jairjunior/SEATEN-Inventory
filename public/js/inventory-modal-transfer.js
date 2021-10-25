@@ -341,20 +341,17 @@ function validateTransferForm(){
 }
 
 function hasSpecialChar(str){
-     if( str.match(/[$-/:-?{-~!"^_`\[\]#@]/) !== null )
-     return true;
+     if( str.match(/[$-/:-?{-~!"^_`\[\]#@]/) !== null ) return true;
      else return false;
 }
 
 function hasLetters(str){
-     if( str.match(/[a-z]/i) !== null )
-     return true;
+     if( str.match(/[a-z]/i) !== null ) return true;
      else return false;
 }
 
 function hasNumbers(str){
-     if( str.match(/[0-9]/i) !== null ) 
-     return true;
+     if( str.match(/[0-9]/i) !== null ) return true;
      else return false;
 }
 
