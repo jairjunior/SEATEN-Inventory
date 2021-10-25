@@ -1,3 +1,5 @@
+"use strict";
+
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
@@ -80,17 +82,9 @@ $('#selectItemCategory').change( eventHandler => {
     let categoryId = $(eventHandler.target).children(':selected').val();
     console.log('Id da categoria selecionada: ', categoryId);
 
-    /*
-    $('#modelSpecs').remove();
-    $('#fieldsetInventoryNumber').remove();
-    $('#fieldsetRequisitionInfo').remove();
-    $('#fieldsetFromUser').remove();
-    $('#fieldsetToUser').remove();
-    $('#fieldsetReason').remove();
-    $('#fieldsetRemarks').remove();
-    */
-
-    checkAndRemoveListOfModelSpecs();
+    removeListOfModelSpecs();
+    removeFormFieldsets();
+    removeBtnRegisterNewStockItem();
 
     fillModelSelect(categoryId);
 });
@@ -125,12 +119,14 @@ $('#selectItemModel').change( eventHandler => {
     console.log('Id do modelo selecionado: ', modelId);
 
     showModelSpecs(modelId);
+    removeFormFieldsets();
     showInventoryNumberFieldset();
-    //showRequisitionInfoFieldset();
-    //showFromUserFieldset();
-    //showToUserFieldset();
-    //showReasonFieldset();
-    //showRemarksFieldset();
+    showRequisitionInfoFieldset();
+    showFromUserFieldset();
+    showToUserFieldset();
+    showReasonFieldset();
+    showRemarksFieldset();
+    showBtnRegisterNewStockItem();
 });
 
 //----------------------------------------------------------------------------------------
@@ -143,7 +139,7 @@ function showModelSpecs(modelId){
     let selectedModel = itemModelsList.filter( model => { return model._id === modelId });
     console.log('Dados do modelo selecionado: ', selectedModel[0]);
 
-    checkAndRemoveListOfModelSpecs();
+    removeListOfModelSpecs();
 
     $('#selectItemModel').after(`
     <div id='registerModelSpecs'>
@@ -159,8 +155,21 @@ function showModelSpecs(modelId){
 }
 
 // Auxiliary funtion
-function checkAndRemoveListOfModelSpecs(){
+function removeListOfModelSpecs(){
     if( $('#registerModelSpecs').length > 0 ) $('#registerModelSpecs').remove();
+}
+
+function removeFormFieldsets(){
+    if( $('#fieldsetInventoryNumber').length > 0 ) $('#fieldsetInventoryNumber').remove();
+    if( $('#fieldsetRequisitionInfo').length > 0 ) $('#fieldsetRequisitionInfo').remove();
+    if( $('#fieldsetFromUser').length > 0 ) $('#fieldsetFromUser').remove();
+    if( $('#fieldsetToUser').length > 0 ) $('#fieldsetToUser').remove();
+    if( $('#fieldsetReason').length > 0 ) $('#fieldsetReason').remove();
+    if( $('#fieldsetRemarks').length > 0 ) $('#fieldsetRemarks').remove();
+}
+
+function removeBtnRegisterNewStockItem(){
+    if( $('#btnRegisterNewStockItem').length > 0 ) $('#btnRegisterNewStockItem').remove();
 }
 
 
@@ -176,9 +185,9 @@ function showInventoryNumberFieldset(){
     <fieldset class="form-group" id="fieldsetInventoryNumber">
         <legend>Inventory Number</legend>
             <div class="form-row">
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-12" id="formGroupInventoryNumber">
                     <label for="inputInventoryNumber">Inventory Number:</label>
-                    <input type="text" class="form-control" id="inputInventoryNumber" name="inventoryNumber" aria-describedby="inputInventoryNumberFeedback" value="${inventoryPrefix}" required>
+                    <input type="tel" class="form-control" id="inputInventoryNumber" name="inventoryNumber" aria-describedby="inputInventoryNumberFeedback" value="${inventoryPrefix}" required>
                     <div id="inputInventoryNumberFeedback"></div>
                 </div>
             </div>
@@ -188,18 +197,15 @@ function showInventoryNumberFieldset(){
     inventoryNumberFieldCaretControl(PREFIX_LENGTH);
     inventoryNumberFieldKeysControl(PREFIX_LENGTH, INPUT_MAX_LENGTH);
     inventoryNumberFieldDotControl(PREFIX_LENGTH, INPUT_MAX_LENGTH);
-
-
-    //<button type="button" id="btnRegisterNewItem" class="btn btn-success">Register New Stock Item</button>
 }
 
 
 //----------------------------------------------------------------------------------------
 // Set of functions to format and constrain the field where the user put the inventory number
 // These 3 functions ensure that the inventory number keep the pattern: "CJF 123.456"
-// First function for controlling the caret
-// Second function for controlling the keyboard entries
-// Third function for controlling the dot position
+// First function controls the caret
+// Second function controls the keyboard entries
+// Third function controls the dot position
 //----------------------------------------------------------------------------------------
 const DIGIT_CODE_0 = 48;
 const DIGIT_CODE_9 = 57;
@@ -238,7 +244,7 @@ function inventoryNumberFieldKeysControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
     $('#inputInventoryNumber').on('keydown', eventHandler => {
         var element = eventHandler.target;
         const inputTextLength = element.value.length;
-        
+
         // Allows the user to use only numbers and the keys delete, backspace, home, end, arrow left and arrow right
         if( ( eventHandler.which < DIGIT_CODE_0 || eventHandler.which > DIGIT_CODE_9 ) &&
             ( eventHandler.which < NUMPAD_CODE_0 || eventHandler.which > NUMPAD_CODE_9 ) &&
@@ -460,5 +466,33 @@ function showRemarksFieldset(){
             </div>
         </div>
     </fieldset>`);
+}
 
+
+function showBtnRegisterNewStockItem(){
+    $('#fieldsetRemarks').after(`<button type="button" id="btnRegisterNewStockItem" class="btn btn-success">Register New Stock Item</button>`);
+
+    clickBtnRegisterNewItem();
+}
+
+
+function clickBtnRegisterNewItem(){
+    $('#btnRegisterNewStockItem').on('click', () => {
+        const category = $('#selectItemCategory option:selected').text();
+        const itemModelId = $('#selectItemModel option:selected').val();
+
+        let formData = $('#formRegisterStockItem').serializeArray();
+        formData.push(  
+            { name: 'category', value : category }, 
+            { name: 'itemModelId', value: itemModelId }
+        );
+
+        var objFormData = {};
+        formData.forEach( (currentElement) => {
+            var { name, value } = currentElement;
+            objFormData[name] = value;
+        });
+        console.log(formData);
+        console.log(objFormData);
+    });
 }
