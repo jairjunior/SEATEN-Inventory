@@ -1,9 +1,10 @@
 "use strict";
+import CJFInventoryNumberInput from "./CJFInventoryNumberInput.js";
 
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-function fetchCategoryList(){
+export function fetchCategoryList(){
     const token = localStorage.getItem('bearerToken');
 
     $.ajax({
@@ -35,7 +36,7 @@ function fetchCategoryList(){
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-function fetchModelList(){
+export function fetchModelList(){
     const token = localStorage.getItem('bearerToken');
 
     $.ajax({
@@ -70,6 +71,8 @@ function fillCategorySelect(categoryList){
     categoryList.forEach( category => {
         $('#selectItemCategory').append(`<option value='${category._id}'>${category.name}</option>`);
     });
+
+    setEventListenerForCategorySelect();
 }
 
 
@@ -78,16 +81,18 @@ function fillCategorySelect(categoryList){
 // On change of this <selected>, the Model <select> is updated with all models
 // belonging the selected category.
 //----------------------------------------------------------------------------------------
-$('#selectItemCategory').change( eventHandler => {
-    let categoryId = $(eventHandler.target).children(':selected').val();
-    console.log('Id da categoria selecionada: ', categoryId);
+function setEventListenerForCategorySelect(){
+    $('#selectItemCategory').change( eventHandler => {
+        let categoryId = $(eventHandler.target).children(':selected').val();
+        console.log('Id da categoria selecionada: ', categoryId);
 
-    removeListOfModelSpecs();
-    removeFormFieldsets();
-    removeBtnRegisterNewStockItem();
+        removeListOfModelSpecs();
+        removeFormFieldsets();
+        removeBtnRegisterNewStockItem();
 
-    fillModelSelect(categoryId);
-});
+        fillModelSelect(categoryId);
+    });
+}
 
 
 //----------------------------------------------------------------------------------------
@@ -108,26 +113,30 @@ function fillModelSelect(categoryId){
     });
 
     $('#selectItemModel').prop('disabled', false);
+    setEventListenerForModelSelect();
 }
 
 
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-$('#selectItemModel').change( eventHandler => {
-    let modelId = $(eventHandler.target).children(':selected').val();
-    console.log('Id do modelo selecionado: ', modelId);
+function setEventListenerForModelSelect(){
+    $('#selectItemModel').change( eventHandler => {
+        let modelId = $(eventHandler.target).children(':selected').val();
+        console.log('Id do modelo selecionado: ', modelId);
 
-    showModelSpecs(modelId);
-    removeFormFieldsets();
-    showInventoryNumberFieldset();
-    showRequisitionInfoFieldset();
-    showFromUserFieldset();
-    showToUserFieldset();
-    showReasonFieldset();
-    showRemarksFieldset();
-    showBtnRegisterNewStockItem();
-});
+        showModelSpecs(modelId);
+        removeFormFieldsets();
+        showInventoryNumberFieldset();
+        showRequisitionInfoFieldset();
+        showFromUserFieldset();
+        showToUserFieldset();
+        showReasonFieldset();
+        showRemarksFieldset();
+        showBtnRegisterNewStockItem();
+    });
+}
+
 
 //----------------------------------------------------------------------------------------
 // 
@@ -154,7 +163,7 @@ function showModelSpecs(modelId){
      }
 }
 
-// Auxiliary funtion
+// Auxiliary funtions
 function removeListOfModelSpecs(){
     if( $('#registerModelSpecs').length > 0 ) $('#registerModelSpecs').remove();
 }
@@ -177,9 +186,6 @@ function removeBtnRegisterNewStockItem(){
 // 
 //----------------------------------------------------------------------------------------
 function showInventoryNumberFieldset(){
-    const inventoryPrefix = 'CJF '
-    const PREFIX_LENGTH = inventoryPrefix.length;
-    const INPUT_MAX_LENGTH = 11; // pattern: CJF 123.456
 
     $('#fieldsetItemSpecs').after(`
     <fieldset class="form-group" id="fieldsetInventoryNumber">
@@ -187,144 +193,24 @@ function showInventoryNumberFieldset(){
             <div class="form-row">
                 <div class="form-group col-md-12" id="formGroupInventoryNumber">
                     <label for="inputInventoryNumber">Inventory Number:</label>
-                    <input type="tel" class="form-control" id="inputInventoryNumber" name="inventoryNumber" aria-describedby="inputInventoryNumberFeedback" value="${inventoryPrefix}" required>
+                    <input type="text" class="form-control" id="inputInventoryNumber" name="inventoryNumber" aria-describedby="inputInventoryNumberFeedback" required>
                     <div id="inputInventoryNumberFeedback"></div>
                 </div>
             </div>
     </fieldset>`);
 
-    // The following functions add event listenners to the input field to format the text
-    inventoryNumberFieldCaretControl(PREFIX_LENGTH);
-    inventoryNumberFieldKeysControl(PREFIX_LENGTH, INPUT_MAX_LENGTH);
-    inventoryNumberFieldDotControl(PREFIX_LENGTH, INPUT_MAX_LENGTH);
+    /*
+    const inventoryNumberInputField = new FormatHTMLTextInput("#inputInventoryNumber", { maxLength: 6 });
+    inventoryNumberInputField.setPrefixText({ prefixText: 'CJF ', fixed: true });
+    inventoryNumberInputField.allowOnlyNumericEntries();
+    inventoryNumberInputField.setFixedSymbol({ symbol: '.', symbolPosition: 8 });
+    */
+
+
+    const inventoryNumberInputField = new CJFInventoryNumberInput("#inputInventoryNumber");
+
 }
 
-
-//----------------------------------------------------------------------------------------
-// Set of functions to format and constrain the field where the user put the inventory number
-// These 3 functions ensure that the inventory number keep the pattern: "CJF 123.456"
-// First function controls the caret
-// Second function controls the keyboard entries
-// Third function controls the dot position
-//----------------------------------------------------------------------------------------
-const DIGIT_CODE_0 = 48;
-const DIGIT_CODE_9 = 57;
-const NUMPAD_CODE_0 = 96;
-const NUMPAD_CODE_9 = 105;
-const DOT_POSITION = 8;
-
-function inventoryNumberFieldCaretControl(PREFIX_LENGTH){
-    $('#inputInventoryNumber').on('focus click', eventHandler => {
-        var element = eventHandler.target;
-
-        if( element.selectionEnd < PREFIX_LENGTH ){
-            element.selectionStart = element.value.length;
-            element.selectionEnd = element.value.length;
-        }
-    });
-
-
-    $('#inputInventoryNumber').on('select', eventHandler => {
-        var element = eventHandler.target;
-
-        if( element.selectionStart < PREFIX_LENGTH && element.selectionEnd >= PREFIX_LENGTH){
-            element.selectionStart = element.selectionEnd;
-        }
-        else if( element.selectionStart >= PREFIX_LENGTH && element.selectionEnd < PREFIX_LENGTH){
-            element.selectionEnd = element.selectionStart;
-        }
-        else if( element.selectionStart < PREFIX_LENGTH && element.selectionEnd < PREFIX_LENGTH){
-            element.selectionStart = PREFIX_LENGTH;
-            element.selectionEnd = PREFIX_LENGTH;
-        }
-    });
-}
-
-function inventoryNumberFieldKeysControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
-    $('#inputInventoryNumber').on('keydown', eventHandler => {
-        var element = eventHandler.target;
-        const inputTextLength = element.value.length;
-
-        // Allows the user to use only numbers and the keys delete, backspace, home, end, arrow left and arrow right
-        if( ( eventHandler.which < DIGIT_CODE_0 || eventHandler.which > DIGIT_CODE_9 ) &&
-            ( eventHandler.which < NUMPAD_CODE_0 || eventHandler.which > NUMPAD_CODE_9 ) &&
-            eventHandler.key !== 'Backspace' && eventHandler.key !== 'Delete' &&
-            eventHandler.key !== 'ArrowLeft' && eventHandler.key !== 'ArrowRight' &&
-            eventHandler.key !== 'Home' && eventHandler.key !== 'End' )
-        {
-            console.log('Tecla pressionada não é válida.');
-            eventHandler.preventDefault();
-        }
-
-        // If Home key is pressed, it will position the caret in the position 4 intead of position 0
-        if( eventHandler.key === 'Home' ){
-            element.selectionStart = PREFIX_LENGTH;
-            element.selectionEnd = PREFIX_LENGTH;
-        }
-
-        // If the caret is in the position 4, it cannot be moved to the left using the ArrowLeft, Backspace or Home keys
-        if (  element.selectionEnd == PREFIX_LENGTH &&
-            ( eventHandler.key === 'Backspace' || eventHandler.key === 'ArrowLeft' || eventHandler.key === 'Home' ) )
-        {  
-            eventHandler.preventDefault();
-        }
-
-        // When the input field has already 11 chars, it allows only the use of the arrows, delete/backsapce and home/end keys
-        if ( inputTextLength === INPUT_MAX_LENGTH && 
-             eventHandler.key !== 'Backspace' &&
-             eventHandler.key !== 'Delete' &&
-             eventHandler.key !== 'ArrowLeft' &&
-             eventHandler.key !== 'ArrowRight' &&
-             eventHandler.key !== 'Home' &&
-             eventHandler.key !== 'End' )
-            {
-                eventHandler.preventDefault();
-            }
-    });
-}
-
-function inventoryNumberFieldDotControl(PREFIX_LENGTH, INPUT_MAX_LENGTH){
-    $('#inputInventoryNumber').on('keyup', eventHandler => {
-        var element = eventHandler.target;
-        const inputText = element.value;
-        const indexOfDot = inputText.indexOf('.');
-        const currentCaretPosition = element.selectionEnd;
-
-        if( inputText.length <= INPUT_MAX_LENGTH && inputText.length >= DOT_POSITION ){
-            if(indexOfDot < 0)
-                var newInputText = inputText.slice(0, 7) + '.' + inputText.slice(7)
-            else{
-                let tempText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
-                var newInputText = tempText.slice(0, 7) + '.' + tempText.slice(7);
-            }
-            element.value = newInputText;
-        }
-        else if(inputText.length <= INPUT_MAX_LENGTH && inputText.length >= PREFIX_LENGTH && indexOfDot >= 0){
-            var newInputText = inputText.slice(0, indexOfDot) + inputText.slice(indexOfDot+1);
-            element.value = newInputText;
-        }
-        repositionCaret(eventHandler, currentCaretPosition);
-    });
-}
-
-function repositionCaret(eventHandler, currentCaretPosition){
-    var element = eventHandler.target;
-    if( eventHandler.key === 'Backspace' || eventHandler.key === 'Delete'){
-        element.selectionStart = currentCaretPosition;
-        element.selectionEnd = currentCaretPosition;
-    }
-    else if( ( eventHandler.which >= DIGIT_CODE_0 && eventHandler.which <= DIGIT_CODE_9 ) || ( eventHandler.which >= NUMPAD_CODE_0 && eventHandler.which <= NUMPAD_CODE_9 ) ){
-        if(currentCaretPosition == 8){
-            element.selectionStart = currentCaretPosition + 1;
-            element.selectionEnd = currentCaretPosition + 1;
-        }
-        else{
-            element.selectionStart = currentCaretPosition;
-            element.selectionEnd = currentCaretPosition;
-        }
-        
-    }
-}
 
 //----------------------------------------------------------------------------------------
 // 
@@ -398,9 +284,9 @@ function showToUserFieldset(){
         <legend>To</legend>
         <div class="form-row">
             <div class="form-group col-md-9">
-                <label for="ToUserName">Full User Name</label>
-                <input type="text" class="form-control" id="ToUserName" aria-describedby="ToUserNameFeedback" name="ToUserName" value="Valéria Prado Arcirio de Oliveira Braga" required>
-                <div id="ToUserNameFeedback"></div>
+                <label for="toUserName">Full User Name</label>
+                <input type="text" class="form-control" id="toUserName" aria-describedby="toUserNameFeedback" name="toUserName" value="Valéria Prado Arcirio de Oliveira Braga" required>
+                <div id="toUserNameFeedback"></div>
             </div>
             <div class="form-group col-md-3">
                 <label for="toRegistrationNumber">Registration Number</label>

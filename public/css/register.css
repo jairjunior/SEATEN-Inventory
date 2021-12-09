@@ -1,5 +1,5 @@
 fieldset.form-group {
-    border: 1px solid rgba(0, 0, 0, 0.226);
+    border: 1px solid rgba(0, 0, 0, 0.068);
     padding: 0.5rem 1.5rem 1.5rem;
     border-radius: 10px;
     margin-bottom: 2rem;
@@ -29,7 +29,7 @@ fieldset.form-group legend {
     padding: 30px 40px;
     border-radius: 10px;
     /*box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.267);*/
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    box-shadow: rgba(0, 0, 0, 0.42) 0px 1px 5px, rgba(0, 0, 0, 0.44) 0px 1px 5px;
 }
 
 

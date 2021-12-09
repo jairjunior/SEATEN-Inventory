@@ -1,5 +1,5 @@
 "use strict";
-
+import { setEventListenerForNavbarLinks, loadInventoryPage } from './app.js';
 
 //----------------------------------------------------------------------------------------
 //
@@ -82,6 +82,7 @@ function loadAppStructure(){
                $('html head').append(`<link rel="stylesheet" href="../css/app.css">`);
 
                $('body').empty().html(data);
+               setEventListenerForNavbarLinks();
                loadInventoryPage();
           }
      })

@@ -13,7 +13,7 @@ router.use(authMiddleware);
 router.get('/models', async (req, res) => {
      try {
           const itemModels = await Model.find().populate('category');
-          console.log('System Log: Sending the client the list with all models.');
+          console.log('System Log: Sending the client the list with all models registered.');
           return res.send({ itemModels });
      }
      catch (error) {

@@ -5,6 +5,7 @@
 # you run this application. The NPM package manager will install
 # all the dependencies for you.
 node_modules/
+backup/
 
 
 # Create your own .env file using the file /examples/.env_example

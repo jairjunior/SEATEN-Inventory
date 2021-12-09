@@ -15,7 +15,7 @@ $(window).on('beforeunload', (event) => {
 // The column containing the Item Ids is hidden from the view. JavaScript will handle it.
 // Finally, it makes an AJAX requisition to retrieve all stock items from the database.
 //----------------------------------------------------------------------------------------
-function loadInventoryTable(){
+export function loadInventoryTable(){
      const tHeaders = ['Stock Item', 'Inventory Number', 'Status', 'Location'];
      for (let i = 0; i < tHeaders.length; i++){
           $('#inventoryTable thead').append("<th scope='col'>"+ tHeaders[i] +"</th>");
