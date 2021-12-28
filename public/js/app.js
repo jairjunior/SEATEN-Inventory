@@ -1,10 +1,53 @@
 "use strict";
+import { httpRequests } from './HTTPRequests.js';
 import { loadInventoryTable } from './inventory.js';
-import { fetchCategoryList, fetchModelList } from './register.js';
-
+import { RegisterPage } from './Register.js';
+import { RegisterNewItemForm } from './Form-RegisterNewItem.js';
 
 //----------------------------------------------------------------------------------------
-// This function creates an event listener for the top navbar links (INVENTORY, REGISTER, DOCUMENTATION AND ACCOUNT)
+// Detects when user tries to reload the application page. Asks for confirmation.
+//----------------------------------------------------------------------------------------
+$(window).on('beforeunload', (event) => {
+     event.preventDefault();
+     return confirm('Are you sure you want to reload the application?');
+});
+
+//----------------------------------------------------------------------------------------
+// Detects when the user press the F5 key in order to reload the page.
+//----------------------------------------------------------------------------------------
+$(window).on('keydown', (event) => {
+     if(event.code === 'F5'){
+          event.preventDefault();
+          reloadPage();
+     }
+});
+
+//----------------------------------------------------------------------------------------
+// Detects in which page of the application the user is in very moment,
+// then reloads the content of the respective page.
+//----------------------------------------------------------------------------------------
+const reloadPage = () => {
+     let currentPage = window.location.pathname.split('/').pop();
+     if( currentPage === 'inventory' )
+          loadInventoryPage();
+     else if( currentPage === 'register' )
+          loadRegisterPage();
+     else if( currentPage === '' ){
+          console.log('window.location.pathname: ' + window.location.pathname);
+     }
+}
+
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+$(window).on('popstate', (event) => {
+     console.log(`%cHistory: ${window.history}`, 'color: blue; font weight: 700;');
+     reloadPage();
+});
+
+//----------------------------------------------------------------------------------------
+// This function creates an event listener for the top navbar links (INVENTORY, REGISTER, 
+// DOCUMENTATION AND ACCOUNT)
 // When one of them is clicked, it activates the link and calls the function to load the
 // respective page.
 //----------------------------------------------------------------------------------------
@@ -16,19 +59,19 @@ export function setEventListenerForNavbarLinks(){
                $('#navbarNav .nav-item.active').removeClass('active');
 
                $(event.target.parentNode).addClass('active');
-               $(event.target).append(` <span class="sr-only">(current)</span>`);
+               $(event.target).append(`<span class="sr-only">(current)</span>`);
 
-               const pageToLoad = $(event.target).text().split(' ')[0].toLowerCase();
-               console.log(`Page to load: ${pageToLoad}`);
+               // next 2 lines for debugging
+               const pageToLoad = $(event.target).text().split(' ')[0];
+               console.log('%cPage to load: ', 'color: orange; font-weight: 600;', `${pageToLoad}`);
 
-               if(pageToLoad === 'inventory')
+               if(pageToLoad === 'Inventory')
                     loadInventoryPage();
-               else if(pageToLoad === 'register')
+               else if(pageToLoad === 'Register')
                     loadRegisterPage();
           }
      });
 }
-
 
 //----------------------------------------------------------------------------------------
 //
@@ -50,15 +93,22 @@ export function loadInventoryPage(){
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Load Inventory page request - status: ${textStatus}`);
-               document.title = 'ICOS | SEATEN Inventory';
-               window.history.pushState({}, 'ICOS | SEATEN Inventory', '/app/inventory');
+               console.log('%cFetch Inventory HTML Page request status: ', 'color: green', `${textStatus}`);
+               document.title = 'ICOS | Inventory';
+               window.history.pushState({page: 1}, 'ICOS | Inventory', '/app/inventory');
 
                $(`head link`).not(`[href*="reset.css"], [href*="bootstrap.min.css"], [href*="app.css"]`).remove();
                $('html head').append(`<link rel="stylesheet" href="../css/inventory.css">`);
 
-               $('body').children().not(`header, footer, script[src*="app.js"]`).remove();
+               $('body').children().not(`
+                    header,
+                    footer, 
+                    script[src*="http-requests.js"],
+                    script[src*="app.js"]
+               `).remove();
+               
                $('body header').after(data);
+               
                $(`script[src*="app.js"]`).after(`
                     <script type="module" src="../js/inventory.js"></script>
                     <script type="text/javascript" src="../js/table-pagination.js"></script>
@@ -68,7 +118,8 @@ export function loadInventoryPage(){
                `);
 
                $('#navbarNav').collapse('hide');
-               localStorage.removeItem('itemCategories');
+               sessionStorage.removeItem('listOfCategories');
+               sessionStorage.removeItem('listOfModels');
                loadInventoryTable();
           }
      })
@@ -79,46 +130,48 @@ export function loadInventoryPage(){
      });
 }
 
+//----------------------------------------------------------------------------------------
+// This function load the Register Page keeping the app structure untouched.
+// It uses the httRequests module to fetch the HTML content, then it clears the <body>
+// and injects in place the new HTML content.
+// After that, it will use the RegisterPage module to fill in 
+//----------------------------------------------------------------------------------------
+const loadRegisterPage = async () => {
+     try{
+          const HTMLContent = await httpRequests.fetchRegisterHTMLPage().then( response => response.text() );
+          clearHTMLBody();
+          $('body header').after(HTMLContent);
 
+     }
+     catch(error){ console.error('Error in loadRegisterPage() function.\n', error); }
+     
+     RegisterPage.setRegisterPageTitle();
+     RegisterPage.setRegisterUrlAddress();
+     RegisterPage.setRegisterCSSFiles();
+     $('#navbarNav').collapse('toggle');
+     localStorage.removeItem('stockItems'); // remover essa parte futuramente
+     localStorage.removeItem('itemModels'); // remover essa parte futuramente
+
+     const responseCategoryList = await httpRequests.fetchCategoryList().then( response => response.json() );
+     let listOfCategories = responseCategoryList['categories'];
+     sessionStorage.setItem('listOfCategories', JSON.stringify(listOfCategories) );
+
+     const responseModelList = await httpRequests.fetchModelList().then( response => response.json() );
+     let listOfModels = responseModelList['itemModels'];
+     sessionStorage.setItem('listOfModels', JSON.stringify(listOfModels) );
+
+     const registerNewItemForm = new RegisterNewItemForm({ root: '#form-RegisterNewItem' });
+     registerNewItemForm.render();
+}
 
 //----------------------------------------------------------------------------------------
-//
+// Clears the <body> content keeping the app structure: 
+// It will maintain untouched the top navbar, footer and app.js script.
 //----------------------------------------------------------------------------------------
-function loadRegisterPage(){
-     const token = localStorage.getItem('bearerToken');
- 
-     $.ajax({
-          url: `/app/register`,
-          type: 'GET',
-          dataType: 'html',
-          beforeSend: (xhr, settings) => {
-               xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-          }
-        })
-     .done( (data, textStatus, jqXHR) => {
-          if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Load Register page request - status: ${textStatus}`);
-               document.title = 'ICOS | Register';
-               window.history.pushState({}, 'ICOS | Register', '/app/register');
-
-               $(`head link`).not(`[href*="reset.css"], [href*="bootstrap.min.css"], [href*="app.css"]`).remove();
-               $('html head').append(`<link rel="stylesheet" href="../css/register.css">`);
-               
-               $('body').children().not(`header, footer, script[src*="app.js"]`).remove();
-               $('body header').after(data);
-               $(`script[src*="app.js"]`).after(`
-                    <script type='module' src="../js/register.js"></script>
-               `);
-               $('#navbarNav').collapse('toggle');
-
-               localStorage.removeItem('stockItems');
-               fetchCategoryList();
-               fetchModelList();
-          }
-     })
-     .fail( (jqXHR, textStatus, errorThrown) => {
-          console.error(`Status: ${textStatus}`);
-          console.error(`jqXHR object: ${jqXHR}`);
-          console.error(`ERROR: ${errorThrown}`);
-     });
+const clearHTMLBody = () => {
+     $('body').children().not(`
+                     header,
+                     footer,
+                     script[src*="app.js"]`)
+                 .remove();
  }
