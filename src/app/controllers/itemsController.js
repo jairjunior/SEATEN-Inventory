@@ -62,11 +62,10 @@ router.get('/items/:itemId', async (req, res) => {
 // the category collection.
 //----------------------------------------------------------------------------------------
 router.post('/items', async (req, res) => {
-     
-     req.body.transferHistory.transferredBy = req.userId;
-     const { category, itemModelId, inventoryNumber } = req.body;
-     
      try {
+          req.body.transferHistory.transferredBy = req.userId;
+          const { category, itemModelId, inventoryNumber } = req.body;
+
           if( await StockItem.findOne({ inventoryNumber }) )
                return res.status(400).send({ error: 'Item already registered.' });
 
@@ -95,7 +94,6 @@ router.post('/items', async (req, res) => {
 // It also update automatically the date at the "updatedAt" field.
 //----------------------------------------------------------------------------------------
 router.put('/items/transfer/:itemId', async (req, res) => {
-     
      req.body.transferredBy = req.userId;
      console.log('Transfer requisition: ', req.body);
 

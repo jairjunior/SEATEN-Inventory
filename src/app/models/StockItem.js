@@ -19,7 +19,7 @@ const StockItemSchema = new mongoose.Schema({
      },
      location: {
           type: String,
-          default: 'STI | SUTEC | SEATEN'
+          default: 'STI | SEATEN'
      },
      status: {
           type: String,
@@ -27,32 +27,32 @@ const StockItemSchema = new mongoose.Schema({
           default: 'available'
      },
      transferHistory: [{
-               reqNumber: {
+               ticketNumber: {
                     type: String,
                     required: true
                },
-               fromDepartment: {
+               providerUserName: {
                     type: String,
                     required: true
                },
-               fromUserName: {
-                    type: String,
-                    required: true
-               },
-               fromUserNumber: {
+               providerRegistrationNumber: {
                     type: Number,
                     required: true
                },
-               toDepartment: {
+               providerDepartment: {
                     type: String,
                     required: true
                },
-               toUserName: {
+               recipientUserName: {
                     type: String,
                     required: true
                },
-               toUserNumber: {
+               recipientRegistrationNumber: {
                     type: Number,
+                    required: true
+               },
+               recipientDepartment: {
+                    type: String,
                     required: true
                },
                reason: {
