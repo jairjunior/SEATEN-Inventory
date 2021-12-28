@@ -79,7 +79,7 @@ function loadAppStructure(){
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
                console.log(`Load App Structure page request - status: ${textStatus}`);
                $(`link[href*="login.css"]`).remove();
-               $('html head').append(`<link rel="stylesheet" href="../css/app.css">`);
+               $('html head').append(` <link rel="stylesheet" href="../css/app.css"> `);
 
                $('body').empty().html(data);
                setEventListenerForNavbarLinks();

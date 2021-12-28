@@ -1,13 +1,5 @@
 "use strict";
 
-//----------------------------------------------------------------------------------------
-// Detects when user tries to reload the application page. Asks for confirmation.
-//----------------------------------------------------------------------------------------
-$(window).on('beforeunload', (event) => {
-     event.preventDefault();
-     return confirm('Are you sure you want to reload the application?')
-});
-
 
 //----------------------------------------------------------------------------------------
 // First of all, it builds the table header filling the columns names with the content in the array tHeaders.
@@ -47,7 +39,7 @@ function fetchStockItemsList(){
         })
      .done( (data, textStatus, jqXHR) => {
           if(jqXHR.readyState === 4 && jqXHR.status === 200){
-               console.log(`Succeed to retrieve list of stock items - status: ${textStatus}`);
+               console.log('%cFetch Stock Items List request status: ', 'color: green', `${textStatus}`);
                console.log(data);
 
                const { stockItems, itemModels } = data;
