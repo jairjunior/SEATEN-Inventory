@@ -3,6 +3,7 @@ import { httpRequests } from './HTTPRequests.js';
 import { loadInventoryTable } from './inventory.js';
 import { RegisterPage } from './Register.js';
 import { RegisterNewItemForm } from './Form-RegisterNewItem.js';
+import Alert from './Alert.js';
 
 //----------------------------------------------------------------------------------------
 // Detects when user tries to reload the application page. Asks for confirmation.
