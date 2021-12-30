@@ -99,7 +99,7 @@ const createNewStockItem = (data) => {
     const url = '/inventory/items';
     const requestHeaders = new Headers({
         'Authorization': `Bearer ${token}`,
-        'Content-type': 'application/json'
+        'Content-Type': 'application/json'
     });
 
     return fetch( url, {

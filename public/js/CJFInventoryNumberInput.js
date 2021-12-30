@@ -8,7 +8,9 @@ export default class CJFInventoryNumberInput extends FormatHTMLTextInput {
 
     constructor(inputFieldId){
         super(inputFieldId, { maxLength: 6 });
+    }
 
+    format(){
         this.setPrefixText({ prefixText: 'CJF ', fixed: true });
         this.allowOnlyNumericEntries();
         this.setFixedSymbol({ symbol: '.', symbolPosition: 8 });
