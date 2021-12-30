@@ -2,6 +2,18 @@
 
 const template = document.createElement('template');
 template.innerHTML = `
+     <style>
+          .fade-out {
+               animation: fadeOut 1s ease-out forwards, shrink 1.5s ease-in forwards;
+          }
+          @keyframes fadeOut {
+               from { opacity: 1; }
+               to { opacity: 0; }
+          }
+          @keyframes shrink {
+               100% { height: 0px; }
+          }
+     </style>
      <link rel="stylesheet" href="../css/bootstrap.min.css">
      <div class="alert alert-dismissible fade show mt-5" role="alert">
           <p class="m-0"><slot name="alertText" /></p>
@@ -23,7 +35,10 @@ export default class Alert extends HTMLElement {
      }
 
      connectedCallback(){
-          this.shadowRoot.querySelector('button.close').addEventListener('click', () => this.remove());
+          this.shadowRoot.querySelector('button.close').addEventListener('click', () => {
+               this.shadowRoot.querySelector('div.alert').classList.add('fade-out');
+               setTimeout( () => this.remove(), 1500);
+          });
      }
 
      disconnectedCallback(){
