@@ -67,23 +67,39 @@ router.post('/items', async (req, res) => {
           const { category, itemModelId, inventoryNumber } = req.body;
 
           if( await StockItem.findOne({ inventoryNumber }) )
-               return res.status(400).send({ error: 'Item already registered.' });
+               return res.status(400).send({
+                    ok: false, 
+                    error: 'A item with the same inventory number already exists.'
+               });
 
           const model = await Model.findById(itemModelId).populate('categoryId');
           if( !model ) 
-               return res.status(400).send({ error: 'Item Model not registered in database.' });
+               return res.status(400).send({
+                    ok: false, 
+                    error: 'Item Model yet not registered in database.' 
+               });
+          
           if( category !== model.categoryId.name )
-               return res.status(400).send({ error: "The 'category' value needs to be the same as the chosen model." });
+               return res.status(400).send({
+                    ok: false,
+                    error: "The 'category' value sent diverges from the model's category name registered in database."
+               });
 
           const newItem = await StockItem.create( req.body );
 
           console.log(`System Log: New item (${category} - ${inventoryNumber}) registered successfully.`);
-          return res.send({ ok: true, newItem });
+          return res.send({
+               ok: true,
+               newItem 
+          });
      }
      catch(err) {
           console.error('ERROR: Failed to register new item.');
           console.error(err);
-          return res.status(400).send({ ok: false, error: 'Failed to register new item.' });
+          return res.status(400).send({
+               ok: false,
+               error: 'Failed to register the new item. Please contact a system admin.'
+          });
      }
 });
 
