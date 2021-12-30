@@ -109,14 +109,15 @@ const createNewStockItem = (data) => {
         body: JSON.stringify(data)
     })
     .then( async (serverResponse) => {
-        if( serverResponse.ok && serverResponse.status === 200){
-            console.log('%cRegister New Stock Item request status: ', 'color: green', `${serverResponse.statusText}`);
-            return serverResponse;
+        const { ok, status, statusText }  = serverResponse;
+        const responseJSON = await serverResponse.json();
+
+        if( ok && status === 200){
+            console.log('%cRegister New Stock Item request status: ', 'color: green', `${statusText}`);
+            return responseJSON;
         }
         else{
             console.log(serverResponse);
-            const { status, statusText }  = serverResponse;
-            const responseJSON = await serverResponse.json();
             throw new Error(`HTTP error in httpRequests.createNewStockItem().\n\tServer message: ${responseJSON.error}\n\tStatus ${status}: ${statusText}`);
         }
     })

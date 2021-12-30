@@ -60,7 +60,8 @@ export default class ButtonRegisterNewItem {
 
      async _registerNewItem(formData){
           try{
-               return await httpRequests.createNewStockItem(formData).then( response => response.json() );
+               const serverResponse = await httpRequests.createNewStockItem(formData);
+               return serverResponse;
           }
           catch(error){ console.error('Error in ButtonRegisterNewItem._registerNewItem() method.\n\t', error); }
      }
