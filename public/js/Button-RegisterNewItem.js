@@ -22,7 +22,18 @@ export default class ButtonRegisterNewItem {
      _setClickEventListenner(){
           this.btn.on('click', () => {
                const formData = this._getFormData();
-               this._registerNewItem(formData);
+               const serverResponse = this._registerNewItem(formData);
+
+               if( serverResponse.ok ){
+                    console.log('Sucesso! Create New Item serverResponse: ', serverResponse);
+                    let category = serverResponse.newItem.category;
+                    let inventoryNumber = serverResponse.newItem.inventoryNumber;
+                    this._showAlert({
+                         type: 'success',
+                         text: `The <strong>${category} (${inventoryNumber})</strong> was successfully registered.`
+                    });
+               }
+               else console.error('Erro! Create New Item serverResponse: ', serverResponse);
           });
      }
 
@@ -49,14 +60,15 @@ export default class ButtonRegisterNewItem {
 
      async _registerNewItem(formData){
           try{
-               const serverResponse = await httpRequests.createNewStockItem(formData).then( response => response.text() );
-               console.log('Create New Item serverResponse: ', JSON.parse(serverResponse) );
+               return await httpRequests.createNewStockItem(formData).then( response => response.json() );
           }
-          catch(error){ console.error('Error in ButtonRegisterNewItem._registerNewItem() method.\n', error); }
+          catch(error){ console.error('Error in ButtonRegisterNewItem._registerNewItem() method.\n\t', error); }
      }
 
 
      _showAlert({ type, text }){
+          console.log('Vamos criar o alerta!');
+
           $('main header').after(`
                <alert-info type='${type}'>
                     <div slot="alertText">${text}</div>
