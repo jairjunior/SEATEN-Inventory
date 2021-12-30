@@ -56,6 +56,15 @@ export default class ButtonRegisterNewItem {
      }
 
 
+     _showAlert({ type, text }){
+          $('main header').after(`
+               <alert-info type='${type}'>
+                    <div slot="alertText">${text}</div>
+               </alert-info>
+          `);
+     }
+     
+
      empty(){
           this.root.empty();
      }
