@@ -21,6 +21,15 @@ export default class Alert extends HTMLElement {
           this.type = this.getAttribute('type');
           this.shadowRoot.querySelector('div.alert').classList.add('alert-' + this.type);
      }
+
+     connectedCallback(){
+          this.shadowRoot.querySelector('button.close').addEventListener('click', () => this.remove());
+     }
+
+     disconnectedCallback(){
+          this.shadowRoot.querySelector('button.close').removeEventListener();
+     }
+
 }
 
 window.customElements.define('alert-info', Alert);
