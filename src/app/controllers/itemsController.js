@@ -95,7 +95,7 @@ router.post('/items', async (req, res) => {
           const newItem = await StockItem.create( req.body );
 
           console.log(`System Log: New item (${category} - ${inventoryNumber}) registered successfully.`);
-          return res.send({
+          return res.status(201).send({
                ok: true,
                newItem 
           });
