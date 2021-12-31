@@ -74,7 +74,7 @@ export default class ButtonRegisterNewItem {
                return responseJSON;
           }
           catch(error){
-               console.log('ERROR in function _registerNewItem().', error);
+               console.error('ERROR in function _registerNewItem().\n', error);
           }
      }
 
