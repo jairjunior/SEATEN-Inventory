@@ -149,17 +149,14 @@ const loadRegisterPage = async () => {
      RegisterPage.setRegisterPageTitle();
      RegisterPage.setRegisterUrlAddress();
      RegisterPage.setRegisterCSSFiles();
-     $('#navbarNav').collapse('toggle');
+     
      localStorage.removeItem('stockItems'); // remover essa parte futuramente
      localStorage.removeItem('itemModels'); // remover essa parte futuramente
 
-     const responseCategoryList = await httpRequests.fetchCategoryList().then( response => response.json() );
-     let listOfCategories = responseCategoryList['categories'];
-     sessionStorage.setItem('listOfCategories', JSON.stringify(listOfCategories) );
+     $('#navbarNav').collapse('toggle');
 
-     const responseModelList = await httpRequests.fetchModelList().then( response => response.json() );
-     let listOfModels = responseModelList['itemModels'];
-     sessionStorage.setItem('listOfModels', JSON.stringify(listOfModels) );
+     await fetchAndStoreCategories();
+     await fetchAndStoreModels();
 
      const registerNewItemForm = new RegisterNewItemForm({ root: '#form-RegisterNewItem' });
      registerNewItemForm.render();
@@ -176,3 +173,44 @@ const clearHTMLBody = () => {
                      script[src*="app.js"]`)
                  .remove();
  }
+
+
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+const fetchAndStoreCategories = async () => {
+     try{
+          const serverResponse = await httpRequests.fetchCategoryList();
+          const responseJSON = await serverResponse.json();
+
+          if( responseJSON.ok )
+               sessionStorage.setItem('listOfCategories', JSON.stringify(responseJSON.categories) );
+          else{
+               console.error(responseJSON);
+               throw new Error('Cannot fetch list of categories from server.');
+          }
+     }
+     catch(error){
+          console.error('ERROR in function fetchAndStoreCategories().\n', error);
+     }
+}
+
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+const fetchAndStoreModels = async () => {
+     try{
+          const serverResponse = await httpRequests.fetchModelList();
+          const responseJSON = await serverResponse.json();
+
+          if( responseJSON.ok )
+               sessionStorage.setItem('listOfModels', JSON.stringify(responseJSON.itemModels) );
+          else{
+               console.error(responseJSON);
+               throw new Error('Cannot fetch list of models from server.');
+          }
+     }
+     catch(error){
+          console.error('ERROR in function fetchAndStoreModels().\n', error);
+     }
+}
