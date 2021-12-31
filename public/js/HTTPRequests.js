@@ -16,12 +16,9 @@ const fetchRegisterHTMLPage = () => {
         headers: requestHeaders
     })
     .then( serverResponse => {
-        if( serverResponse.ok && serverResponse.status === 200){
-            console.log('%cFetch Register HTML Page request status: ', 'color: green', `${serverResponse.statusText}`);
-            return serverResponse;
-        }
-        else 
-            throw new Error( `HTTP error on function httpRequests.fetchRegisterHTMLPage(). Status: ${serverResponse.status}. Body: ${serverResponse.json()}` );
+        const { status, statusText }  = serverResponse;
+        console.log('%cFetch Register HTML Page request status: ', 'color: blue', `${status} - ${statusText}`);
+        return serverResponse;
     })
     .catch( error => {
         console.error(error);
@@ -43,16 +40,10 @@ const fetchCategoryList = () => {
         credentials: 'include',
         headers: requestHeaders
     })
-    .then( async (serverResponse) => {
-        if( serverResponse.ok && serverResponse.status === 200){
-            console.log('%cFetch Category List request status: ', 'color: green', `${serverResponse.statusText}`);
-            return serverResponse;
-        }
-        else{
-            const { status, statusText }  = serverResponse;
-            const responseJSON = await serverResponse.json();
-            throw new Error(`HTTP error in function httpRequests.fetchCategoryList().\nServer message: ${responseJSON.error}\nStatus ${status}: ${statusText}.`);
-        }
+    .then( serverResponse => {
+        const { status, statusText }  = serverResponse;
+        console.log('%cFetch Category List request status: ', 'color: blue', `${status} - ${statusText}`);
+        return serverResponse;
     })
     .catch( error => {
         console.error(error);
@@ -74,17 +65,10 @@ const fetchModelList = () => {
         credentials: 'include',
         headers: requestHeaders
     })
-    .then( async (serverResponse) => {
-        if( serverResponse.ok && serverResponse.status === 200){
-            console.log('%cFetch Model List request status: ', 'color: green', `${serverResponse.statusText}`);
-            return serverResponse;
-        }
-        else{
-            console.log(serverResponse);
-            const { status, statusText }  = serverResponse;
-            const responseJSON = await serverResponse.json();
-            throw new Error(`HTTP error in function httpRequests.fetchModelList().\nServer message: ${responseJSON.error}\nStatus ${status}: ${statusText}`);
-        }
+    .then( serverResponse => {
+        const { status, statusText }  = serverResponse;
+        console.log('%cFetch Model List request status: ', 'color: blue', `${status} - ${statusText}`);
+        return serverResponse;
     })
     .catch( error => {
         console.error(error);
@@ -108,18 +92,10 @@ const createNewStockItem = (data) => {
         headers: requestHeaders,
         body: JSON.stringify(data)
     })
-    .then( async (serverResponse) => {
-        const { ok, status, statusText }  = serverResponse;
-        const responseJSON = await serverResponse.json();
-
-        if( ok && status === 200){
-            console.log('%cRegister New Stock Item request status: ', 'color: green', `${statusText}`);
-            return responseJSON;
-        }
-        else{
-            console.log(serverResponse);
-            throw new Error(`HTTP error in httpRequests.createNewStockItem().\n\tServer message: ${responseJSON.error}\n\tStatus ${status}: ${statusText}`);
-        }
+    .then( serverResponse => {
+        const { status, statusText }  = serverResponse;
+        console.log('%cRegister New Stock Item request status: ', 'color: blue', `${status} - ${statusText}`);
+        return serverResponse;
     })
     .catch( error => {
         console.error(error);
