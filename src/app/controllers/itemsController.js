@@ -22,10 +22,14 @@ router.get('/items', async (req, res) => {
           const stockItems = await StockItem.find();
           const itemModels = await Model.find();
           console.log('System Log: Sending to the client the whole Inventory List with the registered Models.');
-          return res.send({ ok: true, stockItems, itemModels });
+          return res.send({
+               ok: true,
+               stockItems, 
+               itemModels
+          });
      }
      catch (error) {
-          console.error('ERROR: Cannot list items.');
+          console.error('ERROR: Cannot retrieve list of items.');
           console.error(error);
           return res.status(500).send({ ok: false, error: 'Cannot list items.' });
      }
@@ -44,7 +48,10 @@ router.get('/items/:itemId', async (req, res) => {
                populate: { path: 'categoryId' }
           }).populate('transferHistory.transferredBy');
           console.log(`System Log: Sending to the client the item document (id = ${req.params.itemId}).`);
-          return res.send({ ok: true, stockItem });
+          return res.send({
+               ok: true,
+               stockItem
+          });
      }
      catch (error) {
           console.error('ERROR: Cannot retrieve item from database.');

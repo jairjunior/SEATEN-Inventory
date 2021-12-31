@@ -13,10 +13,13 @@ router.get('/categories', async (req, res) => {
      try {
           const categories = await Category.find();
           console.log('System Log: Sending the client the list with all categories registered.');
-          return res.send({ categories });
+          return res.send({
+               ok: true,
+               categories
+          });
      }
      catch (error) {
-          console.error('ERROR: Cannot list categories.');
+          console.error('ERROR: Cannot retrieve list of categories.');
           console.error(error);
           return res.status(500).send({ ok: false, error: 'Cannot list categories.' });
      }

@@ -14,10 +14,13 @@ router.get('/models', async (req, res) => {
      try {
           const itemModels = await Model.find().populate('category');
           console.log('System Log: Sending the client the list with all models registered.');
-          return res.send({ itemModels });
+          return res.send({
+               ok: true,
+               itemModels
+          });
      }
      catch (error) {
-          console.error('ERROR: Cannot list models.');
+          console.error('ERROR: Cannot retrieve list of models.');
           console.error(error);
           return res.status(500).send({ ok: false, error: 'Cannot list models.' });
      }
