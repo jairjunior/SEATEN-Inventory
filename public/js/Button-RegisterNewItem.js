@@ -21,20 +21,29 @@ export default class ButtonRegisterNewItem {
 
      _setClickEventListenner(){
           this.btn.on('click', () => {
-               const formData = this._getFormData();
-               const serverResponse = this._registerNewItem(formData);
-
-               if( serverResponse.ok ){
-                    console.log('Sucesso! Create New Item serverResponse: ', serverResponse);
-                    let category = serverResponse.newItem.category;
-                    let inventoryNumber = serverResponse.newItem.inventoryNumber;
-                    this._showAlert({
-                         type: 'success',
-                         text: `The <strong>${category} (${inventoryNumber})</strong> was successfully registered.`
-                    });
-               }
-               else console.error('Erro! Create New Item serverResponse: ', serverResponse);
+               this._submitForm();
           });
+     }
+
+
+     async _submitForm(){
+          const formData = this._getFormData();
+          const response = await this._registerNewItem(formData);
+
+          if( response.ok ){
+               let { category, inventoryNumber } = response.newItem;
+               this._showAlert({
+                    type: 'success',
+                    text: `The <strong>${category} (${inventoryNumber})</strong> was successfully registered.`
+               });
+          }
+          else{
+               console.error('Error: ', response.error);
+               this._showAlert({
+                    type: 'danger',
+                    text: `<strong>ERROR!</strong> ${response.error}`
+               });
+          }
      }
 
 
@@ -61,18 +70,24 @@ export default class ButtonRegisterNewItem {
      async _registerNewItem(formData){
           try{
                const serverResponse = await httpRequests.createNewStockItem(formData);
-               return serverResponse;
+               const responseJSON = await serverResponse.json();
+               return responseJSON;
           }
-          catch(error){ console.error('Error in ButtonRegisterNewItem._registerNewItem() method.\n\t', error); }
+          catch(error){
+               console.log('ERROR in function _registerNewItem().', error);
+          }
      }
 
 
      _showAlert({ type, text }){
-          console.log('Vamos criar o alerta!');
+          var symbol = '';
+          if(type == 'success') symbol = `<i class="fas fa-check-circle"></i>`;
+          if(type == 'danger') symbol = `<i class="fas fa-exclamation-triangle"></i>`;
 
           $('main header').after(`
                <alert-info type='${type}'>
-                    <div slot="alertText">${text}</div>
+                    <span slot="alertSymbol" class="mr-3">${symbol}</span>
+                    <span slot="alertText">${text}</span>
                </alert-info>
           `);
      }
